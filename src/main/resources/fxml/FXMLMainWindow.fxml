@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.web.WebView?>
+
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="548.0" prefWidth="843.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FXMLMainWindowController">
+   <children>
+      <BorderPane prefHeight="654.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <SplitPane dividerPositions="0.6504161712247325" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <WebView fx:id="WebViewEntity" onDragDone="#dummyButtonAction" onKeyTyped="#dummyButtonAction" onMouseClicked="#dummyButtonAction" onMouseDragReleased="#dummyButtonAction" prefHeight="483.0" prefWidth="497.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <SplitPane fx:id="rightSplitPane" dividerPositions="0.6264822134387352" orientation="VERTICAL" prefHeight="508.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                 <children>
+                                    <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <tabs>
+                                        <Tab text="Code">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <center>
+                                                            <TextArea fx:id="codeTextArea" editable="false" prefHeight="223.0" prefWidth="289.0" BorderPane.alignment="CENTER" />
+                                                         </center>
+                                                         <bottom>
+                                                            <AnchorPane prefHeight="25.0" BorderPane.alignment="CENTER">
+                                                               <padding>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </padding>
+                                                               <children>
+                                                                  <Button mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" text="Send to console" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </bottom>
+                                                      </BorderPane>
+                                                   </children>
+                                                </AnchorPane>
+                                          </content>
+                                        </Tab>
+                                        <Tab text="Console">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                   <children>
+                                                      <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <bottom>
+                                                            <AnchorPane prefHeight="25.0" prefWidth="289.0" BorderPane.alignment="CENTER">
+                                                               <children>
+                                                                  <TextField fx:id="consoleTextField" disable="true" prefHeight="25.0" prefWidth="159.0" promptText="Send to Arduino..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="0.0" />
+                                                                  <Button fx:id="consoleSendButton" disable="true" layoutX="189.0" mnemonicParsing="false" onAction="#consoleSendButtonAction" prefWidth="50.0" text="Send" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0" />
+                                                                  <Button mnemonicParsing="false" onAction="#consoleClearButtonAction" prefWidth="50.0" text="Clear" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </padding>
+                                                            </AnchorPane>
+                                                         </bottom>
+                                                         <center>
+                                                            <TextArea fx:id="consoleTextArea" editable="false" prefColumnCount="0" prefHeight="200.0" prefRowCount="0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                                                         </center>
+                                                      </BorderPane>
+                                                   </children>
+                                                </AnchorPane>
+                                          </content>
+                                        </Tab>
+                                      </tabs>
+                                    </TabPane>
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane fx:id="simulationAnchorPane" minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <ImageView fx:id="imageView" disable="true" fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+              </items>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </SplitPane>
+         </center>
+         <top>
+            <AnchorPane prefHeight="38.0" prefWidth="843.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ToolBar prefHeight="44.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                        <Label prefHeight="35.0" prefWidth="70.0" text="Arduino connection" textAlignment="CENTER" wrapText="true" />
+                      <Button fx:id="connectionSearchButton" mnemonicParsing="false" onAction="#connectionSearchButtonAction" text="Search" />
+                        <ChoiceBox fx:id="connectionChoiceBox" prefWidth="150.0" />
+                        <Button fx:id="connectionConnectButton" mnemonicParsing="false" onAction="#connectionConnectButtonAction" text="Connect" />
+                    </items>
+                  </ToolBar>
+               </children>
+            </AnchorPane>
+         </top>
+      </BorderPane>
+   </children>
+</AnchorPane>

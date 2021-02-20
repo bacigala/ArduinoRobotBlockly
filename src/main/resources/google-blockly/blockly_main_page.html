@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <script src="blockly_compressed.js"></script>
+	<script src="javascript_compressed.js"></script>
+  <script src="blocks_compressed.js"></script>
+  <script src="msg/js/en.js"></script>
+  <script src="blocks/myblock.js"></script>
+  <script src="generators/mygen.js"></script>
+	
+	<script src="blockly_uncompressed.js"></script>
+	<script src="generators/javascript.js"></script>
+	<script src="generators/javascript/logic.js"></script>
+	<script src="generators/javascript/loops.js"></script>
+	<script src="generators/javascript/math.js"></script>
+	<script src="generators/javascript/text.js"></script>
+	<script src="generators/javascript/lists.js"></script>
+	<script src="generators/javascript/colour.js"></script>
+	<script src="generators/javascript/variables.js"></script>
+	<script src="generators/javascript/variables_dynamic.js"></script>
+	<script src="generators/javascript/procedures.js"></script>
+	<script src="msg/messages.js"></script>
+	<script src="blocks/logic.js"></script>
+	<script src="blocks/loops.js"></script>
+	<script src="blocks/math.js"></script>
+	<script src="blocks/text.js"></script>
+	<script src="blocks/lists.js"></script>
+	<script src="blocks/colour.js"></script>
+	<script src="blocks/variables.js"></script>
+	<script src="blocks/variables_dynamic.js"></script>
+	<script src="blocks/procedures.js"></script>
+	
+	<script src="generators/custom_generator_otto.js"></script>
+	
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    #blocklyArea {
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+	<xml id="toolbox" style="display: none">
+		<!--
+		<category name="Control">
+			<block type="controls_if"></block>
+			<block type="controls_whileUntil"></block>
+			<block type="controls_for">
+		</category>
+		<category name="Logic">
+			<block type="logic_compare"></block>
+			<block type="logic_operation"></block>
+			<block type="logic_boolean"></block>
+		</category>
+		<category name="Control" colour="#22bd27">
+			<block type="controls_if"></block>
+			<block type="controls_whileUntil"></block>
+		</category>
+		<category name="Logic" colour="#ba22bd">
+			<block type="logic_compare"></block>
+			<block type="logic_operation"></block>
+			<block type="logic_boolean"></block>
+		</category>
+		-->
+		<block type="start_block"></block>
+		<block type="end_block"></block>
+		<block type="motor_move"/>
+	</xml>
+  
+  <div id="blocklyDiv" style="position: absolute"></div>
+  <div id="blocklyArea"></div>  
+
+	<script>
+		var toolbox = document.getElementById("toolbox");
+
+		var options = { 
+			toolbox : toolbox, 
+			collapse : false, 
+			comments : false, 
+			disable : true, 
+			maxBlocks : Infinity, 
+			trashcan : true, 
+			horizontalLayout : false, 
+			toolboxPosition : 'start', 
+			css : true, 
+			// media : 'https://blockly-demo.appspot.com/static/media/', 
+			rtl : false, 
+			scrollbars : true, 
+			sounds : true, 
+			oneBasedIndex : true,
+			zoom:
+				{controls: true,
+				wheel: true,
+				startScale: 1.0,
+				maxScale: 3,
+				minScale: 0.3,
+				scaleSpeed: 1.2,
+				pinch: true}
+		};
+  
+	  var blocklyArea = document.getElementById('blocklyArea');
+	  var blocklyDiv = document.getElementById('blocklyDiv');
+	  var workspace = Blockly.inject(blocklyDiv, options);
+	  var onresize = function(e) {
+			var element = blocklyArea;
+			var x = 0;
+			var y = 0;
+			do {
+				x += element.offsetLeft;
+				y += element.offsetTop;
+				element = element.offsetParent;
+			} while (element);
+			blocklyDiv.style.left = x + 'px';
+			blocklyDiv.style.top = y + 'px';
+			blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+			blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+			Blockly.svgResize(workspace);
+	  };
+	  window.addEventListener('resize', onresize, false);
+	  onresize();
+	  Blockly.svgResize(workspace);
+	</script>
+
+</body>
+</html>
