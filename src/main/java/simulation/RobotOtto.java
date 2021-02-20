@@ -13,9 +13,6 @@ import com.jme3.scene.Spatial;
  * Simple model of robot Otto.
  */
 public class RobotOtto {
-    // Spatial = model of robot part
-    private Spatial ottoBottomSpatial, ottoTopSpatial, ottoArmRightSpatial, ottoArmLeftSpatial,
-            ottoLegRightSpatial, ottoLegLeftSpatial, ottoFootRightSpatial, ottoFootLeftSpatial;
     // Node = point of rotation
     private final Node ottoNode, ottoArmRightNode, ottoArmLeftNode,
             ottoLegRightNode, ottoLegLeftNode, ottoFootRightNode, ottoFootLeftNode;
@@ -25,6 +22,10 @@ public class RobotOtto {
     }
 
     public RobotOtto(AssetManager assetManager) {
+        // Spatial = model of robot part
+        Spatial ottoBottomSpatial, ottoTopSpatial, ottoArmRightSpatial, ottoArmLeftSpatial,
+                ottoLegRightSpatial, ottoLegLeftSpatial, ottoFootRightSpatial, ottoFootLeftSpatial;
+
         // load models
         ottoTopSpatial = assetManager.loadModel("models/otto-top.obj");
         ottoBottomSpatial = assetManager.loadModel("models/otto-bottom.obj");
@@ -109,11 +110,8 @@ public class RobotOtto {
         ottoFootLeftNode.attachChild(ottoFootLeftSpatial);
         ottoLegLeftNode.attachChild(ottoFootLeftNode);
 
-        // move legs to calibrated position (90 degrees for each motor)
-        ottoLegRightNode.rotate(0, FastMath.HALF_PI, 0);
-        ottoFootRightNode.rotate(-FastMath.HALF_PI, 0, 0);
-        ottoLegLeftNode.rotate(0, -FastMath.HALF_PI, 0);
-        ottoFootLeftNode.rotate(-FastMath.HALF_PI, 0, 0);
+        // move motors to calibrated position (90 degrees for each motor)
+        for (OttoMotor motor : OttoMotor.values()) setMotorPosition(motor, 90);
     }
 
 
@@ -131,27 +129,33 @@ public class RobotOtto {
         ottoLegLeftNode.setLocalRotation(tpf);
     }
 
-    // move separate motor to given position todo
-    public void setMotorPosition(OttoMotor part, int degrees) {
+    // move separate motor to given position
+    public void setMotorPosition(OttoMotor part, float degrees) {
         if (degrees < 0 || degrees > 180) return;
         Quaternion q = new Quaternion();
         switch (part) {
             case LEFT_HAND:
+                q.fromAngles(0,0, FastMath.PI - FastMath.DEG_TO_RAD * degrees);
+                ottoArmLeftNode.setLocalRotation(q);
                 break;
             case RIGHT_HAND:
+                q.fromAngles(0,0,FastMath.TWO_PI - FastMath.DEG_TO_RAD * degrees);
+                ottoArmRightNode.setLocalRotation(q);
                 break;
             case LEFT_LEG:
-                q.fromAngleAxis(-FastMath.PI * degrees / 360, Vector3f.UNIT_Y);
+                q.fromAngles(0, FastMath.TWO_PI - FastMath.DEG_TO_RAD * degrees, 0);
                 ottoLegLeftNode.setLocalRotation(q);
                 break;
             case RIGHT_LEG:
-                q.fromAngleAxis(FastMath.PI * degrees / 360, Vector3f.UNIT_Y);
+                q.fromAngles(0, FastMath.PI - FastMath.DEG_TO_RAD * degrees, 0);
                 ottoLegRightNode.setLocalRotation(q);
                 break;
             case LEFT_FOOT:
+                q.fromAngles(FastMath.TWO_PI - FastMath.DEG_TO_RAD * degrees,0,0);
+                ottoFootLeftNode.setLocalRotation(q);
                 break;
             case RIGHT_FOOT:
-                q.fromAngleAxis(-FastMath.PI * degrees / 360, Vector3f.UNIT_X);
+                q.fromAngles(FastMath.PI + FastMath.DEG_TO_RAD * degrees,0,0);
                 ottoFootRightNode.setLocalRotation(q);
                 break;
         }
