@@ -19,7 +19,7 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void stop(){
-        // application stop -> stop simulation
+        // application stop -> notify controller to stop simulation
         if (mainWindowController != null) mainWindowController.applicationClose();
     }
 
