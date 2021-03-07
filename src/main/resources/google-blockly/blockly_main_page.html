@@ -73,9 +73,27 @@
 			<block type="logic_boolean"></block>
 		</category>
 		-->
-		<block type="start_block"></block>
-		<block type="end_block"></block>
-		<block type="motor_move"/>
+		<category name="Basic & Motion" colour="green">
+			<block type="start_block"></block>
+			<sep gap="8"></sep>
+			<block type="end_block"></block>
+			<sep gap="32"></sep>
+			<block type="motor_move"></block>
+			<sep gap="32"></sep>
+			<block type="block_jump_to_line"></block>
+			<sep gap="32"></sep>
+			<block type="comment_block"></block>
+			<sep gap="8"></sep>
+			<block type="block_dance_total_time"></block>
+			<sep gap="8"></sep>
+			<block type="block_set_slowdown"></block>
+		</category>
+		
+		<category name="Sound" colour="purple">
+			<block type="block_play_sound_effect"></block>
+			<block type="block_play_melody"></block>
+			<block type="block_stop_melody"></block>
+		</category>
 	</xml>
   
   <div id="blocklyDiv" style="position: absolute"></div>
@@ -130,6 +148,9 @@
 	  window.addEventListener('resize', onresize, false);
 	  onresize();
 	  Blockly.svgResize(workspace);
+		
+		// toolbox categoriws stay opened
+		//workspace.toolbox_.flyout_.autoClose = false
 	</script>
 
 </body>
