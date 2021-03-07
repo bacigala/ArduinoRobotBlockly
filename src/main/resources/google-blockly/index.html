@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="sk">
+	<!-- ++++++++++++++++++++ WEBPAGE LAYOUT & STYLE ++++++++++++++++++++ -->
+	<head>
+		<meta charset="utf-8">
+		<title>Blockly</title>
+		
+		<script src="blockly_compressed.js"></script>
+		<script src="blocks/otto-basic.js"></script>
+		<script src="generators/otto-basic.js"></script>
+		
+		<style>
+			html, body, #blocklyArea {
+				height: 100%;
+				margin: 0;
+			}
+		</style>		
+	</head>
+	
+	<body>  
+		<div id="blocklyDiv" style="position: absolute"></div>
+		<div id="blocklyArea"></div>  
+		
+		<!-- ++++++++++++++++++++ DEFINITIONS OF TOOLBOXES ++++++++++++++++++++ -->
+		<xml id="toolbox">
+			<category name="Basic & Motion" colour="green">
+				<block type="start_block"></block>
+				<sep gap="8"></sep>
+				<block type="end_block"></block>
+				<sep gap="32"></sep>
+				<block type="motor_move"></block>
+				<sep gap="32"></sep>
+				<block type="block_jump_to_line"></block>
+				<sep gap="32"></sep>
+				<block type="comment_block"></block>
+				<sep gap="8"></sep>
+				<block type="block_dance_total_time"></block>
+				<sep gap="8"></sep>
+				<block type="block_set_slowdown"></block>
+			</category>
+			
+			<category name="Sound" colour="purple">
+				<block type="block_play_sound_effect"></block>
+				<block type="block_play_melody"></block>
+				<block type="block_stop_melody"></block>
+			</category>
+		</xml>
+
+		<!-- ++++++++++++++++++++ SETUP & INJECT BLOCKLY ++++++++++++++++++++ -->
+		<script>
+			var toolbox = document.getElementById("toolbox");
+
+			var options = { 
+				toolbox : toolbox, 
+				collapse : false, 
+				comments : false, 
+				disable : true, 
+				maxBlocks : Infinity, 
+				trashcan : true, 
+				horizontalLayout : false, 
+				toolboxPosition : 'start', 
+				css : true,  
+				rtl : false, 
+				scrollbars : true, 
+				sounds : true, 
+				oneBasedIndex : true,
+				zoom:
+					{controls: true,
+					wheel: true,
+					startScale: 1.0,
+					maxScale: 3,
+					minScale: 0.3,
+					scaleSpeed: 1.2,
+					pinch: true}
+			};
+		
+			var blocklyArea = document.getElementById('blocklyArea');
+			var blocklyDiv = document.getElementById('blocklyDiv');
+			var workspace = Blockly.inject(blocklyDiv, options);
+			var onresize = function(e) {
+				var element = blocklyArea;
+				var x = 0;
+				var y = 0;
+				do {
+					x += element.offsetLeft;
+					y += element.offsetTop;
+					element = element.offsetParent;
+				} while (element);
+				blocklyDiv.style.left = x + 'px';
+				blocklyDiv.style.top = y + 'px';
+				blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+				blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+				Blockly.svgResize(workspace);
+			};
+			window.addEventListener('resize', onresize, false);
+			onresize();
+			Blockly.svgResize(workspace);
+		</script>
+	</body>
+</html>

@@ -185,23 +185,25 @@ public class FXMLMainWindowController implements Initializable {
     @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> robotVersionChoiceBox;
 
     public void robotVersionSelectButtonAction() {
-        try {
-            ProcessBuilder builder = new ProcessBuilder(
-                    "cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\Arduino\" && arduino");
-            builder.redirectErrorStream(true);
-            Process p = builder.start();
-            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            while (true) {
-                line = r.readLine();
-                if (line == null) {
-                    break;
-                }
-                System.out.println(line);
-            }
-        } catch (IOException e) {
-            System.err.println("Cannot operate on command line. :(");
-        }
+        blockly.setRobotVersion();
+
+//        try {
+//            ProcessBuilder builder = new ProcessBuilder(
+//                    "cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\Arduino\" && arduino");
+//            builder.redirectErrorStream(true);
+//            Process p = builder.start();
+//            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//            String line;
+//            while (true) {
+//                line = r.readLine();
+//                if (line == null) {
+//                    break;
+//                }
+//                System.out.println(line);
+//            }
+//        } catch (IOException e) {
+//            System.err.println("Cannot operate on command line. :(");
+//        }
     }
 
 }
