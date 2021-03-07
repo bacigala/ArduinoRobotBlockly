@@ -27,7 +27,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <WebView fx:id="WebViewEntity" onDragDone="#dummyButtonAction" onKeyTyped="#dummyButtonAction" onMouseClicked="#dummyButtonAction" onMouseDragReleased="#dummyButtonAction" prefHeight="483.0" prefWidth="497.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <WebView fx:id="blocklyWebView" onDragDone="#dummyButtonAction" onKeyTyped="#dummyButtonAction" onMouseClicked="#dummyButtonAction" onMouseDragReleased="#dummyButtonAction" prefHeight="483.0" prefWidth="497.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">

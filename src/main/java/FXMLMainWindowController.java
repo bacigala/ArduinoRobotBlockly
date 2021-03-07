@@ -1,3 +1,4 @@
+import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.system.AppSettings;
 import javafx.application.Platform;
@@ -6,10 +7,11 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
-import javafx.scene.web.WebEngine;
 import simulation.Simulation;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import static java.util.logging.Level.SEVERE;
 
 public class FXMLMainWindowController implements Initializable {
 
-    @FXML javafx.scene.web.WebView WebViewEntity;
+    @FXML javafx.scene.web.WebView blocklyWebView;
     @FXML javafx.scene.image.ImageView imageView;
     @FXML javafx.scene.layout.AnchorPane simulationAnchorPane;
     @FXML javafx.scene.control.SplitPane rightSplitPane;
@@ -29,16 +31,15 @@ public class FXMLMainWindowController implements Initializable {
     @FXML javafx.scene.control.TextField consoleTextField;
     @FXML javafx.scene.control.Button consoleSendButton;
 
-    private WebEngine webEngine = null;
+    private Blockly blockly = null;
     private Simulation simulation = null;
     private final SerialCommunicator serialCommunicator = new SerialCommunicator();
     private boolean lastConsoleWriteBySerial = false;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // start webengine - Blockly
-        webEngine = WebViewEntity.getEngine();
-        webEngine.load(getClass().getResource("/google-blockly/blockly_main_page.html").toString());
+        // start blockly
+        blockly = new Blockly(blocklyWebView.getEngine());
 
         // start simulation - jMonkeyEngine
         var settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
@@ -87,11 +88,7 @@ public class FXMLMainWindowController implements Initializable {
 
     public void dummyButtonAction() {
         codeTextArea.clear();
-        codeTextArea.setText(getBlocklyCode());
-    }
-
-    private String getBlocklyCode() {
-        return (String) webEngine.executeScript("Blockly.basicOttoGenerator.workspaceToCode(workspace)");
+        codeTextArea.setText(blockly.getCode());
     }
 
 
@@ -123,7 +120,7 @@ public class FXMLMainWindowController implements Initializable {
      * Generated code section
      */
     public void codeSendToConsoleButtonAction() {
-        String blocklyCode = getBlocklyCode();
+        String blocklyCode = blockly.getCode();
         if (!blocklyCode.isEmpty() && isConnected) {
             try {
                 serialCommunicator.send(blocklyCode);
@@ -188,7 +185,23 @@ public class FXMLMainWindowController implements Initializable {
     @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> robotVersionChoiceBox;
 
     public void robotVersionSelectButtonAction() {
-
+        try {
+            ProcessBuilder builder = new ProcessBuilder(
+                    "cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\Arduino\" && arduino");
+            builder.redirectErrorStream(true);
+            Process p = builder.start();
+            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while (true) {
+                line = r.readLine();
+                if (line == null) {
+                    break;
+                }
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Cannot operate on command line. :(");
+        }
     }
 
 }
