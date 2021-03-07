@@ -146,8 +146,10 @@ public class FXMLMainWindowController implements Initializable {
     private boolean isConnected = false;
 
     public void connectionSearchButtonAction() {
+        connectionSearchButton.setDisable(true);
         ArrayList<SerialCommunicator.ComPort> availablePorts = serialCommunicator.getAvailablePorts();
         connectionChoiceBox.setItems(FXCollections.observableArrayList(availablePorts));
+        connectionSearchButton.setDisable(false);
     }
 
     public void connectionConnectButtonAction() {
@@ -177,6 +179,16 @@ public class FXMLMainWindowController implements Initializable {
         consoleSendButton.setDisable(!isConnected);
         consoleTextField.setDisable(!isConnected);
         if (isConnected) Platform.runLater(() -> consoleTextField.requestFocus());
+    }
+
+    /**
+     * Robot version toolbox.
+     */
+    @FXML javafx.scene.control.Button robotVersionSelectButton;
+    @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> robotVersionChoiceBox;
+
+    public void robotVersionSelectButtonAction() {
+
     }
 
 }
