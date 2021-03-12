@@ -1,6 +1,9 @@
+package application;
+
 import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.system.AppSettings;
+import dialog.DialogFactory;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -75,6 +78,10 @@ public class FXMLMainWindowController implements Initializable {
         consoleTextField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) consoleSendButtonAction();
         });
+
+        // gui elements default
+        robotVersionLoadButton.setDisable(true);
+        robotVersionModulesButton.setDisable(true);
     }
 
     // called after last application window has been closed
@@ -180,29 +187,46 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Robot version toolbox.
      */
-    @FXML javafx.scene.control.Button robotVersionSelectButton;
+    @FXML javafx.scene.control.Button robotVersionLoadButton;
     @FXML javafx.scene.control.Button robotVersionSearchButton;
+    @FXML javafx.scene.control.Button robotVersionModulesButton;
     @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
 
     public void robotVersionSearchButtonAction() {
-        robotVersionSelectButton.setDisable(true);
+        robotVersionModulesButton.setDisable(true);
+        robotVersionLoadButton.setDisable(true);
         robotVersionSearchButton.setDisable(true);
         robotVersionControl.refreshAvailableVersionsList();
         ArrayList<RobotVersionControl.RobotVersion> availableVersions = robotVersionControl.getAvailableVersions();
         robotVersionChoiceBox.setItems(FXCollections.observableArrayList(availableVersions));
-        robotVersionSelectButton.setDisable(false);
+        robotVersionLoadButton.setDisable(false);
         robotVersionSearchButton.setDisable(false);
     }
 
-    public void robotVersionSelectButtonAction() {
+    public void robotVersionLoadButtonAction() {
         try {
             robotVersionControl.loadVersion(robotVersionChoiceBox.getSelectionModel().getSelectedItem());
             String prop = robotVersionControl.getProperty("toolbox");
             System.out.println("prop read: " + prop);
             blockly.setToolbox(prop);
             blockly.setWorkspace(robotVersionControl.getProperty("workspace"));
+            robotVersionModulesButton.setDisable(false);
         } catch (Exception e) {
             System.out.println("Error while loading property file of selected version.");
+            e.printStackTrace();
+        }
+    }
+
+    public void robotVersionModulesButtonAction() {
+        if (!robotVersionControl.hasLoadedVersion()) {
+            System.out.println("No robot-version loaded.");
+            return;
+        }
+
+        try {
+            DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl);
+        } catch (Exception e) {
+            System.err.println("Unable to open module choice dialog.");
             e.printStackTrace();
         }
     }

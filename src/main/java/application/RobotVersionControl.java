@@ -1,3 +1,5 @@
+package application;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -6,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 public class RobotVersionControl {
-    private static ArrayList<RobotVersion> robotVersions = new ArrayList<>();
+    private ArrayList<RobotVersion> robotVersions = new ArrayList<>();
     private static final String pathToVersionsFolder = "src\\main\\resources\\robot-versions";
     private Properties loadedVersion;
 
@@ -53,6 +55,10 @@ public class RobotVersionControl {
         }
     }
 
+    public boolean hasLoadedVersion() {
+        return loadedVersion != null;
+    }
+
     public String getProperty(String propertyName) {
         if (loadedVersion == null) throw new NullPointerException("No RobotVersion set.");
         String propertyValue;
@@ -64,6 +70,11 @@ public class RobotVersionControl {
         }
         return propertyValue;
     }
+
+    public String getModuleProperty(int moduleNumber, String property) {
+        return getProperty("module" + moduleNumber + "." + property);
+    }
+
 
     public static class RobotVersion {
         private final String name, fileName;
@@ -79,8 +90,8 @@ public class RobotVersionControl {
         }
 
         public String getName() {return name;}
+
         public String getFileName() {return fileName;}
     }
-
 
 }
