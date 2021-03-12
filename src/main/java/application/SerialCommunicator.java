@@ -1,3 +1,5 @@
+package application;
+
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
@@ -83,7 +85,7 @@ public class SerialCommunicator {
                     try {
                         outputStream.write(event.getReceivedData());
                     } catch (IOException e) {
-                        System.err.println("SerialCommunicator: Unable to write to OutputStream.");
+                        System.err.println("application.SerialCommunicator: Unable to write to OutputStream.");
                     }
                 }
         });
@@ -110,7 +112,7 @@ public class SerialCommunicator {
             out.write(bytesToSend);
             out.close();
         } catch (IOException e) {
-            System.err.println("SerialCommunicator.send: Unable to write to COM port.");
+            System.err.println("application.SerialCommunicator.send: Unable to write to COM port.");
             throw e;
         }
     }
