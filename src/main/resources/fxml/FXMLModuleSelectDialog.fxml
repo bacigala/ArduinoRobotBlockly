@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="548.0" prefWidth="496.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dialog.FXMLModuleSelectDialogController">
+   <children>
+      <BorderPane prefHeight="654.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <Label fx:id="mainLabel" text="Choose modules" textAlignment="CENTER" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </Label>
+         </top>
+         <right>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label prefHeight="32.0" text="Module info" AnchorPane.leftAnchor="5.0" />
+                  <TextArea fx:id="moduleInfoTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="32.0" />
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Button cancelButton="true" maxWidth="100.0" mnemonicParsing="false" onAction="#cancelButtonAction" prefHeight="25.0" prefWidth="70.0" text="Cancel" />
+                        <Button defaultButton="true" mnemonicParsing="false" onAction="#confirmButtonAction" prefHeight="25.0" prefWidth="70.0" text="OK" textAlignment="CENTER">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </right>
+         <center>
+            <AnchorPane prefHeight="401.0" prefWidth="404.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ListView fx:id="moduleListView" onMouseClicked="#moduleListViewClickAction" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="32.0" />
+                  <Label prefHeight="32.0" text="Available modules" AnchorPane.leftAnchor="10.0" />
+                  <Label prefHeight="12.0" text="Memory" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="12.0" />
+                  <ProgressBar fx:id="memoryProgressBar" prefHeight="25.0" progress="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" />
+               </children>
+            </AnchorPane>
+         </center>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </BorderPane>
+   </children>
+</AnchorPane>
