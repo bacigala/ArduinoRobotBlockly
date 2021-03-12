@@ -142,6 +142,7 @@
                         <ToolBar layoutX="10.0" layoutY="10.0" prefHeight="44.0" style="-fx-background-color: #fff8c7;">
                            <items>
                               <Label prefHeight="35.0" prefWidth="70.0" text="Robot version" textAlignment="CENTER" wrapText="true" />
+                              <Button fx:id="robotVersionSearchButton" mnemonicParsing="false" onAction="#robotVersionSearchButtonAction" text="Search" />
                               <ChoiceBox fx:id="robotVersionChoiceBox" prefWidth="150.0" />
                               <Button fx:id="robotVersionSelectButton" mnemonicParsing="false" onAction="#robotVersionSelectButtonAction" text="Select" />
                            </items>

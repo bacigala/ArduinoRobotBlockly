@@ -9,9 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import simulation.Simulation;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ public class FXMLMainWindowController implements Initializable {
     private Simulation simulation = null;
     private final SerialCommunicator serialCommunicator = new SerialCommunicator();
     private boolean lastConsoleWriteBySerial = false;
+    private final RobotVersionControl robotVersionControl = new RobotVersionControl();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -182,28 +181,30 @@ public class FXMLMainWindowController implements Initializable {
      * Robot version toolbox.
      */
     @FXML javafx.scene.control.Button robotVersionSelectButton;
-    @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> robotVersionChoiceBox;
+    @FXML javafx.scene.control.Button robotVersionSearchButton;
+    @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
+
+    public void robotVersionSearchButtonAction() {
+        robotVersionSelectButton.setDisable(true);
+        robotVersionSearchButton.setDisable(true);
+        robotVersionControl.refreshAvailableVersionsList();
+        ArrayList<RobotVersionControl.RobotVersion> availableVersions = robotVersionControl.getAvailableVersions();
+        robotVersionChoiceBox.setItems(FXCollections.observableArrayList(availableVersions));
+        robotVersionSelectButton.setDisable(false);
+        robotVersionSearchButton.setDisable(false);
+    }
 
     public void robotVersionSelectButtonAction() {
-        blockly.setRobotVersion();
-
-//        try {
-//            ProcessBuilder builder = new ProcessBuilder(
-//                    "cmd.exe", "/c", "cd \"C:\\Program Files (x86)\\Arduino\" && arduino");
-//            builder.redirectErrorStream(true);
-//            Process p = builder.start();
-//            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//            String line;
-//            while (true) {
-//                line = r.readLine();
-//                if (line == null) {
-//                    break;
-//                }
-//                System.out.println(line);
-//            }
-//        } catch (IOException e) {
-//            System.err.println("Cannot operate on command line. :(");
-//        }
+        try {
+            robotVersionControl.loadVersion(robotVersionChoiceBox.getSelectionModel().getSelectedItem());
+            String prop = robotVersionControl.getProperty("toolbox");
+            System.out.println("prop read: " + prop);
+            blockly.setToolbox(prop);
+            blockly.setWorkspace(robotVersionControl.getProperty("workspace"));
+        } catch (Exception e) {
+            System.out.println("Error while loading property file of selected version.");
+            e.printStackTrace();
+        }
     }
 
 }
