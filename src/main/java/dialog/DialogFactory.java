@@ -8,7 +8,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 
 
 public class DialogFactory {
@@ -23,12 +23,13 @@ public class DialogFactory {
     /**
      * Opens dialog with choice of RobotVersion modules.
      */
-    public void openModuleSelectDialog(RobotVersionControl robotVersionControl) throws IOException {
+    public void openModuleSelectDialog(
+            RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(DialogFactory.class.getResource(
                 "/fxml/FXMLModuleSelectDialog.fxml"));
         Parent root = fxmlLoader.load();
         FXMLModuleSelectDialogController controller = fxmlLoader.getController();
-        controller.initialize(robotVersionControl);
+        controller.initialize(robotVersionControl, chosenModules);
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);

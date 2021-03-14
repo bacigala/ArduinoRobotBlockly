@@ -223,8 +223,9 @@ public class FXMLMainWindowController implements Initializable {
             return;
         }
 
+        ArrayList<Integer> chosenModules = new ArrayList<>(); // IDs of chosen modules
         try {
-            DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl);
+            DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
         } catch (Exception e) {
             System.err.println("Unable to open module choice dialog.");
             e.printStackTrace();

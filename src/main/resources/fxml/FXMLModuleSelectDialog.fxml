@@ -47,9 +47,11 @@
          <center>
             <AnchorPane prefHeight="401.0" prefWidth="404.0" BorderPane.alignment="CENTER">
                <children>
-                  <ListView fx:id="moduleListView" onMouseClicked="#moduleListViewClickAction" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="32.0" />
-                  <Label prefHeight="32.0" text="Available modules" AnchorPane.leftAnchor="10.0" />
-                  <Label prefHeight="12.0" text="Memory" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="12.0" />
+                  <ListView fx:id="compulsoryModuleListView" onMouseClicked="#compulsoryModuleListViewClickAction" prefHeight="120.0" prefWidth="261.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="32.0" />
+                  <ListView fx:id="availableModuleListView" layoutX="13.0" layoutY="214.0" onMouseClicked="#availableModuleListViewClickAction" prefHeight="202.0" prefWidth="261.0" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="184.0" />
+                  <Label prefHeight="32.0" text="Compulsory modules" AnchorPane.leftAnchor="10.0" />
+                  <Label layoutX="20.0" layoutY="10.0" prefHeight="32.0" text="Available modules" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="152.0" />
+                  <Label fx:id="usedMemoryLabel" prefHeight="12.0" text="Used memory:" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="12.0" />
                   <ProgressBar fx:id="memoryProgressBar" prefHeight="25.0" progress="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" />
                </children>
             </AnchorPane>

@@ -58,23 +58,7 @@ Blockly.defineBlocksWithJsonArray([{
   "inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 240,
-  "tooltip": "",
-  "helpUrl": ""
-},
-{
-  "type": "start_block",
-  "message0": "START",
-  "nextStatement": null,
   "colour": 120,
-  "tooltip": "",
-  "helpUrl": ""
-},
-{
-  "type": "end_block",
-  "message0": "END",
-  "previousStatement": null,
-  "colour": 0,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -128,7 +112,7 @@ Blockly.defineBlocksWithJsonArray([{
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 120,
+  "colour": 60,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -204,6 +188,22 @@ Blockly.defineBlocksWithJsonArray([{
   "previousStatement": null,
   "nextStatement": null,
   "colour": 230,
+  "tooltip": "",
+  "helpUrl": ""
+},
+{
+  "type": "otto_basic_loop",
+  "message0": "Program %1 %2",
+  "args0": [
+    {
+      "type": "input_dummy"
+    },
+    {
+      "type": "input_statement",
+      "name": "PROGRAM"
+    }
+  ],
+  "colour": 180,
   "tooltip": "",
   "helpUrl": ""
 }

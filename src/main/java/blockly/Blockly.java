@@ -63,9 +63,8 @@ public class Blockly {
         webEngine.executeScript("Blockly.mainWorkspace.clear()");
     }
 
-    public void setToolbox(String toolboxID) {
+    public void setToolbox(String toolbox) {
         if (webEngine == null) throw new NullPointerException("No web engine.");
-        webEngine.executeScript("workspace.updateToolbox(" + toolboxID + ")");
+        webEngine.executeScript("workspace.updateToolbox(\"" + toolbox + "\")");
     }
-
 }

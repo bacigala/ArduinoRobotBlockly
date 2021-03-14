@@ -1,14 +1,7 @@
 
 Blockly.basicOttoGenerator = new Blockly.Generator('basicOttoGenerator');
 Blockly.basicOttoGenerator.PRECEDENCE = 0;
-
-Blockly.basicOttoGenerator['start_block'] = function(block) {
-	return "@";
-};
-
-Blockly.basicOttoGenerator['end_block'] = function(block) {
-	return "0 0 0";
-};
+Blockly.basicOttoGenerator.INDENT = "";
 
 Blockly.basicOttoGenerator['motor_move'] = function(block) {
 	var waitTime = block.getFieldValue('WAIT_TIME');
@@ -64,11 +57,16 @@ Blockly.basicOttoGenerator['block_toogle_speaker'] = function(block) {
   return code;
 };
 
+Blockly.basicOttoGenerator['otto_basic_loop'] = function(block) {
+	var program = Blockly.basicOttoGenerator.statementToCode(block, 'PROGRAM');
+  return "@" + program + "0 0 0";
+};
+
 Blockly.basicOttoGenerator.scrub_ = function(block, code, opt_thisOnly) {
   const nextBlock =
       block.nextConnection && block.nextConnection.targetBlock();
   const nextCode =
       opt_thisOnly ? '' : Blockly.basicOttoGenerator.blockToCode(nextBlock);
-  return code +  nextCode;
+  return code + nextCode;
 };
 

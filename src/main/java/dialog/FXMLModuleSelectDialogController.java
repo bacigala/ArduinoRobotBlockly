@@ -11,14 +11,24 @@ import java.util.ArrayList;
 
 public class FXMLModuleSelectDialogController {
     @FXML javafx.scene.control.Label mainLabel;
-    @FXML javafx.scene.control.ListView<Module> moduleListView;
+    @FXML javafx.scene.control.Label usedMemoryLabel;
+    @FXML javafx.scene.control.ListView<Module> compulsoryModuleListView;
+    @FXML javafx.scene.control.ListView<Module> availableModuleListView;
     @FXML javafx.scene.control.TextArea moduleInfoTextArea;
     @FXML javafx.scene.control.ProgressBar memoryProgressBar;
 
-    private final ArrayList<Integer> selectedModuleIds = new ArrayList<>();
-    private int memory = 0;
+    private final ArrayList<Module> compulsoryModules = new ArrayList<>();
+    private final ArrayList<Module> availableModules = new ArrayList<>();
+    private int maxMemory = 0;
+    private int usedMemory = 0;
+    private ArrayList<Integer> chosenModules;
 
-    public void initialize(RobotVersionControl robotVersionControl) {
+    public void initialize(RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) {
+        this.chosenModules = chosenModules;
+        mainLabel.setText(robotVersionControl.getProperty("name"));
+
+        // get data
+        maxMemory = Integer.parseInt(robotVersionControl.getProperty("robotMaxMemory"));
         int moduleCount = Integer.parseInt(robotVersionControl.getProperty("moduleCount"));
         for (int moduleNo = 1; moduleNo <= moduleCount ; moduleNo++) {
             Module module = new Module();
@@ -27,26 +37,27 @@ public class FXMLModuleSelectDialogController {
             module.id = moduleNo;
             module.size = Integer.parseInt(robotVersionControl.getModuleProperty(moduleNo, "size"));
             module.required = Boolean.parseBoolean(robotVersionControl.getModuleProperty(moduleNo, "required"));
-            moduleListView.getItems().add(module);
+            if (module.required) {
+                compulsoryModules.add(module);
+                usedMemory += module.size;
+            } else {
+                availableModules.add(module);
+            }
         }
 
-        int maxMemory = Integer.parseInt(robotVersionControl.getProperty("robotMaxMemory"));
-        moduleListView.setCellFactory(CheckBoxListCell.forListView(module -> {
+        availableModuleListView.setCellFactory(CheckBoxListCell.forListView(module -> {
             BooleanProperty observable = new SimpleBooleanProperty();
             observable.addListener((obs, oldProperty, newProperty) -> {
-                if (newProperty) {
-                    // module was checked
-                    selectedModuleIds.add(module.id);
-                    memory += module.size;
-                } else {
-                    // module was unchecked
-                    selectedModuleIds.remove(module.id);
-                    memory -= module.size;
-                }
-                memoryProgressBar.setProgress(memory / (double)maxMemory);
+                usedMemory += newProperty ? module.size : -module.size;
+                viewUsedMemory();
             });
+            module.chosen = observable;
             return observable;
         }));
+
+        compulsoryModuleListView.getItems().addAll(compulsoryModules);
+        availableModuleListView.getItems().addAll(availableModules);
+        viewUsedMemory();
     }
 
     public void cancelButtonAction() {
@@ -55,30 +66,48 @@ public class FXMLModuleSelectDialogController {
     }
 
     public void confirmButtonAction() {
-        //todo: notify robotVersionControl AND / OR Blockly AND / OR ArduinoCompiler
+        chosenModules.clear();
+        for (Module module : compulsoryModules) chosenModules.add(module.id);
+        for (Module module : availableModules) if (module.chosen.get()) chosenModules.add(module.id);
+        cancelButtonAction();
     }
 
-    public void moduleListViewClickAction() {
-        Module selected = moduleListView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
+    public void compulsoryModuleListViewClickAction() {
+        viewModuleInfo(compulsoryModuleListView.getSelectionModel().getSelectedItem());
+    }
+
+    public void availableModuleListViewClickAction() {
+        viewModuleInfo(availableModuleListView.getSelectionModel().getSelectedItem());
+    }
+
+    private void viewModuleInfo(Module module) {
+        if (module == null) {
             moduleInfoTextArea.setText("Select module to view details.");
             return;
         }
-        moduleInfoTextArea.setText("Name:\t" + selected.name + "\n");
-        moduleInfoTextArea.appendText("Size:\t\t" + selected.size + "\n");
-        moduleInfoTextArea.appendText("Required:\t" + (selected.required ? "yes" : "no") + "\n\n");
-        moduleInfoTextArea.appendText("Description:\n" + selected.description);
+        moduleInfoTextArea.setText("Name:\t" + module.name + "\n");
+        moduleInfoTextArea.appendText("Size:\t\t" + module.size + "\n");
+        moduleInfoTextArea.appendText("Required:\t" + (module.required ? "yes" : "no") + "\n\n");
+        moduleInfoTextArea.appendText("Description:\n" + module.description);
+    }
+
+    private void viewUsedMemory() {
+        double usedMemoryPercent = usedMemory / (double)maxMemory;
+        memoryProgressBar.setProgress(usedMemoryPercent);
+        usedMemoryLabel.setText(
+                "Used memory: " + usedMemory + " / " + maxMemory + " (" + usedMemoryPercent*100 + "%)");
     }
 
     private static class Module {
         public String name, description;
         public int size;
         public boolean required;
+        public BooleanProperty chosen = new SimpleBooleanProperty(false);
         public Integer id;
 
         @Override
         public String toString() {
-            return name + " (" + size + ")" + (required ? " R" : "");
+            return name + " (" + size + ")";
         }
     }
 }
