@@ -23,11 +23,17 @@ public class FXMLModuleSelectDialogController {
     private int usedMemory = 0;
     private ArrayList<Integer> chosenModules;
 
+    /**
+     * Sets default values, populates listviews with module info.
+     * @param robotVersionControl provides information about modules of robot-version
+     * @param chosenModules contains currently used modules, acts as return value
+     */
     public void initialize(RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) {
         this.chosenModules = chosenModules;
         mainLabel.setText(robotVersionControl.getProperty("name"));
 
-        // get data
+        // get module information
+        ArrayList<Module> allModules = new ArrayList<>();
         maxMemory = Integer.parseInt(robotVersionControl.getProperty("robotMaxMemory"));
         int moduleCount = Integer.parseInt(robotVersionControl.getProperty("moduleCount"));
         for (int moduleNo = 1; moduleNo <= moduleCount ; moduleNo++) {
@@ -43,28 +49,41 @@ public class FXMLModuleSelectDialogController {
             } else {
                 availableModules.add(module);
             }
+            allModules.add(module);
         }
 
+        // set previously chosen as chosen
+        for (Integer i : chosenModules) allModules.get(i-1).chosen.set(true);
+
+        // listen to change of checkboxes in listview (selection of module)
         availableModuleListView.setCellFactory(CheckBoxListCell.forListView(module -> {
             BooleanProperty observable = new SimpleBooleanProperty();
             observable.addListener((obs, oldProperty, newProperty) -> {
                 usedMemory += newProperty ? module.size : -module.size;
                 viewUsedMemory();
             });
+            observable.setValue(module.chosen.get());
             module.chosen = observable;
             return observable;
         }));
 
+        // update gui
         compulsoryModuleListView.getItems().addAll(compulsoryModules);
         availableModuleListView.getItems().addAll(availableModules);
         viewUsedMemory();
     }
 
+    /**
+     * Closes the dialog without any change to selected modules.
+     */
     public void cancelButtonAction() {
         Stage stage = (Stage) mainLabel.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Updates arraylist of selected modules, then closes the dialog.
+     */
     public void confirmButtonAction() {
         chosenModules.clear();
         for (Module module : compulsoryModules) chosenModules.add(module.id);
@@ -92,10 +111,9 @@ public class FXMLModuleSelectDialogController {
     }
 
     private void viewUsedMemory() {
-        double usedMemoryPercent = usedMemory / (double)maxMemory;
-        memoryProgressBar.setProgress(usedMemoryPercent);
+        memoryProgressBar.setProgress(usedMemory / (double)maxMemory);
         usedMemoryLabel.setText(
-                "Used memory: " + usedMemory + " / " + maxMemory + " (" + usedMemoryPercent*100 + "%)");
+                "Used memory: " + usedMemory + " / " + maxMemory + " (" + usedMemory*100 / maxMemory + "%)");
     }
 
     private static class Module {

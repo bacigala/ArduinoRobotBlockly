@@ -192,6 +192,8 @@ public class FXMLMainWindowController implements Initializable {
     @FXML javafx.scene.control.Button robotVersionModulesButton;
     @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
 
+    private final ArrayList<Integer> chosenModules = new ArrayList<>();
+
     public void robotVersionSearchButtonAction() {
         robotVersionModulesButton.setDisable(true);
         robotVersionLoadButton.setDisable(true);
@@ -217,18 +219,27 @@ public class FXMLMainWindowController implements Initializable {
         }
     }
 
+    /**
+     *  Modules.
+     */
+    private void choseCompulsoryModules() {
+        // todo load only required modules (e.g. on startup)
+    }
+
+    private void loadChosenModules() {
+        // todo: notify compiler and blockly
+    }
+
     public void robotVersionModulesButtonAction() {
         if (!robotVersionControl.hasLoadedVersion()) {
             System.out.println("No robot-version loaded.");
             return;
         }
 
-        ArrayList<Integer> chosenModules = new ArrayList<>(); // IDs of chosen modules
         try {
             DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
         } catch (Exception e) {
             System.err.println("Unable to open module choice dialog.");
-            e.printStackTrace();
         }
     }
 
