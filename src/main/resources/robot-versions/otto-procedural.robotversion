@@ -352,18 +352,32 @@
 							</xml>
 
 	robotMaxMemory 	= 200
-	moduleCount		 	= 1
+	moduleCount		 	= 2
 	categories		 	= logic, math, loops, lists, text, variables, functions, colour
 	generator				= OttoProcedural
 
 !Module 1
 	module1.name 				  = Basic
-	module1.description 	= This version consists of one module only which handles everything.
-	module1.required 			= true
-	module1.path 					= otto-basic/otto-basic.ino
-	module1.size					= 20
+	module1.description 	= Basic logic, math, loops, aritmetics, variables
+	module1.required 			= false
+	module1.location			= otto-procedural/basic
+	module1.size					= 0
 	module1.categoryCount = 4
 		module1.category1		= logic
 		module1.category2		= math
 		module1.category3 	= loops
 		module1.category4		= variables
+
+!Module 2
+	module2.name 				  = Procedures and functions
+	module2.description 	= 
+	module2.required 			= false
+	module2.location			= otto-procedural/procedures
+	module2.size					= 0
+	module2.categoryCount = 1
+		module2.category1		= functions
+
+
+
+
+

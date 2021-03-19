@@ -12,11 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import simulation.Simulation;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
+import java.io.*;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -164,16 +161,73 @@ public class FXMLMainWindowController implements Initializable {
         codeSendToConsoleButton.setDisable(false); // todo default
     }
 
-    public void codeVerifyButtonAction() throws URISyntaxException {
-        URL resource = ArduinoCompiler.class.getResource("/robot-versions/otto-basic/otto-basic.ino");
-        String filepath = Paths.get(resource.toURI()).toFile().getAbsolutePath();
-        ArduinoCompiler.verify(filepath);
+    public void codeVerifyButtonAction() {
+        try {
+            assembleFileToCompile();
+            ArduinoCompiler.verify(new File("generated-code.txt").getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void codeUploadButtonAction() throws URISyntaxException {
-        URL resource = ArduinoCompiler.class.getResource("/robot-versions/otto-basic/otto-basic.ino");
-        String filepath = Paths.get(resource.toURI()).toFile().getAbsolutePath();
-        ArduinoCompiler.verifyAndUpload(filepath);
+    public void codeUploadButtonAction() {
+        try {
+            assembleFileToCompile();
+            ArduinoCompiler.verifyAndUpload(new File("generated-code.txt").getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void assembleFileToCompile() throws IOException {
+        // get paths to all required files
+        ArrayList<String> modulePaths = new ArrayList<>();
+        for (int moduleNo : chosenModules) {
+            System.out.println(moduleNo);
+            modulePaths.add("/robot-versions/" + robotVersionControl.getModuleProperty(moduleNo, "location"));
+        }
+
+        // create output file
+        FileWriter writer = new FileWriter("generated-code.txt");
+
+        // output file header
+        for (String file : modulePaths) {
+            URL resource = ArduinoCompiler.class.getResource(file + "_header.ino");
+            System.out.println(resource.getPath());
+            BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
+            String line;
+            while ((line = br.readLine()) != null)
+                writer.append(line).append("\r\n");
+            br.close();
+        }
+
+        // output setup section
+        writer.append("\r\nsetup() {\r\n");
+        for (String file : modulePaths) {
+            URL resource = ArduinoCompiler.class.getResource(file + "_setup.ino");
+            BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
+            String line;
+            while ((line = br.readLine()) != null)
+                writer.append(line).append("\r\n");
+            br.close();
+        }
+        writer.append("\r\n}\r\n\r\n");
+
+        // get blockly code (the loop part and user-defined functions)
+        writer.append(blockly.getCode()).append("\r\n\r\n");
+
+        // output support functions from modules
+        for (String file : modulePaths) {
+            URL resource = ArduinoCompiler.class.getResource(file + "_footer.ino");
+            BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
+            String line;
+            while ((line = br.readLine()) != null)
+                writer.append(line).append("\r\n");
+            br.close();
+        }
+
+        writer.flush();
+        writer.close();
     }
 
 
@@ -271,18 +325,10 @@ public class FXMLMainWindowController implements Initializable {
     /**
      *  Modules.
      */
-    private void choseCompulsoryModules() {
-        // todo load only required modules (e.g. on startup)
-    }
-
-    private void loadChosenModules() {
-        // todo: notify compiler and blockly
-    }
-
     public void robotVersionModulesButtonAction() {
         try {
             DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
-            //todo load categories to toolbox
+
             ArrayList<String> toolboxCategories = new ArrayList<>();
             for (Integer moduleNumber : chosenModules) {
                 int noToolboxCategories = Integer.parseInt(
@@ -293,7 +339,7 @@ public class FXMLMainWindowController implements Initializable {
             }
 
             blockly.setToolbox(robotVersionControl.getProperty("toolbox"));
-            blockly.hideCategories(robotVersionControl.getAllCategories());;
+            blockly.hideCategories(robotVersionControl.getAllCategories());
             blockly.showCategories(toolboxCategories);
             blockly.setWorkspace(robotVersionControl.getProperty("workspace"));
             reloadBlocklyCode();

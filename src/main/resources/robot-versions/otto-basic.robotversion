@@ -27,7 +27,6 @@
 
 	robotMaxMemory 	= 200
 	moduleCount		 	= 1
-	categoryCount  	= 3
 	categories		 	= motion, sound, setup
 	generator				= basicOttoGenerator
 
