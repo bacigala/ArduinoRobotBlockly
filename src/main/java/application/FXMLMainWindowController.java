@@ -94,9 +94,22 @@ public class FXMLMainWindowController implements Initializable {
         serialCommunicator.disconnect();
     }
 
-    public void dummyButtonAction() {
+    private void reloadBlocklyCode() {
         codeTextArea.clear();
         codeTextArea.setText(blockly.getCode());
+    }
+
+    public void reloadBlockly() {
+        reloadBlocklyCode();
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Platform.runLater(this::reloadBlocklyCode);
+        });
+        thread.start();
     }
 
 
@@ -125,7 +138,7 @@ public class FXMLMainWindowController implements Initializable {
 
 
     /**
-     * Generated code section
+     * Generated code section.
      */
     @FXML javafx.scene.control.Button codeSendToConsoleButton;
     @FXML javafx.scene.control.Button codeVerifyButton;
