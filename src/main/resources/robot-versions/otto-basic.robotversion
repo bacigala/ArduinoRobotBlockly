@@ -3,17 +3,17 @@
 	name = Otto DTDT 2018 (Arrays in RAM)
 	
 	toolbox = <xml id='basicOttoToolbox' style='display: none'>\
-							<category name='Motion' colour='7ece7e'>\
+							<category name='Motion' toolboxitemid='motion' colour='7ece7e'>\
 								<block type='motor_move'></block>\
 							</category>\
 							\
-							<category name='Sound' colour='955CA6'>\
+							<category name='Sound' toolboxitemid='sound' colour='955CA6'>\
 								<block type='block_play_sound_effect'></block>\
 								<block type='block_play_melody'></block>\
 								<block type='block_stop_melody'></block>\
 							</category>\
 							\
-							<category name='Setup' colour='a65c5c'>\
+							<category name='Setup' toolboxitemid='setup' colour='a65c5c'>\
 								<block type='block_dance_total_time'></block>\
 								<block type='block_set_slowdown'></block>\
 								<block type='block_jump_to_line'></block>\
@@ -25,29 +25,19 @@
 								<block type='otto_basic_loop' deletable='false' movable='false'></block>\
 							</xml>
 
-	robotMaxMemory = 200
-	moduleCount = 3
+	robotMaxMemory 	= 200
+	moduleCount		 	= 1
+	categoryCount  	= 3
+	categories		 	= motion, sound, setup
+	generator				= basicOttoGenerator
 
 !Module 1
-	module1.name 				= Basic
-	module1.description = This version consists of one module only which handles everything.
-	module1.required 		= true
-	module1.path 				= otto-basic/otto-basic.ino
-	module1.size				= 20
-	module1.category		= basic
-	
-!Module 2 - DUMMY
-	module2.name 				= Dummy2
-	module2.description = Description for moduele Dummy 2.
-	module2.required 		= false
-	module2.path 				= x
-	module2.size				= 40
-	module2.category		= dummy2
-	
-!Module 3 - DUMMY
-	module3.name 				= Dummy3
-	module3.description = Description for moduele Dummy 3.
-	module3.required 		= false
-	module3.path 				= x
-	module3.size				= 50
-	module3.category		= dummy3
+	module1.name 				  = Basic
+	module1.description 	= This version consists of one module only which handles everything.
+	module1.required 			= true
+	module1.path 					= otto-basic/otto-basic.ino
+	module1.size					= 20
+	module1.categoryCount = 3
+		module1.category1		= motion
+		module1.category2		= sound
+		module1.category3 	= setup

@@ -258,11 +258,9 @@ public class FXMLMainWindowController implements Initializable {
     public void robotVersionLoadButtonAction() {
         try {
             robotVersionControl.loadVersion(robotVersionChoiceBox.getSelectionModel().getSelectedItem());
-            String prop = robotVersionControl.getProperty("toolbox");
-            System.out.println("prop read: " + prop);
-            blockly.setToolbox(prop);
-            blockly.setWorkspace(robotVersionControl.getProperty("workspace"));
             robotVersionModulesButton.setDisable(false);
+            blockly.setGenerator(robotVersionControl.getProperty("generator"));
+            robotVersionModulesButtonAction();
         } catch (Exception e) {
             System.out.println("Error while loading property file of selected version.");
             e.printStackTrace();
@@ -282,15 +280,26 @@ public class FXMLMainWindowController implements Initializable {
     }
 
     public void robotVersionModulesButtonAction() {
-        if (!robotVersionControl.hasLoadedVersion()) {
-            System.out.println("No robot-version loaded.");
-            return;
-        }
-
         try {
             DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
+            //todo load categories to toolbox
+            ArrayList<String> toolboxCategories = new ArrayList<>();
+            for (Integer moduleNumber : chosenModules) {
+                int noToolboxCategories = Integer.parseInt(
+                        robotVersionControl.getModuleProperty(moduleNumber, "categoryCount"));
+                for (int categoryNumber = 1; categoryNumber <= noToolboxCategories; categoryNumber++) {
+                    toolboxCategories.add(robotVersionControl.getModuleCategoryName(moduleNumber, categoryNumber));
+                }
+            }
+
+            blockly.setToolbox(robotVersionControl.getProperty("toolbox"));
+            blockly.hideCategories(robotVersionControl.getAllCategories());;
+            blockly.showCategories(toolboxCategories);
+            blockly.setWorkspace(robotVersionControl.getProperty("workspace"));
+            reloadBlocklyCode();
         } catch (Exception e) {
-            System.err.println("Unable to open module choice dialog.");
+            System.err.println("Unable to load selected modules.");
+            e.printStackTrace();
         }
     }
 

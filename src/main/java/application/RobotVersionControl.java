@@ -5,14 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class RobotVersionControl {
+
     private ArrayList<RobotVersion> robotVersions = new ArrayList<>();
     private static final String pathToVersionsFolder = "src\\main\\resources\\robot-versions";
     private Properties loadedVersion;
-
-    public RobotVersionControl() {}
 
     public ArrayList<RobotVersion> getAvailableVersions() {
         return robotVersions;
@@ -73,6 +73,15 @@ public class RobotVersionControl {
 
     public String getModuleProperty(int moduleNumber, String property) {
         return getProperty("module" + moduleNumber + "." + property);
+    }
+
+    public String getModuleCategoryName(int moduleNumber, int categoryNumber) {
+        return getProperty("module" + moduleNumber + ".category" + categoryNumber);
+    }
+
+    public ArrayList<String> getAllCategories() {
+        String categories = getProperty("categories");
+        return new ArrayList<>(Arrays.asList(categories.split(",[ ]*")));
     }
 
 
