@@ -63,10 +63,8 @@ Blockly.basicOttoGenerator['otto_basic_loop'] = function(block) {
 };
 
 Blockly.basicOttoGenerator.scrub_ = function(block, code, opt_thisOnly) {
-  const nextBlock =
-      block.nextConnection && block.nextConnection.targetBlock();
-  const nextCode =
-      opt_thisOnly ? '' : Blockly.basicOttoGenerator.blockToCode(nextBlock);
+  const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
+  const nextCode = opt_thisOnly ? '' : Blockly.basicOttoGenerator.blockToCode(nextBlock);
   return code + nextCode;
 };
 
