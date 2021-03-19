@@ -14,7 +14,9 @@ import simulation.Simulation;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -125,6 +127,10 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Generated code section
      */
+    @FXML javafx.scene.control.Button codeSendToConsoleButton;
+    @FXML javafx.scene.control.Button codeVerifyButton;
+    @FXML javafx.scene.control.Button codeUploadButton;
+
     public void codeSendToConsoleButtonAction() {
         String blocklyCode = blockly.getCode();
         if (!blocklyCode.isEmpty() && isConnected) {
@@ -136,6 +142,18 @@ public class FXMLMainWindowController implements Initializable {
                 consoleTextArea.appendText("\n* * * communication error * * *");
             }
         }
+    }
+
+    public void codeVerifyButtonAction() throws URISyntaxException {
+        URL resource = ArduinoCompiler.class.getResource("/robot-versions/otto-basic/otto-basic.ino");
+        String filepath = Paths.get(resource.toURI()).toFile().getAbsolutePath();
+        ArduinoCompiler.verify(filepath);
+    }
+
+    public void codeUploadButtonAction() throws URISyntaxException {
+        URL resource = ArduinoCompiler.class.getResource("/robot-versions/otto-basic/otto-basic.ino");
+        String filepath = Paths.get(resource.toURI()).toFile().getAbsolutePath();
+        ArduinoCompiler.verifyAndUpload(filepath);
     }
 
 

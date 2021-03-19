@@ -27,7 +27,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <WebView fx:id="blocklyWebView" onDragDone="#dummyButtonAction" onKeyTyped="#dummyButtonAction" onMouseClicked="#dummyButtonAction" onMouseDragReleased="#dummyButtonAction" prefHeight="483.0" prefWidth="497.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <WebView fx:id="blocklyWebView" onDragDetected="#reloadBlockly" onDragDropped="#reloadBlockly" onKeyPressed="#reloadBlockly" onKeyTyped="#reloadBlockly" onMouseClicked="#reloadBlockly" onMouseDragReleased="#reloadBlockly" prefHeight="483.0" prefWidth="497.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -38,7 +38,7 @@
                                  <children>
                                     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <tabs>
-                                        <Tab text="Code">
+                                        <Tab closable="false" style="-fx-background-color: #c7c7ff;" text="Code">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
@@ -47,21 +47,23 @@
                                                             <TextArea fx:id="codeTextArea" editable="false" prefHeight="223.0" prefWidth="289.0" BorderPane.alignment="CENTER" />
                                                          </center>
                                                          <bottom>
-                                                            <AnchorPane prefHeight="25.0" BorderPane.alignment="CENTER">
+                                                            <HBox alignment="TOP_CENTER" prefHeight="25.0" prefWidth="200.0" spacing="4.0" style="-fx-background-color: #c7c7ff;" BorderPane.alignment="CENTER">
+                                                               <children>
+                                                                  <Button fx:id="codeVerifyButton" alignment="CENTER" mnemonicParsing="false" onAction="#codeVerifyButtonAction" prefWidth="60.0" text="Verify" textAlignment="CENTER" />
+                                                                  <Button fx:id="codeUploadButton" alignment="CENTER" mnemonicParsing="false" onAction="#codeUploadButtonAction" prefWidth="60.0" text="Upload" textAlignment="CENTER" />
+                                                                  <Button fx:id="codeSendToConsoleButton" mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" prefWidth="120.0" text="Send to console" />
+                                                               </children>
                                                                <padding>
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </padding>
-                                                               <children>
-                                                                  <Button mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" text="Send to console" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                               </children>
-                                                            </AnchorPane>
+                                                            </HBox>
                                                          </bottom>
                                                       </BorderPane>
                                                    </children>
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                        <Tab text="Console">
+                                        <Tab closable="false" text="Console">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
@@ -124,17 +126,17 @@
                   </MenuBar>
                </top>
                <center>
-                  <HBox BorderPane.alignment="CENTER">
+                  <HBox style="-fx-background-color: #ffc7ff;" BorderPane.alignment="CENTER">
                      <children>
-                        <ToolBar prefHeight="44.0" style="-fx-background-color: #c7ffee;">
+                        <ToolBar prefHeight="44.0" style="-fx-background-color: #e3ffc7;">
                            <items>
                               <Label prefHeight="35.0" prefWidth="70.0" text="Arduino connection" textAlignment="CENTER" wrapText="true" />
                               <Button fx:id="connectionSearchButton" mnemonicParsing="false" onAction="#connectionSearchButtonAction" text="Search" />
-                              <ChoiceBox fx:id="connectionChoiceBox" prefWidth="150.0" />
-                              <Button fx:id="connectionConnectButton" mnemonicParsing="false" onAction="#connectionConnectButtonAction" text="Connect" />
+                              <ChoiceBox fx:id="connectionChoiceBox" prefWidth="170.0" />
+                              <Button fx:id="connectionConnectButton" mnemonicParsing="false" onAction="#connectionConnectButtonAction" text="Connect SERIAL" />
                            </items>
                         </ToolBar>
-                        <ToolBar layoutX="10.0" layoutY="10.0" prefHeight="44.0" style="-fx-background-color: #fff8c7;">
+                        <ToolBar layoutX="10.0" layoutY="10.0" prefHeight="44.0" style="-fx-background-color: #ffc7ff;">
                            <items>
                               <Label prefHeight="35.0" prefWidth="70.0" text="Robot version" textAlignment="CENTER" wrapText="true" />
                               <Button fx:id="robotVersionSearchButton" mnemonicParsing="false" onAction="#robotVersionSearchButtonAction" text="Search" />
