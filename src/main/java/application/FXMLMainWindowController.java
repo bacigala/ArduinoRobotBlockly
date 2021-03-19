@@ -25,73 +25,30 @@ import static java.util.logging.Level.SEVERE;
 
 public class FXMLMainWindowController implements Initializable {
 
-    @FXML javafx.scene.web.WebView blocklyWebView;
-    @FXML javafx.scene.image.ImageView imageView;
-    @FXML javafx.scene.layout.AnchorPane simulationAnchorPane;
-    @FXML javafx.scene.control.SplitPane rightSplitPane;
-    @FXML javafx.scene.control.TextArea codeTextArea;
-    @FXML javafx.scene.control.TextArea consoleTextArea;
-    @FXML javafx.scene.control.TextField consoleTextField;
-    @FXML javafx.scene.control.Button consoleSendButton;
-
-    private Blockly blockly = null;
-    private Simulation simulation = null;
-    private final SerialCommunicator serialCommunicator = new SerialCommunicator();
-    private boolean lastConsoleWriteBySerial = false;
-    private final RobotVersionControl robotVersionControl = new RobotVersionControl();
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // start blockly
-        blockly = new Blockly(blocklyWebView.getEngine());
-
-        // start simulation - jMonkeyEngine
-        var settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
-        simulation = new Simulation();
-        simulation.setSettings(settings);
-        simulation.setShowSettings(false);
-        JmeToJfxIntegrator.startAndBindMainViewPort(simulation, imageView, Thread::new);
-        Logger.getLogger("com.jme3").setLevel(SEVERE);
-
-        // simulation ImageView auto resize
-        ChangeListener<Number> sizeChangeListener = (observableValue, number, t1) -> {
-            imageView.setFitWidth(simulationAnchorPane.getWidth());
-            imageView.setFitHeight(simulationAnchorPane.getHeight());
-        };
-        simulationAnchorPane.heightProperty().addListener(sizeChangeListener);
-        simulationAnchorPane.widthProperty().addListener(sizeChangeListener);
-
-        // console setup
-        serialCommunicator.setOutputStream( new OutputStream() {
-            private final StringBuilder buffer = new StringBuilder();
-
-            @Override
-            public void write(int b) {
-                String value = Character.toString((char) b);
-                buffer.append(value);
-                if (value.equals("\n")) {
-                    consoleTextArea.appendText(buffer.toString());
-                    buffer.delete(0, buffer.length());
-                    lastConsoleWriteBySerial = true;
-                }
-            }
-        });
-        consoleTextArea.setText("No connection.");
-        consoleTextField.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ENTER) consoleSendButtonAction();
-        });
-
-        // gui elements default
-        robotVersionLoadButton.setDisable(true);
-        robotVersionModulesButton.setDisable(true);
+        initializeBlockly();
+        initializeSimulation();
+        initializeConsole();
+        initializeRobotVersion();
     }
 
     // called after last application window has been closed
     public void applicationClose() {
-        // stop simulation (jMonkeyEngine)
-        if (simulation != null) simulation.stop();
-        // stop serial communication
-        serialCommunicator.disconnect();
+        terminateSimulation();
+        terminateSerialCommunication();
+    }
+
+
+    /**
+     * Blockly.
+     */
+    @FXML javafx.scene.web.WebView blocklyWebView;
+
+    private Blockly blockly = null;
+
+    private void initializeBlockly() {
+        blockly = new Blockly(blocklyWebView.getEngine());
     }
 
     private void reloadBlocklyCode() {
@@ -99,6 +56,7 @@ public class FXMLMainWindowController implements Initializable {
         codeTextArea.setText(blockly.getCode());
     }
 
+    // called by GUI (on button pressed, od drag...)
     public void reloadBlockly() {
         reloadBlocklyCode();
         Thread thread = new Thread(() -> {
@@ -114,47 +72,96 @@ public class FXMLMainWindowController implements Initializable {
 
 
     /**
-     * Console - communication with Arduino.
+     * Console.
      */
+    @FXML javafx.scene.control.TextArea consoleTextArea;
+    @FXML javafx.scene.control.TextField consoleTextField;
+    @FXML javafx.scene.control.Button consoleSendButton;
+    @FXML javafx.scene.control.Button consoleClearButton;
+
+    private boolean lastConsoleWriteBySerial = false;
+
+    private void initializeConsole() {
+        serialCommunicator.setOutputStream( new OutputStream() {
+            private final StringBuilder buffer = new StringBuilder();
+
+            @Override
+            public void write(int b) {
+                String value = Character.toString((char) b);
+                buffer.append(value);
+                if (value.equals("\n")) {
+                    consoleTextArea.appendText(buffer.toString());
+                    buffer.delete(0, buffer.length());
+                    lastConsoleWriteBySerial = true;
+                }
+            }
+        });
+
+        // pressing enter sends text to serial
+        consoleTextField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) consoleSendButtonAction();
+        });
+
+        // gui defaults
+        consoleSetDisable(true);
+    }
+
     public void consoleSendButtonAction() {
+        consoleSendButton.setDisable(true);
+        codeSendToConsoleButton.setDisable(true);
+        sendToConsole(consoleTextField.getText());
+        consoleTextField.clear();
+        consoleSendButton.setDisable(false);
+        codeSendToConsoleButton.setDisable(false); // todo set default
+    }
+
+    public void consoleClearButtonAction() {
+        consoleClearButton.setDisable(true);
+        consoleTextArea.setText("");
+        consoleClearButton.setDisable(false);
+    }
+
+    private void sendToConsole(String message) {
         try {
-            serialCommunicator.send(consoleTextField.getText());
+            serialCommunicator.send(message);
         } catch (IOException e) {
-            // todo: alert - cannot send to COM
-            consoleTextArea.appendText("\n* * * communication error * * *");
+            consoleTextArea.appendText("\n[ERROR] Communication error!");
+            consoleTextArea.appendText("\n[ERROR] Try serial restart.");
+            consoleSetDisable(true);
             return;
         }
         if (lastConsoleWriteBySerial) {
             consoleTextArea.appendText("\n");
             lastConsoleWriteBySerial = false;
         }
-        consoleTextArea.appendText("> " + consoleTextField.getText() + "\n");
-        consoleTextField.clear();
+        consoleTextArea.appendText("> " + message.replace("\n", "\n> ") + "\n");
     }
 
-    public void consoleClearButtonAction() {
-        consoleTextArea.setText("");
+    private void consoleSetDisable(boolean value) {
+        consoleTextArea.setDisable(value);
+        consoleTextField.setDisable(value);
+        consoleSendButton.setDisable(value);
+        consoleClearButton.setDisable(value);
+        codeSendToConsoleButton.setDisable(value); //section code
+        consoleTextArea.setText(value ? "Serial not connected." : "");
     }
 
 
     /**
-     * Generated code section.
+     * Generated code.
      */
+    @FXML javafx.scene.control.TextArea codeTextArea;
     @FXML javafx.scene.control.Button codeSendToConsoleButton;
     @FXML javafx.scene.control.Button codeVerifyButton;
     @FXML javafx.scene.control.Button codeUploadButton;
 
     public void codeSendToConsoleButtonAction() {
+        consoleSendButton.setDisable(true);
+        codeSendToConsoleButton.setDisable(true);
         String blocklyCode = blockly.getCode();
-        if (!blocklyCode.isEmpty() && isConnected) {
-            try {
-                serialCommunicator.send(blocklyCode);
-                consoleTextArea.appendText(blocklyCode + "\n");
-            } catch (IOException e) {
-                // todo: alert - cannot send to COM
-                consoleTextArea.appendText("\n* * * communication error * * *");
-            }
-        }
+        if (!blocklyCode.isEmpty()) sendToConsole(blocklyCode);
+        consoleSendButton.setDisable(false);
+        codeSendToConsoleButton.setDisable(false); // todo default
     }
 
     public void codeVerifyButtonAction() throws URISyntaxException {
@@ -171,13 +178,17 @@ public class FXMLMainWindowController implements Initializable {
 
 
     /**
-     * Serial connection management toolbox.
+     * Serial connection.
      */
     @FXML javafx.scene.control.Button connectionConnectButton;
     @FXML javafx.scene.control.Button connectionSearchButton;
     @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> connectionChoiceBox;
-
+    private final SerialCommunicator serialCommunicator = new SerialCommunicator();
     private boolean isConnected = false;
+
+    private void terminateSerialCommunication() {
+        serialCommunicator.disconnect();
+    }
 
     public void connectionSearchButtonAction() {
         connectionSearchButton.setDisable(true);
@@ -203,6 +214,7 @@ public class FXMLMainWindowController implements Initializable {
             }
         }
         isConnected = !isConnected;
+        consoleSetDisable(!isConnected);
 
         // update GUI
         connectionSearchButton.setDisable(isConnected);
@@ -215,15 +227,22 @@ public class FXMLMainWindowController implements Initializable {
         if (isConnected) Platform.runLater(() -> consoleTextField.requestFocus());
     }
 
+
     /**
-     * Robot version toolbox.
+     * Robot version.
      */
     @FXML javafx.scene.control.Button robotVersionLoadButton;
     @FXML javafx.scene.control.Button robotVersionSearchButton;
     @FXML javafx.scene.control.Button robotVersionModulesButton;
     @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
 
+    private final RobotVersionControl robotVersionControl = new RobotVersionControl();
     private final ArrayList<Integer> chosenModules = new ArrayList<>();
+
+    private void initializeRobotVersion() {
+        robotVersionLoadButton.setDisable(true);
+        robotVersionModulesButton.setDisable(true);
+    }
 
     public void robotVersionSearchButtonAction() {
         robotVersionModulesButton.setDisable(true);
@@ -250,6 +269,7 @@ public class FXMLMainWindowController implements Initializable {
         }
     }
 
+
     /**
      *  Modules.
      */
@@ -272,6 +292,37 @@ public class FXMLMainWindowController implements Initializable {
         } catch (Exception e) {
             System.err.println("Unable to open module choice dialog.");
         }
+    }
+
+
+    /**
+     * Simulation.
+     */
+    @FXML javafx.scene.layout.AnchorPane simulationAnchorPane;
+    @FXML javafx.scene.image.ImageView imageView;
+
+    private Simulation simulation = null;
+
+    private void initializeSimulation() {
+        // start simulation - jMonkeyEngine
+        var settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
+        simulation = new Simulation();
+        simulation.setSettings(settings);
+        simulation.setShowSettings(false);
+        JmeToJfxIntegrator.startAndBindMainViewPort(simulation, imageView, Thread::new);
+        Logger.getLogger("com.jme3").setLevel(SEVERE);
+
+        // simulation ImageView auto resize
+        ChangeListener<Number> sizeChangeListener = (observableValue, number, t1) -> {
+            imageView.setFitWidth(simulationAnchorPane.getWidth());
+            imageView.setFitHeight(simulationAnchorPane.getHeight());
+        };
+        simulationAnchorPane.heightProperty().addListener(sizeChangeListener);
+        simulationAnchorPane.widthProperty().addListener(sizeChangeListener);
+    }
+
+    private void terminateSimulation() {
+        if (simulation != null) simulation.stop();
     }
 
 }

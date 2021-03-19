@@ -32,7 +32,7 @@
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <SplitPane fx:id="rightSplitPane" dividerPositions="0.6264822134387352" orientation="VERTICAL" prefHeight="508.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.6264822134387352" orientation="VERTICAL" prefHeight="508.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
@@ -73,7 +73,7 @@
                                                                <children>
                                                                   <TextField fx:id="consoleTextField" disable="true" prefHeight="25.0" prefWidth="159.0" promptText="Send to Arduino..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="0.0" />
                                                                   <Button fx:id="consoleSendButton" disable="true" layoutX="189.0" mnemonicParsing="false" onAction="#consoleSendButtonAction" prefWidth="50.0" text="Send" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="0.0" />
-                                                                  <Button mnemonicParsing="false" onAction="#consoleClearButtonAction" prefWidth="50.0" text="Clear" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                                  <Button fx:id="consoleClearButton" mnemonicParsing="false" onAction="#consoleClearButtonAction" prefWidth="50.0" text="Clear" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                                </children>
                                                                <padding>
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
