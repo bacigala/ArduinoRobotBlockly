@@ -1,6 +1,5 @@
 package blockly;
 
-import dialog.DialogFactory;
 import dialog.FXMLTextInputDialogController;
 import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;

@@ -164,7 +164,7 @@ public class FXMLMainWindowController implements Initializable {
     public void codeVerifyButtonAction() {
         try {
             assembleFileToCompile();
-            ArduinoCompiler.verify(new File("generated-code.txt").getAbsolutePath());
+            ArduinoCompiler.verify(new File("generated-code.ino").getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -173,7 +173,7 @@ public class FXMLMainWindowController implements Initializable {
     public void codeUploadButtonAction() {
         try {
             assembleFileToCompile();
-            ArduinoCompiler.verifyAndUpload(new File("generated-code.txt").getAbsolutePath());
+            ArduinoCompiler.verifyAndUpload(new File("generated-code.ino").getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -188,10 +188,11 @@ public class FXMLMainWindowController implements Initializable {
         }
 
         // create output file
-        FileWriter writer = new FileWriter("generated-code.txt");
+        FileWriter writer = new FileWriter("generated-code.ino");
 
         // output file header
         for (String file : modulePaths) {
+            System.out.println("looking for resource: " + file + "_header.ino");
             URL resource = ArduinoCompiler.class.getResource(file + "_header.ino");
             System.out.println(resource.getPath());
             BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
@@ -202,7 +203,7 @@ public class FXMLMainWindowController implements Initializable {
         }
 
         // output setup section
-        writer.append("\r\nsetup() {\r\n");
+        writer.append("\r\nvoid setup() {\r\n");
         for (String file : modulePaths) {
             URL resource = ArduinoCompiler.class.getResource(file + "_setup.ino");
             BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
@@ -314,6 +315,7 @@ public class FXMLMainWindowController implements Initializable {
             robotVersionControl.loadVersion(robotVersionChoiceBox.getSelectionModel().getSelectedItem());
             robotVersionModulesButton.setDisable(false);
             blockly.setGenerator(robotVersionControl.getProperty("generator"));
+            chosenModules.clear();
             robotVersionModulesButtonAction();
         } catch (Exception e) {
             System.out.println("Error while loading property file of selected version.");
@@ -331,11 +333,13 @@ public class FXMLMainWindowController implements Initializable {
 
             ArrayList<String> toolboxCategories = new ArrayList<>();
             for (Integer moduleNumber : chosenModules) {
-                int noToolboxCategories = Integer.parseInt(
-                        robotVersionControl.getModuleProperty(moduleNumber, "categoryCount"));
-                for (int categoryNumber = 1; categoryNumber <= noToolboxCategories; categoryNumber++) {
-                    toolboxCategories.add(robotVersionControl.getModuleCategoryName(moduleNumber, categoryNumber));
-                }
+//                int noToolboxCategories = Integer.parseInt(
+//                        robotVersionControl.getModuleProperty(moduleNumber, "categoryCount"));
+//                for (int categoryNumber = 1; categoryNumber <= noToolboxCategories; categoryNumber++) {
+//                    toolboxCategories.add(robotVersionControl.getModuleCategoryName(moduleNumber, categoryNumber));
+//                }
+                ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
+                if (moduleCategories != null) toolboxCategories.addAll(moduleCategories);
             }
 
             blockly.setToolbox(robotVersionControl.getProperty("toolbox"));

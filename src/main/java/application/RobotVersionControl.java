@@ -84,6 +84,11 @@ public class RobotVersionControl {
         return new ArrayList<>(Arrays.asList(categories.split(",[ ]*")));
     }
 
+    public ArrayList<String> getModuleCategories(int moduleNumber) {
+        String categories = getModuleProperty(moduleNumber, "categories");
+        if (categories.isEmpty()) return null;
+        return new ArrayList<>(Arrays.asList(categories.split(",[ ]*")));
+    }
 
     public static class RobotVersion {
         private final String name, fileName;

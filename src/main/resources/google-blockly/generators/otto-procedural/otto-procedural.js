@@ -153,6 +153,8 @@ Blockly.OttoProcedural.finish = function(code) {
 	// result += '}\n\n';
 	result += 'void loop() {\n';
 	result += code + '\n';
+	result += 'check_battery();\n'
+	result += 'delay(500);\n'
 	result += '}\n\n';
 	result += definitions.join('\n\n');
 	
