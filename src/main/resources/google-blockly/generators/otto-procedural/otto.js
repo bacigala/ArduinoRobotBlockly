@@ -1,3 +1,4 @@
 Blockly.OttoProcedural['otto_basic_loop'] = function(block) {
-  return "";
+  var program = Blockly.OttoProcedural.statementToCode(block, 'PROGRAM');
+  return program;
 };

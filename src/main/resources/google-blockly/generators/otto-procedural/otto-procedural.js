@@ -148,9 +148,9 @@ Blockly.OttoProcedural.finish = function(code) {
 	
 	var result = '';
 	if (variables) result += variables + '\n\n';
-	result += 'void setup() {\n'
-	result += '\t\\\\ SETUP CODE HERE\n';
-	result += '}\n\n';
+	// result += 'void setup() {\n'
+	// result += '\t\\\\ SETUP CODE HERE\n';
+	// result += '}\n\n';
 	result += 'void loop() {\n';
 	result += code + '\n';
 	result += '}\n\n';
