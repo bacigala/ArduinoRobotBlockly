@@ -1,18 +1,11 @@
 /**
+ * This is modified file, by original author licensed as follows: 
  * @license
  * Copyright 2012 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- */
-
-/**
- * @fileoverview Logic blocks for Blockly.
- *
- * This file is scraped to extract a .json file of block definitions. The array
- * passed to defineBlocksWithJsonArray(..) must be strict JSON: double quotes
- * only, no outside references, no functions, no trailing commas, etc. The one
- * exception is end-of-line comments, which the scraper will remove.
  * @author q.neutron@gmail.com (Quynh Neutron)
  */
+
 'use strict';
 
 goog.provide('Blockly.Blocks.logic');  // Deprecated
@@ -23,13 +16,6 @@ goog.require('Blockly.Blocks');
 goog.require('Blockly.FieldDropdown');
 goog.require('Blockly.FieldLabel');
 goog.require('Blockly.Mutator');
-
-
-/**
- * Unused constant for the common HSV hue for all blocks in this category.
- * @deprecated Use Blockly.Msg['LOGIC_HUE']. (2018 April 5)
- */
-Blockly.Constants.Logic.HUE = 210;
 
 Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   // Block for boolean data type: true and false.
@@ -631,5 +617,4 @@ Blockly.Constants.Logic.LOGIC_TERNARY_ONCHANGE_MIXIN = {
   }
 };
 
-Blockly.Extensions.registerMixin('logic_ternary',
-    Blockly.Constants.Logic.LOGIC_TERNARY_ONCHANGE_MIXIN);
+Blockly.Extensions.registerMixin('logic_ternary', Blockly.Constants.Logic.LOGIC_TERNARY_ONCHANGE_MIXIN);

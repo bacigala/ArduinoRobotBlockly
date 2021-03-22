@@ -41,11 +41,11 @@ Blockly.VariablesDynamic.onCreateVariableButtonClick_Colour = function(button) {
 Blockly.VariablesDynamic.flyoutCategory = function(workspace) {
   var xmlList = [];
   var button = document.createElement('button');
-  button.setAttribute('text', Blockly.Msg['NEW_STRING_VARIABLE']);
+  button.setAttribute('text', 'Create string variable');
   button.setAttribute('callbackKey', 'CREATE_VARIABLE_STRING');
-  // xmlList.push(button);
+  xmlList.push(button);
   button = document.createElement('button');
-  button.setAttribute('text', 'Create new variable');
+  button.setAttribute('text', 'Create number variable');
   button.setAttribute('callbackKey', 'CREATE_VARIABLE_NUMBER');
   xmlList.push(button);
   button = document.createElement('button');
@@ -102,20 +102,24 @@ Blockly.VariablesDynamic.flyoutCategoryBlocks = function(workspace) {
 				if (variable.type === 'String') {
 					xmlListString.push(block);
 				} else if (variable.type === 'Number') {
+					
 					xmlListNumber.push(block);
-				} else {
+				} else { // should never happen
 					xmlListOther.push(block);
 				}
       }
 			
 			if (xmlListString.length > 0) {
+				xmlList.push('<label text=\'String variables\'></label>');
 				xmlList = xmlList.concat(xmlListString);
 			}
 			
 			if (xmlListNumber.length > 0) {
+				xmlList.push('<label text="Number variables"></label>');
 				xmlList = xmlList.concat(xmlListNumber);
 			}
 			if (xmlListOther.length > 0) { // should be allways false
+				xmlList.push('<label text="Othervariables"></label>');
 				xmlList = xmlList.concat(xmlListOther);
 			}
     }

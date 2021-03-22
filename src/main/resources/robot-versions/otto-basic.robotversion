@@ -34,9 +34,6 @@
 	module1.name 				  = Basic
 	module1.description 	= This version consists of one module only which handles everything.
 	module1.required 			= true
-	module1.path 					= otto-basic/otto-basic.ino
+	module1.location			= otto-basic/otto-basic
 	module1.size					= 20
-	module1.categoryCount = 3
-		module1.category1		= motion
-		module1.category2		= sound
-		module1.category3 	= setup
+	module1.categories		= motion, sound, setup

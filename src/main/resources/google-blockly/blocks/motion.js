@@ -43,18 +43,15 @@ Blockly.defineBlocksWithJsonArray([
       "type": "input_dummy"
     },
     {
-      "type": "field_number",
+      "type": "input_value",
       "name": "MOTOR_POSITION",
-      "value": 0,
-      "min": 0,
-      "max": 180,
-      "precision": 1
+      "check": "Number"
     }
   ],
   "inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 120,
+  "colour": 60,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -64,7 +61,7 @@ Blockly.defineBlocksWithJsonArray([
   "message0": "Reset motor position.",
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 120,
+  "colour": 60,
   "tooltip": "",
   "helpUrl": ""
 }

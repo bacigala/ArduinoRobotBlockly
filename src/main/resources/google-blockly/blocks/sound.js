@@ -7,19 +7,17 @@ Blockly.defineBlocksWithJsonArray([
   "type": "mp3_play_song",
   "message0": "Play song number %1",
   "args0": [
-    {
-      "type": "field_number",
+	  {
+      "type": "input_value",
       "name": "SONG_NO",
-      "value": 1,
-      "min": 1,
-      "max": 6,
-      "precision": 1
+      "check": "Number"
     }
   ],
   "previousStatement": null,
+	"inputsInline": true,
   "nextStatement": null,
-  "colour": 315,
-  "tooltip": "",
+  "colour": 30,
+  "tooltip": "Allowed range: 1..6",
   "helpUrl": ""
 },
 // mp3 player - set volume
@@ -27,19 +25,17 @@ Blockly.defineBlocksWithJsonArray([
   "type": "mp3_set_volume",
   "message0": "Set volume level of mp3 to %1",
   "args0": [
-    {
-      "type": "field_number",
+		{
+      "type": "input_value",
       "name": "VOLUME_LEVEL",
-      "value": 0,
-      "min": 0,
-      "max": 30,
-      "precision": 1
+      "check": "Number"
     }
   ],
+	"inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 315,
-  "tooltip": "",
+  "colour": 30,
+  "tooltip": "Allowed range: 0..30",
   "helpUrl": ""
 },
 // melody - play
@@ -47,19 +43,17 @@ Blockly.defineBlocksWithJsonArray([
   "type": "melody_play",
   "message0": "Play melody number %1",
   "args0": [
-    {
-      "type": "field_number",
+		{
+      "type": "input_value",
       "name": "MELODY_NO",
-      "value": 1,
-      "min": 1,
-      "max": 7,
-      "precision": 1
+      "check": "Number"
     }
   ],
+	"inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 315,
-  "tooltip": "",
+  "colour": 30,
+  "tooltip": "Allowed range: 1..7",
   "helpUrl": ""
 },
 // melody - stop
@@ -68,7 +62,7 @@ Blockly.defineBlocksWithJsonArray([
   "message0": "Stop playing melody.",
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 315,
+  "colour": 30,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -77,27 +71,22 @@ Blockly.defineBlocksWithJsonArray([
   "type": "tone_play",
   "message0": "Play tone frequency %1 , duration %2",
   "args0": [
-    {
-      "type": "field_number",
+		{
+      "type": "input_value",
       "name": "FREQUENCY",
-      "value": 0,
-      "min": 1,
-      "max": 65535,
-      "precision": 1
+      "check": "Number"
     },
-    {
-      "type": "field_number",
+		{
+      "type": "input_value",
       "name": "DURATION",
-      "value": 0,
-      "min": 1,
-      "max": 65535,
-      "precision": 1
+      "check": "Number"
     }
   ],
+	"inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 315,
-  "tooltip": "",
+  "colour": 30,
+  "tooltip": "Allowed range: 1..65535",
   "helpUrl": ""
 },
 // beep
@@ -106,7 +95,7 @@ Blockly.defineBlocksWithJsonArray([
   "message0": "Beep",
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 315,
+  "colour": 30,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -115,19 +104,17 @@ Blockly.defineBlocksWithJsonArray([
   "type": "play_sound_effect",
   "message0": "Play sound effect number %1",
   "args0": [
-    {
-      "type": "field_number",
+		{
+      "type": "input_value",
       "name": "EFFECT_NO",
-      "value": 1,
-      "min": 1,
-      "max": 16,
-      "precision": 1
+      "check": "Number"
     }
   ],
+	"inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 315,
-  "tooltip": "",
+  "colour": 30,
+  "tooltip": "Allowed range: 1..16",
   "helpUrl": ""
 }
 ]);

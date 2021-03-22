@@ -16,7 +16,6 @@ goog.require('Blockly.OttoProcedural');
 
 
 Blockly.OttoProcedural['text'] = function(block) {
-  // Text value.
   var code = Blockly.OttoProcedural.quote_(block.getFieldValue('TEXT'));
   return [code, Blockly.OttoProcedural.ORDER_ATOMIC];
 };
