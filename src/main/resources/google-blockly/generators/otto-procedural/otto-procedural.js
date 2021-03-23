@@ -112,18 +112,31 @@ Blockly.OttoProcedural.init = function(workspace) {
         Blockly.Names.DEVELOPER_VARIABLE_TYPE));
   }
 
+
+	var defNumber = [];
+	var defString = [];
+	
   // Add user variables, but only ones that are being used.
   var variables = Blockly.Variables.allUsedVarModels(workspace);
   for (var i = 0; i < variables.length; i++) {
-    defvars.push(Blockly.OttoProcedural.variableDB_.getName(variables[i].getId(),
+		if (variables[i].type === 'Number') {
+			defNumber.push(Blockly.OttoProcedural.variableDB_.getName(variables[i].getId(),
         Blockly.VARIABLE_CATEGORY_NAME));
+		} else {
+			defString.push(Blockly.OttoProcedural.variableDB_.getName(variables[i].getId(),
+        Blockly.VARIABLE_CATEGORY_NAME));
+		}
   }
 
   // Declare all of the variables.
-  if (defvars.length) {
-    Blockly.OttoProcedural.definitions_['variables'] =
-        'int16_t ' + defvars.join(', ') + ';';
-  }
+	Blockly.OttoProcedural.definitions_['variables'] = '';
+  if (defvars.length)
+		Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'int16_t ' + defvars.join(', ') + ';\n';
+	
+	if (defNumber.length) 
+    Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'int16_t ' + defNumber.join(', ') + ';\n';
+	if (defString.length) 
+    Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'String ' + defString.join(', ') + ';\n';		
 };
 
 /**

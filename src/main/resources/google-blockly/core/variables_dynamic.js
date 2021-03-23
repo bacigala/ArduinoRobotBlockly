@@ -40,29 +40,39 @@ Blockly.VariablesDynamic.onCreateVariableButtonClick_Colour = function(button) {
  */
 Blockly.VariablesDynamic.flyoutCategory = function(workspace) {
   var xmlList = [];
-  var button = document.createElement('button');
-  button.setAttribute('text', 'Create string variable');
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE_STRING');
-  xmlList.push(button);
-  button = document.createElement('button');
+  
+	// Number variables
+	var label = document.createElement('label');
+	label.setAttribute('text', 'Number variables');
+	xmlList.push(label);
+
+	var button = document.createElement('button');
   button.setAttribute('text', 'Create number variable');
   button.setAttribute('callbackKey', 'CREATE_VARIABLE_NUMBER');
   xmlList.push(button);
-  button = document.createElement('button');
-  button.setAttribute('text', Blockly.Msg['NEW_COLOUR_VARIABLE']);
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE_COLOUR');
-  // xmlList.push(button);
-
-  workspace.registerButtonCallback('CREATE_VARIABLE_STRING',
-      Blockly.VariablesDynamic.onCreateVariableButtonClick_String);
-  workspace.registerButtonCallback('CREATE_VARIABLE_NUMBER',
+	workspace.registerButtonCallback('CREATE_VARIABLE_NUMBER',
       Blockly.VariablesDynamic.onCreateVariableButtonClick_Number);
-  workspace.registerButtonCallback('CREATE_VARIABLE_COLOUR',
-      Blockly.VariablesDynamic.onCreateVariableButtonClick_Colour);
-
-
-  var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace);
+	
+  var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'Number');
   xmlList = xmlList.concat(blockList);
+	
+	// String variables
+	label = document.createElement('label');
+	xmlList.push(label);
+	label = document.createElement('label');
+	label.setAttribute('text', 'String variables');
+	xmlList.push(label);
+	
+	button = document.createElement('button');
+  button.setAttribute('text', 'Create string variable');
+  button.setAttribute('callbackKey', 'CREATE_VARIABLE_STRING');
+	xmlList.push(button);
+	workspace.registerButtonCallback('CREATE_VARIABLE_STRING',
+      Blockly.VariablesDynamic.onCreateVariableButtonClick_String);
+
+	var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'String');
+  xmlList = xmlList.concat(blockList);
+	
   return xmlList;
 };
 
@@ -71,57 +81,30 @@ Blockly.VariablesDynamic.flyoutCategory = function(workspace) {
  * @param {!Blockly.Workspace} workspace The workspace containing variables.
  * @return {!Array.<!Element>} Array of XML block elements.
  */
-Blockly.VariablesDynamic.flyoutCategoryBlocks = function(workspace) {
-  var variableModelList = workspace.getAllVariables();
+Blockly.VariablesDynamic.flyoutCategoryBlocks = function(workspace, type) {
+  var variableModelList = workspace.getVariablesOfType(type);
 
   var xmlList = [];
   if (variableModelList.length > 0) {
     if (Blockly.Blocks['variables_set_dynamic']) {
       var firstVariable = variableModelList[variableModelList.length - 1];
       var block = Blockly.utils.xml.createElement('block');
-      block.setAttribute('type', 'variables_set_dynamic');
+      block.setAttribute('type', 'variables_set_dynamic_' + type);
       block.setAttribute('gap', 24);
       block.appendChild(
           Blockly.Variables.generateVariableFieldDom(firstVariable));
       xmlList.push(block);
     }
 		
-		var xmlListString = [];
-		var xmlListNumber = [];
-		var xmlListOther = [];
-		
     if (Blockly.Blocks['variables_get_dynamic']) {
       variableModelList.sort(Blockly.VariableModel.compareByName);
       for (var i = 0, variable; (variable = variableModelList[i]); i++) {
 				var block = Blockly.utils.xml.createElement('block');
-				block.setAttribute('type', 'variables_get_dynamic');
+				block.setAttribute('type', 'variables_get_dynamic_' + type);
 				block.setAttribute('gap', 8);
 				block.appendChild(Blockly.Variables.generateVariableFieldDom(variable));
-				
-				// separate variables according to type
-				if (variable.type === 'String') {
-					xmlListString.push(block);
-				} else if (variable.type === 'Number') {
-					
-					xmlListNumber.push(block);
-				} else { // should never happen
-					xmlListOther.push(block);
-				}
+				xmlList.push(block);
       }
-			
-			if (xmlListString.length > 0) {
-				xmlList.push('<label text=\'String variables\'></label>');
-				xmlList = xmlList.concat(xmlListString);
-			}
-			
-			if (xmlListNumber.length > 0) {
-				xmlList.push('<label text="Number variables"></label>');
-				xmlList = xmlList.concat(xmlListNumber);
-			}
-			if (xmlListOther.length > 0) { // should be allways false
-				xmlList.push('<label text="Othervariables"></label>');
-				xmlList = xmlList.concat(xmlListOther);
-			}
     }
 		
   }

@@ -27,7 +27,7 @@ goog.require('Blockly.FieldVariable');
  * Unused constant for the common HSV hue for all blocks in this category.
  * @deprecated Use Blockly.Msg['VARIABLES_DYNAMIC_HUE']. (2018 April 5)
  */
-Blockly.Constants.VariablesDynamic.HUE = 310;
+//Blockly.Constants.VariablesDynamic.HUE = 310;
 
 Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
   // Block for variable getter.
@@ -45,10 +45,42 @@ Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
     "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
     "extensions": ["contextMenu_variableDynamicSetterGetter"]
   },
+	// NUMBER GETTER.
+  {
+    "type": "variables_get_dynamic_Number",
+    "message0": "%1",
+    "args0": [{
+      "type": "field_variable",
+      "name": "VAR",
+      "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+			"defaultType": "Number"
+    }],
+    "output": "Number",
+    "colour": "330",
+    "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
+    "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
+    "extensions": ["contextMenu_variableDynamicSetterGetter"]
+  },
+	// String GETTER.
+  {
+    "type": "variables_get_dynamic_String",
+    "message0": "%1",
+    "args0": [{
+      "type": "field_variable",
+      "name": "VAR",
+      "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+			"defaultType": "String"
+    }],
+    "output": "String",
+    "colour": "195",
+    "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
+    "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
+    "extensions": ["contextMenu_variableDynamicSetterGetter"]
+  },
   // Block for variable setter.
   {
     "type": "variables_set_dynamic",
-    "message0": "%{BKY_VARIABLES_SET}",
+    "message0": "BASIC SET%{BKY_VARIABLES_SET}",
     "args0": [{
       "type": "field_variable",
       "name": "VAR",
@@ -62,6 +94,56 @@ Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
     "previousStatement": null,
     "nextStatement": null,
     "style": "variable_dynamic_blocks",
+    "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
+    "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
+    "extensions": ["contextMenu_variableDynamicSetterGetter"]
+  },
+	// NUMBER SETTER
+	  {
+    "type": "variables_set_dynamic_Number",
+    "message0": "%{BKY_VARIABLES_SET}",
+    "args0": [
+			{
+				"type": "field_variable",
+				"name": "VAR",
+				"variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+				"variableTypes": ["Number"],
+				"defaultType": "Number"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"check": "Number"  
+			}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 330,
+    "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
+    "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
+    "extensions": ["contextMenu_variableDynamicSetterGetter"]
+  },
+	// STRING SETTER
+	  {
+    "type": "variables_set_dynamic_String",
+    "message0": "%{BKY_VARIABLES_SET}",
+    "args0": [
+			{
+				"type": "field_variable",
+				"name": "VAR",
+				"variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+				"variableTypes": ["String"],
+				"defaultType": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"check": "String"  
+			}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 195,
     "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
     "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
     "extensions": ["contextMenu_variableDynamicSetterGetter"]
@@ -139,7 +221,7 @@ Blockly.Constants.VariablesDynamic.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MI
   onchange: function(_e) {
     var id = this.getFieldValue('VAR');
     var variableModel = Blockly.Variables.getVariable(this.workspace, id);
-    if (this.type == 'variables_get_dynamic') {
+    if ((this.type == 'variables_get_dynamic') || (this.type == 'variables_get_dynamic_Number') || (this.type == 'variables_get_dynamic_String')) {
       this.outputConnection.setCheck(variableModel.type);
     } else {
       this.getInput('VALUE').connection.setCheck(variableModel.type);
