@@ -19,8 +19,8 @@ public class ArduinoCompiler {
     }
 
     // calls Arduino IDE to verify and upload code to selected board, shows output of ide in new dialog
-    public static void verifyAndUpload(String filePath) {
-        String command = "--upload --board arduino:avr:nano:cpu=atmega328old --port COM4 " + filePath;
+    public static void verifyAndUpload(String portName, String filePath) {
+        String command = "--upload --board arduino:avr:nano:cpu=atmega328old --port " + portName + " " + filePath;
         callArduinoIde(command, true);
     }
 

@@ -126,7 +126,7 @@
                   </MenuBar>
                </top>
                <center>
-                  <HBox style="-fx-background-color: #ffc7ff;" BorderPane.alignment="CENTER">
+                  <HBox BorderPane.alignment="CENTER">
                      <children>
                         <ToolBar prefHeight="44.0" style="-fx-background-color: #e3ffc7;">
                            <items>
@@ -142,7 +142,6 @@
                               <Button fx:id="robotVersionSearchButton" mnemonicParsing="false" onAction="#robotVersionSearchButtonAction" text="Search" />
                               <ChoiceBox fx:id="robotVersionChoiceBox" prefWidth="150.0" />
                               <Button fx:id="robotVersionLoadButton" mnemonicParsing="false" onAction="#robotVersionLoadButtonAction" text="Load" />
-                              <Button fx:id="robotVersionModulesButton" layoutX="294.0" layoutY="15.0" mnemonicParsing="false" onAction="#robotVersionModulesButtonAction" text="Modules" />
                            </items>
                         </ToolBar>
                      </children>

@@ -197,6 +197,7 @@
 	moduleCount		 	= 7
 	categories		 	= logic, math, loops, variables, functions, sound, motion, ultrasound, serial
 	generator				= OttoProcedural
+	programInRam		= false
 
 !Module 1
 	module1.name 				  = Basic

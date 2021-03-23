@@ -4,14 +4,18 @@ import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.system.AppSettings;
 import dialog.DialogFactory;
+import dialog.FXMLUploadToArduinoDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.SelectionModel;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.input.KeyCode;
 import simulation.Simulation;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -172,9 +176,10 @@ public class FXMLMainWindowController implements Initializable {
 
     public void codeUploadButtonAction() {
         try {
+            String portName = connectionChoiceBox.getSelectionModel().getSelectedItem().getComName();
             assembleFileToCompile();
-            ArduinoCompiler.verifyAndUpload(new File("generated-code.ino").getAbsolutePath());
-        } catch (IOException e) {
+            ArduinoCompiler.verifyAndUpload(portName, new File("generated-code.ino").getAbsolutePath());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -288,7 +293,6 @@ public class FXMLMainWindowController implements Initializable {
      */
     @FXML javafx.scene.control.Button robotVersionLoadButton;
     @FXML javafx.scene.control.Button robotVersionSearchButton;
-    @FXML javafx.scene.control.Button robotVersionModulesButton;
     @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
 
     private final RobotVersionControl robotVersionControl = new RobotVersionControl();
@@ -296,11 +300,9 @@ public class FXMLMainWindowController implements Initializable {
 
     private void initializeRobotVersion() {
         robotVersionLoadButton.setDisable(true);
-        robotVersionModulesButton.setDisable(true);
     }
 
     public void robotVersionSearchButtonAction() {
-        robotVersionModulesButton.setDisable(true);
         robotVersionLoadButton.setDisable(true);
         robotVersionSearchButton.setDisable(true);
         robotVersionControl.refreshAvailableVersionsList();
@@ -313,7 +315,6 @@ public class FXMLMainWindowController implements Initializable {
     public void robotVersionLoadButtonAction() {
         try {
             robotVersionControl.loadVersion(robotVersionChoiceBox.getSelectionModel().getSelectedItem());
-            robotVersionModulesButton.setDisable(false);
             blockly.setGenerator(robotVersionControl.getProperty("generator"));
             chosenModules.clear();
             robotVersionModulesButtonAction();
@@ -328,18 +329,27 @@ public class FXMLMainWindowController implements Initializable {
      *  Modules.
      */
     public void robotVersionModulesButtonAction() {
-        try {
-            DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
 
+        try {
             ArrayList<String> toolboxCategories = new ArrayList<>();
-            for (Integer moduleNumber : chosenModules) {
-//                int noToolboxCategories = Integer.parseInt(
-//                        robotVersionControl.getModuleProperty(moduleNumber, "categoryCount"));
-//                for (int categoryNumber = 1; categoryNumber <= noToolboxCategories; categoryNumber++) {
-//                    toolboxCategories.add(robotVersionControl.getModuleCategoryName(moduleNumber, categoryNumber));
-//                }
-                ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
-                if (moduleCategories != null) toolboxCategories.addAll(moduleCategories);
+
+            boolean programInRam = Boolean.parseBoolean(robotVersionControl.getProperty("programInRam"));
+            if (programInRam) {
+                ArrayList<SerialCommunicator.ComPort> availablePorts = serialCommunicator.getAvailablePorts();
+                SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort = connectionChoiceBox.getSelectionModel();
+                String message = "This version requires you to upload program to robot.";
+
+                String resourcePath = "/robot-versions/" + robotVersionControl.getProperty("programLocation");
+                URL resource = ArduinoCompiler.class.getResource(resourcePath);
+                FXMLUploadToArduinoDialog.getDialog(message, availablePorts, selectedComPort, resource).show();
+                toolboxCategories.addAll(robotVersionControl.getAllCategories());
+            } else {
+                //open module selection
+                DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
+                for (Integer moduleNumber : chosenModules) {
+                    ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
+                    if (moduleCategories != null) toolboxCategories.addAll(moduleCategories);
+                }
             }
 
             blockly.setToolbox(robotVersionControl.getProperty("toolbox"));
