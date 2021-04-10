@@ -119,5 +119,19 @@
             <version>3.3.2-stable</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jmonkeyengine</groupId>
+            <artifactId>jme3-plugins</artifactId>
+            <version>3.1.0-stable</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmonkeyengine</groupId>
+            <artifactId>jme3-blender</artifactId>
+            <version>3.1.0-stable</version>
+        </dependency>
+
+
+
     </dependencies>
 </project>

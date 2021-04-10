@@ -144,6 +144,12 @@
                               <Button fx:id="robotVersionLoadButton" mnemonicParsing="false" onAction="#robotVersionLoadButtonAction" text="Load" />
                            </items>
                         </ToolBar>
+                        <ToolBar layoutX="426.0" layoutY="10.0" prefHeight="44.0" style="-fx-background-color: skyblue;">
+                           <items>
+                              <Button mnemonicParsing="false" onAction="#testButton1Action" text="T1" />
+                              <Button mnemonicParsing="false" onAction="#testButton2Action" text="T2" />
+                           </items>
+                        </ToolBar>
                      </children>
                   </HBox>
                </center>

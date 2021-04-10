@@ -10,12 +10,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.input.KeyCode;
 import simulation.Simulation;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,6 +48,7 @@ public class FXMLMainWindowController implements Initializable {
 
     private void initializeBlockly() {
         blockly = new Blockly(blocklyWebView.getEngine());
+        blocklyWebView.setVisible(false);
     }
 
     private void reloadBlocklyCode() {
@@ -318,9 +317,11 @@ public class FXMLMainWindowController implements Initializable {
             blockly.setGenerator(robotVersionControl.getProperty("generator"));
             chosenModules.clear();
             robotVersionModulesButtonAction();
+            blocklyWebView.setVisible(true);
         } catch (Exception e) {
-            System.out.println("Error while loading property file of selected version.");
-            e.printStackTrace();
+            blocklyWebView.setVisible(false);
+            System.err.println("Error while loading property file of selected version. OR no version chosen");
+            System.err.println("EXCEPTION INFO: " + e.getMessage());
         }
     }
 
@@ -361,6 +362,17 @@ public class FXMLMainWindowController implements Initializable {
             System.err.println("Unable to load selected modules.");
             e.printStackTrace();
         }
+    }
+
+
+    public void testButton1Action() {
+        simulation.stop();
+    }
+
+    public void testButton2Action() {
+        String blocklyCode = blockly.getCode();
+        if (!blocklyCode.isEmpty()) simulation.loadOttoProgram(blocklyCode);
+
     }
 
 
