@@ -64,5 +64,59 @@ Blockly.defineBlocksWithJsonArray([
   "colour": 60,
   "tooltip": "",
   "helpUrl": ""
+},
+// coplex move forward / backward
+{
+  "type": "move_complex",
+  "message0": "Go %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "DIRECTION",
+      "options": [
+        [
+          "forward",
+          "FWD"
+        ],
+        [
+          "backward",
+          "BWD"
+        ]
+      ]
+    }
+  ],
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
+},
+// coplex turn left / right
+{
+  "type": "turn_complex",
+  "message0": "Turn %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "DIRECTION",
+      "options": [
+        [
+          "left",
+          "LEFT"
+        ],
+        [
+          "rigth",
+          "RIGHT"
+        ]
+      ]
+    }
+  ],
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
 }
 ]);

@@ -366,7 +366,7 @@ public class FXMLMainWindowController implements Initializable {
 
 
     public void testButton1Action() {
-        simulation.stop();
+        blocklyWebView.getEngine().reload();
     }
 
     public void testButton2Action() {

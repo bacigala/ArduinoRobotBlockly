@@ -164,10 +164,23 @@
 									</value>\
 								</block>\
 								<block type='reset_motors'></block>\
+								<block type='move_complex'></block>\
+								<block type='turn_complex'></block>\
 							</category>\
 							\
-							<category name='Ultrasound' colour='90' toolboxitemid='ultrasound'>\
+							<category name='Sensors' colour='90' toolboxitemid='ultrasound'>\
+								<label text='Ultrasound'></label>\
 								<block type='otto_procedural_ultrasound_get_distance'></block>\
+								<block type='wait_ultrasound'>\
+								<value name='DISTANCE'>\
+										<shadow type='math_number'>\
+											<field name='NUM'>50</field>\
+										</shadow>\
+									</value>\
+								</block>\
+								<label text='Touch'></label>\
+								<block type='button_pressed'></block>\
+								<block type='wait_touch'></block>\
 							</category>\
 							\
 							<category name='Serial' colour='180' toolboxitemid='serial'>\

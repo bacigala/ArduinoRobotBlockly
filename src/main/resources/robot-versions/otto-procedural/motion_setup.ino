@@ -10,8 +10,6 @@ s[5].attach(PIN_SERVO_PRAVA_RUKA);
 
 precitaj_kalibraciu_z_EEPROM();
 
-
-
 for (int i = 0; i < 6; i++)
 {
 	kalib[i] = prednastavena_kalibracia[i];

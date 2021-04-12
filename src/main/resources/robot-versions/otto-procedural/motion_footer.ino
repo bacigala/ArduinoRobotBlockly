@@ -1,9 +1,9 @@
 
 // MOTION FUNCTIONS (FOOTER)
 
-uint16_t fwd_time[] = {1,1,100,1,1,1,100,1,1,1,100,1,100,1,1,100,1,100,1,1,1,0};
-uint8_t fwd_servo[] = {10,11,1,2,1,6,4,3,6,5,1,2,2,6,5,3,4,1,2,1,9,0};
-uint8_t fwd_val[] = {6,1,36,66,90,180,120,120,90,0,109,156,90,0,90,60,60,36,70,90,6,0};
+uint16_t fwd_time[] = {1,	1,100,1,1,1,100,1,1,1,100,1,100,1,1,100,1,100,1,1,1,0};
+uint8_t fwd_servo[] = {10,11, 1,  2,  1,  6,  4,  3,  6,  5,  1,  2,  2,  6,  5,  3,  4,  1,  2,  1,  9, 0};
+uint8_t fwd_val[] = 	{6,	1,	36, 66, 90, 180,120,120,90, 0,  109,156,90, 0,  90, 60, 60, 36, 70, 90, 6, 0};
 uint8_t fwd_len = 22;
 uint8_t bwd_val[] = {6,2,36,66,90,180,60,60,90,0,109,156,90,0,90,120,120,36,70,90,6,0};
 uint8_t lt_val[] = {6,5,36,66,90,180,120,80,90,0,111,156,90,0,90,110,80,36,70,90,6,0};
@@ -33,7 +33,7 @@ void zatancuj_choreografiu(uint16_t *ch_time, uint8_t *ch_servo, uint8_t *ch_val
 #ifdef MODULE_SERIAL
     if (serial_available() || Serial.available()) {
       serial_println_flash(PSTR("FAIL: Serial was available."));
-      break;
+      //break;
     }
 #endif
     check_battery();
@@ -56,10 +56,11 @@ int specialny_prikaz(uint16_t i, uint8_t prikaz, uint8_t argument, int len)
   }
   else if (prikaz == 10) spomalenie = argument;
 #ifdef MODULE_SOUND
-  else if (prikaz == 11) melody_play(argument);
+  //else if (prikaz == 11) melody_play(argument);
   else if (prikaz == 12) sound_effect8();
   else if (prikaz == 13) melody_stop();
 #endif
+	else if (prikaz == 14) reset_motors();
   return i;
 }
 
