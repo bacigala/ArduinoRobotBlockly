@@ -115,6 +115,7 @@
                         <Menu mnemonicParsing="false" text="Options">
                            <items>
                               <MenuItem fx:id="loadAtProgramButton" mnemonicParsing="false" onAction="#loadAtProgramButtonAction" text="Load @ program" />
+                              <MenuItem fx:id="loadExampleButton" mnemonicParsing="false" onAction="#loadExampleButtonAction" text="Load example program" />
                            </items>
                         </Menu>
                         <Menu mnemonicParsing="false">

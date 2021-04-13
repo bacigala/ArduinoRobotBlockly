@@ -83,6 +83,16 @@ public class RobotVersionControl {
         return getProperty("module" + moduleNumber + ".category" + categoryNumber);
     }
 
+    public String getExampleProperty(int exampleNumber, String property) {
+        return getProperty("example" + exampleNumber + "." + property);
+    }
+
+    public ArrayList<String> getExampleModules(int exampleNo) {
+        String modules = getExampleProperty(exampleNo, "modules");
+        if (modules.isEmpty()) return null;
+        return new ArrayList<>(Arrays.asList(modules.split(",[ ]*")));
+    }
+
     public ArrayList<String> getAllCategories() {
         String categories = getProperty("categories");
         return new ArrayList<>(Arrays.asList(categories.split(",[ ]*")));

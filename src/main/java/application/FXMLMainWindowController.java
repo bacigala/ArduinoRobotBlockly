@@ -3,6 +3,7 @@ package application;
 import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.system.AppSettings;
+import dialog.ExampleSelectDialog;
 import dialog.FXMLModuleSelectDialogController;
 import dialog.FXMLUploadToArduinoDialog;
 import dialog.TextAreaInputDialog;
@@ -346,7 +347,7 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Modules.
      */
-    public void robotVersionModulesButtonAction() {
+    private void robotVersionModulesButtonAction() {
 
         try {
             ArrayList<String> toolboxCategories = new ArrayList<>();
@@ -379,6 +380,16 @@ public class FXMLMainWindowController implements Initializable {
             System.err.println("Unable to load selected modules.");
             e.printStackTrace();
         }
+    }
+
+    private void setToolboxCategories() {
+        ArrayList<String> toolboxCategories = new ArrayList<>();
+        for (Integer moduleNumber : chosenModules) {
+            ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
+            if (moduleCategories != null) toolboxCategories.addAll(moduleCategories);
+        }
+        blockly.hideCategories(robotVersionControl.getAllCategories());
+        blockly.showCategories(toolboxCategories);
     }
 
 
@@ -544,6 +555,24 @@ public class FXMLMainWindowController implements Initializable {
                 "<field name='NUM'>" + triplet[2] + "</field>" +
                 "</shadow>" +
                 "</value>";
+    }
+
+    /**
+     *  Load example program.
+     */
+    @FXML javafx.scene.control.MenuItem loadExampleButton;
+
+    public void loadExampleButtonAction() {
+        try {
+            String workspace = ExampleSelectDialog.display(robotVersionControl, chosenModules);
+            if (workspace == null || workspace.isEmpty()) return;
+            setToolboxCategories();
+            blockly.setWorkspace(workspace);
+            reloadBlocklyCode();
+        } catch (IOException e) {
+            System.err.println("Unable to open examples dialog.");
+            e.printStackTrace();
+        }
     }
 
 }

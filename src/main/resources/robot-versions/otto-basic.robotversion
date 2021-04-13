@@ -27,6 +27,7 @@
 
 	robotMaxMemory 	= 200
 	moduleCount		 	= 1
+	exampleCount		= 1
 	categories		 	= motion, sound, setup
 	generator				= basicOttoGenerator
 	programInRam		= true
@@ -40,3 +41,18 @@
 	module1.location			= 
 	module1.size					= 20
 	module1.categories		= motion, sound, setup
+
+!Example 1
+	example1.name					= Try this
+	example1.description	= Description of the first example1
+	example1.modules			= 1
+	example1.workspace 		= <xml><block type='otto_basic_loop' deletable='false' movable='false'><statement name='PROGRAM'><block type='motor_move'><field name='WAIT_TIME'>1000</field><field name='MOTOR_NUMBER'>3</field><field name='MOTOR_POSITION'>60</field><next><block type='motor_move'><field name='WAIT_TIME'>1000</field><field name='MOTOR_NUMBER'>3</field><field name='MOTOR_POSITION'>120</field><next><block type='motor_move'><field name='WAIT_TIME'>1000</field><field name='MOTOR_NUMBER'>3</field><field name='MOTOR_POSITION'>90</field></block></next></block></next></block></statement></block></xml>
+	
+	
+	
+	
+	
+	
+	
+	
+	
