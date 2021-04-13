@@ -1,6 +1,6 @@
 
 !General info
-	name = Otto DTDT 2018 (Arrays in RAM)
+	name = Otto 2020 RL (Arrays in RAM)
 	
 	toolbox = <xml id='basicOttoToolbox' style='display: none'>\
 							<category name='Motion' toolboxitemid='motion' colour='7ece7e'>\

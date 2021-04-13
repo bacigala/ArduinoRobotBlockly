@@ -1,7 +1,7 @@
 
 !General info
-	name = Otto Procedural 2021
-
+	name = Otto 2021 Procedural
+	
 	toolbox =	<xml id='toolbox-otto-procedural' style='display: none'>\
 							<category name='Logic' categorystyle='logic_category' toolboxitemid='logic'>\
 								<block type='controls_if'></block>\
@@ -157,7 +157,7 @@
 							\
 							<category name='Motion' colour='60' toolboxitemid='motion'>\
 								<block type='otto_procedural_motor_move'>\
-									<value name='EFFECT_NO'>\
+									<value name='MOTOR_POSITION'>\
 										<shadow type='math_number'>\
 											<field name='NUM'>3</field>\
 										</shadow>\
@@ -166,6 +166,9 @@
 								<block type='reset_motors'></block>\
 								<block type='move_complex'></block>\
 								<block type='turn_complex'></block>\
+								<block type='tiptoes'></block>\
+								<block type='heels'></block>\
+								<block type='wave_hand'></block>\
 							</category>\
 							\
 							<category name='Sensors' colour='90' toolboxitemid='ultrasound'>\

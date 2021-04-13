@@ -32,3 +32,18 @@ Blockly.OttoProcedural['turn_complex'] = function(block) {
 	}
 };
 
+Blockly.OttoProcedural['tiptoes'] = function(block) {
+  var code = 'to_tiptoes();\n';
+  return code;
+};
+
+Blockly.OttoProcedural['heels'] = function(block) {
+  var code = 'to_heels();\n';
+  return code;
+};
+
+Blockly.OttoProcedural['wave_hand'] = function(block) {
+  var code = 'wave_hand();\n';
+  return code;
+};
+

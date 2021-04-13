@@ -118,5 +118,35 @@ Blockly.defineBlocksWithJsonArray([
   "colour": 60,
   "tooltip": "",
   "helpUrl": ""
+},
+{
+  "type": "tiptoes",
+  "message0": "Stand on tiptoes",
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
+},
+{
+  "type": "heels",
+  "message0": "Stand on heels",
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
+},
+{
+  "type": "wave_hand",
+  "message0": "Wave hand.",
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
 }
 ]);

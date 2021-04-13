@@ -124,6 +124,23 @@ void reset_motors()
   beep();
 }
 
+void to_tiptoes() {
+	nastav_koncatinu(1, 50);
+	nastav_koncatinu(2, 130);
+}
+
+void to_heels() {
+	nastav_koncatinu(1, 130);
+	nastav_koncatinu(2, 50);
+}
+
+void wave_hand() {
+	nastav_koncatinu(5, 0);
+	nastav_koncatinu(5, 35);
+	nastav_koncatinu(5, 0);
+	nastav_koncatinu(5, 35);
+}
+
 void precitaj_kalibraciu_z_EEPROM()
 {
   uint8_t value = EEPROM.read(1);
