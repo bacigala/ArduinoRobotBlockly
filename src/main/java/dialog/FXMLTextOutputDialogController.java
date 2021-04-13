@@ -13,7 +13,7 @@ import java.io.OutputStream;
 public class FXMLTextOutputDialogController {
 
     public static FXMLTextOutputDialogController getDialog(String title) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(DialogFactory.class.getResource(
+        FXMLLoader fxmlLoader = new FXMLLoader(FXMLTextOutputDialogController.class.getResource(
                 "/fxml/FXMLTextOutputDialog.fxml"));
         Parent parent = fxmlLoader.load();
         FXMLTextOutputDialogController controller = fxmlLoader.getController();

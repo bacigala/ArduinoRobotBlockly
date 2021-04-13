@@ -23,7 +23,7 @@ public class FXMLUploadToArduinoDialog {
     public static FXMLUploadToArduinoDialog getDialog(
             String message, ArrayList<SerialCommunicator.ComPort> availablePorts,
             SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort, URL resource) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(DialogFactory.class.getResource(
+        FXMLLoader fxmlLoader = new FXMLLoader(FXMLUploadToArduinoDialog.class.getResource(
                 "/fxml/FXMLUploadToArduino.fxml"));
         Parent parent = fxmlLoader.load();
         FXMLUploadToArduinoDialog controller = fxmlLoader.getController();

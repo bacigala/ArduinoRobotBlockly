@@ -3,7 +3,7 @@ package application;
 import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.system.AppSettings;
-import dialog.DialogFactory;
+import dialog.FXMLModuleSelectDialogController;
 import dialog.FXMLUploadToArduinoDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -346,7 +346,7 @@ public class FXMLMainWindowController implements Initializable {
                 toolboxCategories.addAll(robotVersionControl.getAllCategories());
             } else {
                 //open module selection
-                DialogFactory.getInstance().openModuleSelectDialog(robotVersionControl, chosenModules);
+                FXMLModuleSelectDialogController.display(robotVersionControl, chosenModules);
                 for (Integer moduleNumber : chosenModules) {
                     ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
                     if (moduleCategories != null) toolboxCategories.addAll(moduleCategories);

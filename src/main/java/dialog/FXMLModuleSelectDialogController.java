@@ -4,12 +4,31 @@ import application.RobotVersionControl;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FXMLModuleSelectDialogController {
+    public static void display(
+            RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(FXMLModuleSelectDialogController.class.getResource(
+                "/fxml/FXMLModuleSelectDialog.fxml"));
+        Parent root = fxmlLoader.load();
+        FXMLModuleSelectDialogController controller = fxmlLoader.getController();
+        controller.initialize(robotVersionControl, chosenModules);
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Modules");
+        stage.showAndWait();
+    }
+
     @FXML javafx.scene.control.Label mainLabel;
     @FXML javafx.scene.control.Label usedMemoryLabel;
     @FXML javafx.scene.control.ListView<Module> compulsoryModuleListView;
@@ -120,7 +139,7 @@ public class FXMLModuleSelectDialogController {
         public String name, description;
         public int size;
         public boolean required;
-        public BooleanProperty chosen = new SimpleBooleanProperty(false);
+        public BooleanProperty chosen = new SimpleBooleanProperty(true);
         public Integer id;
 
         @Override

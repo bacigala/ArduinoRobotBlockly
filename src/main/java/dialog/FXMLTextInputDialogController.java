@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class FXMLTextInputDialogController {
     public static String display(String message, String defaultText) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(DialogFactory.class.getResource(
+        FXMLLoader fxmlLoader = new FXMLLoader(FXMLTextInputDialogController.class.getResource(
                 "/fxml/FXMLTextInputDialog.fxml"));
         Parent root = fxmlLoader.load();
         FXMLTextInputDialogController controller = fxmlLoader.getController();
