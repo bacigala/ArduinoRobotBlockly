@@ -297,6 +297,9 @@
 			//workspace.addChangeListener(myUpdateFunction);
 			workspace.addChangeListener(Blockly.Events.disableOrphans);			
 			
+			Blockly.getWorkspaceCode = function () {
+				return 'helloGeneratedCode';
+			}
 		</script>
 	</body>
 </html>

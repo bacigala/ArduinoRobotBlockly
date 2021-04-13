@@ -112,9 +112,9 @@
                <top>
                   <MenuBar BorderPane.alignment="CENTER">
                      <menus>
-                        <Menu mnemonicParsing="false">
+                        <Menu mnemonicParsing="false" text="Options">
                            <items>
-                              <MenuItem mnemonicParsing="false" text="Close" />
+                              <MenuItem fx:id="loadAtProgramButton" mnemonicParsing="false" onAction="#loadAtProgramButtonAction" text="Load @ program" />
                            </items>
                         </Menu>
                         <Menu mnemonicParsing="false">

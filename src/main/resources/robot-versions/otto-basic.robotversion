@@ -31,6 +31,7 @@
 	generator				= basicOttoGenerator
 	programInRam		= true
 	programLocation	= otto-basic/otto-basic.ino
+	codeLoader			= ottoBasic
 
 !Module 1
 	module1.name 				  = Basic

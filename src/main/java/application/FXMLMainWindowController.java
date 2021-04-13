@@ -5,6 +5,7 @@ import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.system.AppSettings;
 import dialog.FXMLModuleSelectDialogController;
 import dialog.FXMLUploadToArduinoDialog;
+import dialog.TextAreaInputDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -17,6 +18,7 @@ import simulation.Simulation;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -42,7 +44,8 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Blockly.
      */
-    @FXML javafx.scene.web.WebView blocklyWebView;
+    @FXML
+    javafx.scene.web.WebView blocklyWebView;
 
     private Blockly blockly = null;
 
@@ -74,15 +77,19 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Console.
      */
-    @FXML javafx.scene.control.TextArea consoleTextArea;
-    @FXML javafx.scene.control.TextField consoleTextField;
-    @FXML javafx.scene.control.Button consoleSendButton;
-    @FXML javafx.scene.control.Button consoleClearButton;
+    @FXML
+    javafx.scene.control.TextArea consoleTextArea;
+    @FXML
+    javafx.scene.control.TextField consoleTextField;
+    @FXML
+    javafx.scene.control.Button consoleSendButton;
+    @FXML
+    javafx.scene.control.Button consoleClearButton;
 
     private boolean lastConsoleWriteBySerial = false;
 
     private void initializeConsole() {
-        serialCommunicator.setOutputStream( new OutputStream() {
+        serialCommunicator.setOutputStream(new OutputStream() {
             private final StringBuilder buffer = new StringBuilder();
 
             @Override
@@ -150,10 +157,14 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Generated code.
      */
-    @FXML javafx.scene.control.TextArea codeTextArea;
-    @FXML javafx.scene.control.Button codeSendToConsoleButton;
-    @FXML javafx.scene.control.Button codeVerifyButton;
-    @FXML javafx.scene.control.Button codeUploadButton;
+    @FXML
+    javafx.scene.control.TextArea codeTextArea;
+    @FXML
+    javafx.scene.control.Button codeSendToConsoleButton;
+    @FXML
+    javafx.scene.control.Button codeVerifyButton;
+    @FXML
+    javafx.scene.control.Button codeUploadButton;
 
     public void codeSendToConsoleButtonAction() {
         consoleSendButton.setDisable(true);
@@ -239,9 +250,12 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Serial connection.
      */
-    @FXML javafx.scene.control.Button connectionConnectButton;
-    @FXML javafx.scene.control.Button connectionSearchButton;
-    @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> connectionChoiceBox;
+    @FXML
+    javafx.scene.control.Button connectionConnectButton;
+    @FXML
+    javafx.scene.control.Button connectionSearchButton;
+    @FXML
+    javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> connectionChoiceBox;
     private final SerialCommunicator serialCommunicator = new SerialCommunicator();
     private boolean isConnected = false;
 
@@ -290,9 +304,12 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Robot version.
      */
-    @FXML javafx.scene.control.Button robotVersionLoadButton;
-    @FXML javafx.scene.control.Button robotVersionSearchButton;
-    @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
+    @FXML
+    javafx.scene.control.Button robotVersionLoadButton;
+    @FXML
+    javafx.scene.control.Button robotVersionSearchButton;
+    @FXML
+    javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
 
     private final RobotVersionControl robotVersionControl = new RobotVersionControl();
     private final ArrayList<Integer> chosenModules = new ArrayList<>();
@@ -327,7 +344,7 @@ public class FXMLMainWindowController implements Initializable {
 
 
     /**
-     *  Modules.
+     * Modules.
      */
     public void robotVersionModulesButtonAction() {
 
@@ -366,7 +383,7 @@ public class FXMLMainWindowController implements Initializable {
 
 
     public void testButton1Action() {
-        blocklyWebView.getEngine().reload();
+        System.out.println(blockly.getWorkspace());
     }
 
     public void testButton2Action() {
@@ -379,8 +396,10 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Simulation.
      */
-    @FXML javafx.scene.layout.AnchorPane simulationAnchorPane;
-    @FXML javafx.scene.image.ImageView imageView;
+    @FXML
+    javafx.scene.layout.AnchorPane simulationAnchorPane;
+    @FXML
+    javafx.scene.image.ImageView imageView;
 
     private Simulation simulation = null;
 
@@ -404,6 +423,127 @@ public class FXMLMainWindowController implements Initializable {
 
     private void terminateSimulation() {
         if (simulation != null) simulation.stop();
+    }
+
+    /**
+     * Load @ program.
+     */
+    @FXML
+    javafx.scene.control.MenuItem loadAtProgramButton;
+
+    public void loadAtProgramButtonAction() {
+        String codeLoader = robotVersionControl.getProperty("codeLoader");
+        if (codeLoader == null) {
+            // todo: unsupported operation dialog / disable this option
+            System.err.println("Unsupported operation");
+            return;
+        }
+        try {
+            // get code from user
+            String defaultChoreography = "@\n1000 3 60\n1000 3 120\n1000 3 90\n0 0 0\n";
+            String inputCode = TextAreaInputDialog.display("Insert your @ choreography", defaultChoreography);
+
+            // parse code
+            inputCode = inputCode.replaceFirst("^@[ ]*", ""); // remove @
+            ArrayList<String> codeLines = new ArrayList<>(Arrays.asList(inputCode.split("[\r\n]+")));
+            if (codeLines.isEmpty()) throw new IllegalArgumentException("No code to parse.");
+
+            StringBuilder workspace = new StringBuilder();
+            workspace.append("<xml><block type='otto_basic_loop' deletable='false' movable='false'><statement name='PROGRAM'>");
+            int relativeOrder = 0;
+            int absoluteOrder = 0;
+            int[] triplet = new int[3];
+
+            for (String codeLine : codeLines) {
+                if (codeLine.startsWith("#")) {
+                    if (absoluteOrder > 0) workspace.append("<next>");
+                    workspace.append("<block type='comment_block'><field name='COMMENT'>")
+                             .append(codeLine.replaceFirst("^[\r\n ]*#", ""))
+                             .append("</field>");
+                    absoluteOrder++;
+                    continue;
+                }
+                ArrayList<String> commands = new ArrayList<>(Arrays.asList(codeLine.split("[ ]+")));
+                for (String command : commands) {
+                    if (command.isEmpty()) continue;
+                    triplet[relativeOrder] = Integer.parseInt(command);
+                    if (relativeOrder == 0 && triplet[0] == 0) break; // end of code
+
+                    if (relativeOrder == 2) { // end of triplet -> create block
+                        if (absoluteOrder > 0) workspace.append("<next>");
+                        if (codeLoader.equals("ottoProcedural"))
+                            workspace.append(createOttoProceduralMoveBlock(triplet));
+                        if (codeLoader.equals("ottoBasic"))
+                            workspace.append(createOttoBasicMoveBlock(triplet));
+
+                        absoluteOrder++;
+                    }
+
+                    relativeOrder++;
+                    relativeOrder %= 3;
+                }
+            }
+
+            for (int i = absoluteOrder; i > 1; i--)
+                workspace.append("</block></next>");
+            if (absoluteOrder > 0) workspace.append("</block>");
+            workspace.append("</statement></block></xml>");
+
+            // load code to blockly
+            blockly.setWorkspace(workspace.toString());
+
+        } catch (Exception e) {
+            System.err.println("Cannot parse @ code" + e.getMessage()); //todo error dialog
+            e.printStackTrace();
+        }
+    }
+
+    private String createOttoBasicMoveBlock(int[] triplet) {
+        String block = null;
+        if (triplet[1] < 7) {
+            block = "<block type='motor_move'>" +
+                    "<field name='WAIT_TIME'>" + triplet[0] + "</field>" +
+                    "<field name='MOTOR_NUMBER'>" + triplet[1] + "</field>" +
+                    "<field name='MOTOR_POSITION'>" + triplet[2] + "</field>";
+        } else switch (triplet[1]) {
+            case 8:
+                block = "<block type='block_dance_total_time'>" +
+                        "<field name='DURATION'>" + triplet[2] + "</field>";
+                break;
+            case 9:
+                block = "<block type='block_jump_to_line'>" +
+                        "<field name='LINE_NO'>" + triplet[2] + "</field>";
+                break;
+            case 10:
+                block = "<block type='block_set_slowdown'>" +
+                        "<field name='SLOWDOWN'>" + triplet[2] + "</field>";
+                break;
+            case 11:
+                block = "<block type='block_play_melody'>" +
+                        "<field name='MELODY_NO'>" + triplet[2] + "</field>";
+                break;
+            case 13:
+                block = "<block type='block_stop_melody'>";
+                break;
+            case 12:
+                block = "<block type='block_play_sound_effect'>" +
+                        "<field name='EFFECT_NO'>" + triplet[2] + "</field>";
+                break;
+        }
+        return block;
+    }
+
+    private String createOttoProceduralMoveBlock(int[] triplet) {
+        // todo: support for other blocks...?
+        return "<block type='otto_procedural_motor_move'>" +
+                "<field name='MOTOR_NUMBER'>" +
+                triplet[1] +
+                "</field>" +
+                "<value name='MOTOR_POSITION'>" +
+                "<shadow type='math_number'>" +
+                "<field name='NUM'>" + triplet[2] + "</field>" +
+                "</shadow>" +
+                "</value>";
     }
 
 }

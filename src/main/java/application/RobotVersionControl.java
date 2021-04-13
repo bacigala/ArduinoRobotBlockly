@@ -59,16 +59,20 @@ public class RobotVersionControl {
         return loadedVersion != null;
     }
 
-    public String getProperty(String propertyName) {
+    public String getProperty(String propertyName, String ifNotSet) {
         if (loadedVersion == null) throw new NullPointerException("No RobotVersion set.");
         String propertyValue;
         try {
-            propertyValue = loadedVersion.getProperty(propertyName);
+            propertyValue = loadedVersion.getProperty(propertyName, ifNotSet);
         } catch (Exception e) {
             System.err.println("Cannot read property " + propertyName);
             return "";
         }
         return propertyValue;
+    }
+
+    public String getProperty(String propertyName) {
+        return getProperty(propertyName, null);
     }
 
     public String getModuleProperty(int moduleNumber, String property) {
