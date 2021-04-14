@@ -38,7 +38,7 @@ public class ExampleSelectDialog {
         this.robotVersionControl = robotVersionControl;
 
         // get example information
-        int exampleCount = Integer.parseInt(robotVersionControl.getProperty("exampleCount"));
+        int exampleCount = Integer.parseInt(robotVersionControl.getProperty("exampleCount", "0"));
         for (int exampleNo = 1; exampleNo <= exampleCount ; exampleNo++) {
             Example ex = new Example();
             ex.name = robotVersionControl.getExampleProperty(exampleNo, "name");

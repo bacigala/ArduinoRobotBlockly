@@ -395,6 +395,7 @@ public class FXMLMainWindowController implements Initializable {
 
     public void testButton1Action() {
         System.out.println(blockly.getWorkspace());
+        System.out.println(blockly.getWorkspace().replaceAll("\"", "'"));
     }
 
     public void testButton2Action() {
@@ -545,16 +546,46 @@ public class FXMLMainWindowController implements Initializable {
     }
 
     private String createOttoProceduralMoveBlock(int[] triplet) {
-        // todo: support for other blocks...?
-        return "<block type='otto_procedural_motor_move'>" +
-                "<field name='MOTOR_NUMBER'>" +
-                triplet[1] +
-                "</field>" +
-                "<value name='MOTOR_POSITION'>" +
-                "<shadow type='math_number'>" +
-                "<field name='NUM'>" + triplet[2] + "</field>" +
-                "</shadow>" +
-                "</value>";
+        String block = null;
+        if (triplet[1] < 7) {
+            block = "<block type='otto_procedural_motor_move'>" +
+                    "<field name='MOTOR_NUMBER'>" +
+                    triplet[1] +
+                    "</field>" +
+                    "<value name='MOTOR_POSITION'>" +
+                    "<shadow type='math_number'>" +
+                    "<field name='NUM'>" + triplet[2] + "</field>" +
+                    "</shadow>" +
+                    "</value>";
+        } else switch (triplet[1]) {
+            case 8:
+                    block = "<block type='comment_block'>" +
+                        "<field name='COMMENT'>UNSUPPORTED BLOCK: Dance total time: " + triplet[2] + "</field>";
+                break;
+            case 9:
+                block = "<block type='comment_block'>" +
+                        "<field name='COMMENT'>UNSUPPORTED BLOCK: Jump to code line: " + triplet[2] + "</field>";
+                break;
+            case 10:
+                block = "<block type='comment_block'>" +
+                        "<field name='COMMENT'>UNSUPPORTED BLOCK: Set slowdown to: " + triplet[2] + "</field>";
+                break;
+            case 11:
+                block = "<block type='melody_play'>" +
+                        "<value name='MELODY_NO'><shadow type='math_number'><field name='NUM'>" +
+                            triplet[2] + "</field></shadow></value>";
+                break;
+            case 13:
+                block = "<block type='melody_stop'>";
+                break;
+            case 12:
+                block = "<block type='play_sound_effect'>" +
+                        "<value name='EFFECT_NO'><shadow type='math_number'>" +
+                            "<field name='NUM'>" + triplet[2] + "</field></shadow></value>";
+                break;
+        }
+        return block;
+
     }
 
     /**

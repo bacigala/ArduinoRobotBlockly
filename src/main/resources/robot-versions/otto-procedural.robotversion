@@ -214,6 +214,8 @@
 	categories		 	= logic, math, loops, variables, functions, sound, motion, ultrasound, serial
 	generator				= OttoProcedural
 	programInRam		= false
+	codeLoader			= ottoProcedural
+	exampleCount		= 2
 
 !Module 1
 	module1.name 				  = Basic
@@ -270,3 +272,18 @@
 	module7.location			= otto-procedural/serial
 	module7.size					= 0
 	module7.categories		= serial
+	
+!Example 1
+	example1.name					= Wave on proximity
+	example1.description	= When Otto sees obstacle, he waves. 
+	example1.modules			= 3, 5, 6
+	example1.workspace 		= <xml xmlns='https://developers.google.com/blockly/xml'><block type='otto_basic_loop' id='h7W;KMe!nWzO^vGJwpH?' deletable='false' movable='false' x='10' y='10'><statement name='PROGRAM'><block type='wait_ultrasound' id='H4}m1o7mI%%18tKa%kN;'><field name='RELATION'>LESS</field><value name='DISTANCE'><shadow type='math_number' id='{;l*d=]mhlUyG710R(FV'><field name='NUM'>50</field></shadow></value><next><block type='wave_hand' id='y9A1nH9jcCz*~kB7mdil'></block></next></block></statement></block></xml>
+	
+!Example 2
+	example2.name					= On tiptoes, on heels
+	example2.description	= Let Otto stand  on his tiptoes / on heels by usig the touch sensors.
+	example2.modules			= 1, 3, 5, 6
+	example2.workspace 		= <xml xmlns='https://developers.google.com/blockly/xml'><block type='otto_basic_loop' id='yW*nV4NgvDA$!}N_cjP7' deletable='false' movable='false' x='10' y='10'><statement name='PROGRAM'><block type='controls_if' id='7u+4MJcw9J7?]`HG:#O='><value name='IF0'><block type='button_pressed' id='(O5.g_YtM,;BTkXS7iSs'><field name='BUTTON'>LEFT</field></block></value><statement name='DO0'><block type='tiptoes' id='#)k(onH.LZj+%-}_R@p?'></block></statement><next><block type='controls_if' id='I=;_],QvW#V[C6b,k$Kx'><value name='IF0'><block type='button_pressed' id='F*$mg385U@!lk,;].nB['><field name='BUTTON'>RIGHT</field></block></value><statement name='DO0'><block type='heels' id='Em7!`A.hZYL$L.!lxFR+'></block></statement></block></next></block></statement></block></xml>
+
+
+
