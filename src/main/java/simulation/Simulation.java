@@ -184,10 +184,17 @@ public class Simulation extends JmeToJfxApplication {
         motor.clear();
         position.clear();
 
-        String[] words = program.split("\\s+");
-        for (int i = 1; i < words.length - 3; i += 3) {
-            int motorNo = Integer.parseInt(words[i]);
-            if (motorNo >= 1 && motorNo <= 6 && i + 1 < words.length) {
+        String[] programLines = program.split("[\r\n]+");
+
+        for (int lineNo = 0; lineNo < programLines.length; lineNo++) {
+            System.out.println("PL: " + programLines[lineNo]);
+            programLines[lineNo] = programLines[lineNo].replaceFirst("\\s*@\\s*]", "");
+            if (programLines[lineNo].isEmpty()) continue; // ignore starting @
+            if (programLines[lineNo].contains("#")) continue; // ignore comments
+
+            String[] lineParts = programLines[lineNo].split("\\s+");
+            int motorNo = Integer.parseInt(lineParts[1]);
+            if (motorNo >= 1 && motorNo <= 6) {
                 switch (motorNo) {
                     case 1:
                         motor.add(RobotOttoSimple.OttoMotor.RIGHT_FOOT);
@@ -208,9 +215,9 @@ public class Simulation extends JmeToJfxApplication {
                         motor.add(RobotOttoSimple.OttoMotor.RIGHT_HAND);
                         break;
                 }
+                float pos = Float.parseFloat(lineParts[2]);
+                position.add(pos);
             }
-            float pos = Float.parseFloat(words[i + 1]);
-            position.add(pos);
         }
     }
 
