@@ -79,7 +79,7 @@ public class Simulation extends JmeToJfxApplication {
         robotOtto = new RobotOttoJoints(assetManager, bulletAppState);
         rootNode.attachChild(robotOtto.getRootNode());
 
-        loadOttoProgram("@1000 2 130 1000 2 130 0 0 0");
+        loadOttoProgram("@1000 2 130\n1000 2 130\n0 0 0");
     }
 
     float time = 0f, continualTime = 0;
@@ -187,7 +187,6 @@ public class Simulation extends JmeToJfxApplication {
         String[] programLines = program.split("[\r\n]+");
 
         for (int lineNo = 0; lineNo < programLines.length; lineNo++) {
-            System.out.println("PL: " + programLines[lineNo]);
             programLines[lineNo] = programLines[lineNo].replaceFirst("\\s*@\\s*]", "");
             if (programLines[lineNo].isEmpty()) continue; // ignore starting @
             if (programLines[lineNo].contains("#")) continue; // ignore comments

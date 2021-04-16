@@ -205,6 +205,14 @@
 									<field name='TEXT'>Message</field>\
 								</block>\
 							</category>\
+							\
+							<category name='Time' colour='210' toolboxitemid='time'>\
+								<label text='Time'></label>\
+								<block type='get_time'></block>\
+								<label text='Timers'></label>\
+								<block type='reset_timer'></block>\
+								<block type='get_timer'></block>\
+							</category>\
 						</xml>
 
 	workspace = <xml>\
@@ -212,8 +220,8 @@
 							</xml>
 
 	robotMaxMemory 	= 200
-	moduleCount		 	= 7
-	categories		 	= logic, math, loops, variables, functions, sound, motion, ultrasound, serial
+	moduleCount		 	= 8
+	categories		 	= logic, math, loops, variables, functions, sound, motion, ultrasound, serial, time
 	generator				= OttoProcedural
 	programInRam		= false
 	codeLoader			= ottoProcedural
@@ -274,6 +282,14 @@
 	module7.location			= otto-procedural/serial
 	module7.size					= 0
 	module7.categories		= serial
+	
+!Module 8
+	module8.name 				  = Time
+	module8.description 	= 
+	module8.required 			= false
+	module8.location			= otto-procedural/time
+	module8.size					= 0
+	module8.categories		= time
 	
 !Example 1
 	example1.name					= Wave on proximity

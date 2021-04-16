@@ -187,7 +187,7 @@ public class FXMLMainWindowController implements Initializable {
 
     public void codeUploadButtonAction() {
         try {
-            String portName = connectionChoiceBox.getSelectionModel().getSelectedItem().getComName();
+            String portName = connectionChoiceBox.getSelectionModel().getSelectedItem().getComName(); //todo: NULL -> error no pot chosen
             assembleFileToCompile();
             ArduinoCompiler.verifyAndUpload(portName, new File("generated-code.ino").getAbsolutePath());
         } catch (Exception e) {
