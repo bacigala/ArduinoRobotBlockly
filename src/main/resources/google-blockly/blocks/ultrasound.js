@@ -104,5 +104,31 @@ Blockly.defineBlocksWithJsonArray([
   "colour": 90,
   "tooltip": "",
   "helpUrl": ""
+},
+// ULTRASONIC  - RECORD GESTURE
+{
+  "type": "ulrasonic_gesture_record",
+  "message0": "Record gesture",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 95,
+  "tooltip": "",
+  "helpUrl": ""
+},
+// ULTRASONIC - GET LAST SEEN GESTURE
+{
+  "type": "ulrasonic_gesture_last",
+  "message0": "Ultrasonic - last seen gesture",
+  "output": "Number",
+  "colour": 95,
+  "tooltip": "",
+  "helpUrl": ""
 }
+
+
+
+
+
+
+
 ]);

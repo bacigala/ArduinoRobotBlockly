@@ -38,6 +38,7 @@
 		<script src="generators/otto-procedural/motion.js"></script>
 		<script src="generators/otto-procedural/ultrasound.js"></script>
 		<script src="generators/otto-procedural/serial.js"></script>
+		<script src="generators/otto-procedural/time.js"></script>
 		
 		<script src="blocks/otto-basic.js"></script>
 		<script src="blocks/lists.js"></script>
@@ -52,6 +53,7 @@
 		<script src="blocks/motion.js"></script>
 		<script src="blocks/ultrasound.js"></script>
 		<script src="blocks/serial.js"></script>
+		<script src="blocks/time.js"></script>
 		
 		<xml id='toolbox-otto-procedural' style='display: none'>
 			<category name='Logic' categorystyle='logic_category' toolboxitemid='logic'>
@@ -238,6 +240,16 @@
 					<field name='TEXT'>Message</field>
 				</block>
 			</category>
+			
+							<category name='Time' colour='210' toolboxitemid='time'>
+								<label text='Time'></label>
+								<block type='get_time'></block>
+								<label text='Timers'></label>
+								<block type='reset_timer'></block>
+								<block type='get_timer'></block>
+								<block type='serial_get_number'></block>
+								<block type='switch_case'></block>
+							</category>\
 		</xml>
 
 		

@@ -10,6 +10,8 @@ volatile int16_t distance;
 static volatile uint32_t pulse_start;
 static volatile uint8_t new_distance;
 
+uint16_t US_last_seen_gesture;
+
 // TOUCH HEADER
 
 #define TOUCH1   16    // A2

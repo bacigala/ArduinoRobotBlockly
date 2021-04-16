@@ -181,6 +181,8 @@
 										</shadow>\
 									</value>\
 								</block>\
+								<block type='ulrasonic_gesture_record'></block>\
+								<block type='ulrasonic_gesture_last'></block>\
 								<label text='Touch'></label>\
 								<block type='button_pressed'></block>\
 								<block type='wait_touch'></block>\

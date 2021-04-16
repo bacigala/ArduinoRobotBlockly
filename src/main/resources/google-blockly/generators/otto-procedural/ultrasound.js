@@ -40,3 +40,15 @@ Blockly.OttoProcedural['wait_touch'] = function(block) {
 	code += '}\n';
   return code;
 };
+
+Blockly.OttoProcedural['ulrasonic_gesture_record'] = function(block) {
+  var code = 'ultrasonic_gesture_record(50, 2000, 3000);\n';
+  return code;
+};
+
+Blockly.OttoProcedural['ulrasonic_gesture_last'] = function(block) {
+  var code = 'US_last_seen_gesture';
+  return [code, Blockly.OttoProcedural.ORDER_NONE];
+};
+
+

@@ -70,7 +70,7 @@ void check_battery()
 #endif
 
 
-// SHARED WITH SERIAL
+// SHARED WITH SERIAL & ULTRASOUND
 ISR(PCINT0_vect)
 {
   new_pinb = PINB;
