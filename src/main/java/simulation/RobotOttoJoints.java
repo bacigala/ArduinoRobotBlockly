@@ -31,11 +31,12 @@ public class RobotOttoJoints implements RobotOtto {
 
     public RobotOttoJoints(AssetManager assetManager, BulletAppState bulletAppState) {
         // Spatial = model of robot part
-        Spatial ottoBottomSpatial, ottoTopSpatial, ottoArmRightSpatial, ottoArmLeftSpatial,
+        Spatial ottoBottomSpatial, ottoTopSpatial, ottoArmRightSpatial, ottoArmLeftSpatial, ottoEyesSpatial,
                 ottoLegRightSpatial, ottoLegLeftSpatial, ottoFootRightSpatial, ottoFootLeftSpatial;
 
         // load models
         ottoTopSpatial = assetManager.loadModel("models/otto-top.obj");
+        ottoEyesSpatial = assetManager.loadModel("models/otto-eyes.obj");
         ottoBottomSpatial = assetManager.loadModel("models/otto-bottom.obj");
         ottoArmRightSpatial = assetManager.loadModel("models/otto-arm-right.obj");
         ottoArmLeftSpatial = assetManager.loadModel("models/otto-arm-left.obj");
@@ -48,9 +49,11 @@ public class RobotOttoJoints implements RobotOtto {
         Material blueMaterial = createMaterial(assetManager, ColorRGBA.Blue);
         Material redMaterial = createMaterial(assetManager, ColorRGBA.Red);
         Material cyanMaterial = createMaterial(assetManager, ColorRGBA.Cyan);
+        Material grayMaterial = createMaterial(assetManager, ColorRGBA.Gray);
 
         // assign materials to models
         ottoTopSpatial.setMaterial(cyanMaterial);
+        ottoEyesSpatial.setMaterial(grayMaterial);
         ottoBottomSpatial.setMaterial(blueMaterial);
         ottoArmRightSpatial.setMaterial(cyanMaterial);
         ottoArmLeftSpatial.setMaterial(cyanMaterial);
@@ -94,6 +97,8 @@ public class RobotOttoJoints implements RobotOtto {
     // TOP
         ottoBottomNode.attachChild(ottoTopSpatial);
 
+    // EYES
+        ottoBottomNode.attachChild(ottoEyesSpatial);
 
     // ARM RIGHT
         ottoArmRightNode = new Node("ottoArmRightNode");
@@ -278,6 +283,7 @@ public class RobotOttoJoints implements RobotOtto {
         switch (part) {
             case LEFT_HAND:
                 limit = FastMath.TWO_PI - limit;
+                limit = FastMath.PI - limit;
                 armLeftJoint.setLimit(limit, limit);
                 armLeftControl.activate();
                 break;
@@ -291,6 +297,7 @@ public class RobotOttoJoints implements RobotOtto {
                 break;
             case RIGHT_LEG:
                 limit = FastMath.TWO_PI - limit;
+                limit = FastMath.PI - limit;
                 legRightJoint.setLimit(limit, limit);
                 legRightControl.activate();
                 break;
@@ -299,6 +306,7 @@ public class RobotOttoJoints implements RobotOtto {
                 footLeftControl.activate();
                 break;
             case RIGHT_FOOT:
+                limit = FastMath.PI - limit;
                 footRightJoint.setLimit(limit, limit);
                 footRightControl.activate();
                 break;
