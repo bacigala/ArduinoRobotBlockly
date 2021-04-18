@@ -1,10 +1,14 @@
+
 /**
+ * This file was created by modification of the original file described below.
+ * File was modified to support variable types.
+ *
+ * ORIGINAL FILE LICENSE AND AUTHOR:
+ *
  * @license
  * Copyright 2012 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- */
-
-/**
+ *
  * @fileoverview Procedure blocks for Blockly.
  * @author fraser@google.com (Neil Fraser)
  */
@@ -28,14 +32,15 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    * @this {Blockly.Block}
    */
   init: function() {
-    var nameField = new Blockly.FieldTextInput('',
+    var initName = Blockly.Procedures.findLegalName('', this);
+    var nameField = new Blockly.FieldTextInput(initName,
         Blockly.Procedures.rename);
     nameField.setSpellcheck(false);
     this.appendDummyInput()
         .appendField(Blockly.Msg['PROCEDURES_DEFNORETURN_TITLE'])
         .appendField(nameField, 'NAME')
         .appendField('', 'PARAMS');
-    this.setMutator(new Blockly.Mutator(['procedures_mutatorarg']));
+    this.setMutator(new Blockly.Mutator(['procedures_mutatorarg_Boolean','procedures_mutatorarg_Number', 'procedures_mutatorarg_String']));
     if ((this.workspace.options.comments ||
          (this.workspace.options.parentWorkspace &&
           this.workspace.options.parentWorkspace.options.comments)) &&
@@ -79,9 +84,12 @@ Blockly.Blocks['procedures_defnoreturn'] = {
 
     // Merge the arguments into a human-readable list.
     var paramString = '';
-    if (this.arguments_.length) {
-      paramString = Blockly.Msg['PROCEDURES_BEFORE_PARAMS'] +
-          ' ' + this.arguments_.join(', ');
+    if (this.argumentVarModels_.length) { //JAMA arg -> arg models
+      paramString = Blockly.Msg['PROCEDURES_BEFORE_PARAMS'];
+			for (var i = 0; i < this.argumentVarModels_.length; i++) {
+				if (i > 0) paramString += ', ';
+				paramString += this.argumentVarModels_[i].type + ' ' + this.argumentVarModels_[i].name;
+			}
     }
     // The params field is deterministic based on the mutation,
     // no need to fire a change event.
@@ -109,6 +117,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
       var argModel = this.argumentVarModels_[i];
       parameter.setAttribute('name', argModel.name);
       parameter.setAttribute('varid', argModel.getId());
+      parameter.setAttribute('vartype', argModel.type); //JAMA
       if (opt_paramIds && this.paramIds_) {
         parameter.setAttribute('paramId', this.paramIds_[i]);
       }
@@ -132,10 +141,11 @@ Blockly.Blocks['procedures_defnoreturn'] = {
     for (var i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
       if (childNode.nodeName.toLowerCase() == 'arg') {
         var varName = childNode.getAttribute('name');
+        var varType = childNode.getAttribute('vartype'); //JAMA
         var varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
         this.arguments_.push(varName);
         var variable = Blockly.Variables.getOrCreateVariablePackage(
-            this.workspace, varId, varName, '');
+            this.workspace, varId, varName, varType); //JAMA
         if (variable != null) {
           this.argumentVarModels_.push(variable);
         } else {
@@ -177,12 +187,19 @@ Blockly.Blocks['procedures_defnoreturn'] = {
     var node = statementNode;
     for (var i = 0; i < this.arguments_.length; i++) {
       var argBlockNode = Blockly.utils.xml.createElement('block');
-      argBlockNode.setAttribute('type', 'procedures_mutatorarg');
+      argBlockNode.setAttribute('type', 'procedures_mutatorarg_' + this.argumentVarModels_[i].type);
       var fieldNode = Blockly.utils.xml.createElement('field');
       fieldNode.setAttribute('name', 'NAME');
       var argumentName = Blockly.utils.xml.createTextNode(this.arguments_[i]);
       fieldNode.appendChild(argumentName);
       argBlockNode.appendChild(fieldNode);
+			
+			var fieldNode2 = Blockly.utils.xml.createElement('field');
+      fieldNode2.setAttribute('name', 'TYPE');
+      var argumentName2 = Blockly.utils.xml.createTextNode(this.argumentVarModels_[i].type);
+      fieldNode2.appendChild(argumentName2);
+      argBlockNode.appendChild(fieldNode2);
+			
       var nextNode = Blockly.utils.xml.createElement('next');
       argBlockNode.appendChild(nextNode);
 
@@ -213,10 +230,12 @@ Blockly.Blocks['procedures_defnoreturn'] = {
     this.paramIds_ = [];
     this.argumentVarModels_ = [];
     var paramBlock = containerBlock.getInputTargetBlock('STACK');
-    while (paramBlock) {
+    while (paramBlock && !paramBlock.isInsertionMarker()) {
       var varName = paramBlock.getFieldValue('NAME');
+      var varType = paramBlock.getFieldValue('TYPE'); // JAMA
       this.arguments_.push(varName);
-      var variable = this.workspace.getVariable(varName, '');
+      var variable = this.workspace.getVariable(varName, varType);
+			console.log('pushung: ' + varName + ' ' + varType + ' ' + this.workspace.getVariable(varName, varType));
       this.argumentVarModels_.push(variable);
 
       this.paramIds_.push(paramBlock.id);
@@ -289,10 +308,10 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    */
   renameVarById: function(oldId, newId) {
     var oldVariable = this.workspace.getVariableById(oldId);
-    if (oldVariable.type != '') {
-      // Procedure arguments always have the empty type.
-      return;
-    }
+    //if (oldVariable.type != '') {
+      // Procedure arguments always have the empty type. // JAMA: not true anymore
+      //return;
+    //}
     var oldName = oldVariable.name;
     var newVar = this.workspace.getVariableById(newId);
 
@@ -405,17 +424,19 @@ Blockly.Blocks['procedures_defreturn'] = {
    * @this {Blockly.Block}
    */
   init: function() {
-    var nameField = new Blockly.FieldTextInput('',
+    var initName = Blockly.Procedures.findLegalName('', this);
+    var nameField = new Blockly.FieldTextInput(initName,
         Blockly.Procedures.rename);
     nameField.setSpellcheck(false);
     this.appendDummyInput()
         .appendField(Blockly.Msg['PROCEDURES_DEFRETURN_TITLE'])
         .appendField(nameField, 'NAME')
         .appendField('', 'PARAMS');
-    this.appendValueInput('RETURN')
+    this.appendValueInput('RETURN').setCheck('Boolean')
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField(Blockly.Msg['PROCEDURES_DEFRETURN_RETURN']);
-    this.setMutator(new Blockly.Mutator(['procedures_mutatorarg']));
+		this.appendDummyInput().appendField(new Blockly.FieldDropdown([['Boolean', 'Boolean'],['Number', 'Number'],['String', 'String']]), "TYPE");
+    this.setMutator(new Blockly.Mutator(['procedures_mutatorarg_Boolean','procedures_mutatorarg_Number', 'procedures_mutatorarg_String']));
     if ((this.workspace.options.comments ||
          (this.workspace.options.parentWorkspace &&
           this.workspace.options.parentWorkspace.options.comments)) &&
@@ -453,8 +474,18 @@ Blockly.Blocks['procedures_defreturn'] = {
   updateVarName: Blockly.Blocks['procedures_defnoreturn'].updateVarName,
   displayRenamedVar_: Blockly.Blocks['procedures_defnoreturn'].displayRenamedVar_,
   customContextMenu: Blockly.Blocks['procedures_defnoreturn'].customContextMenu,
-  callType_: 'procedures_callreturn'
+  callType_: 'procedures_callreturn',
+	
+	onchange : function() {
+		var typeField = this.getInput('RETURN');
+		typeField.setCheck(this.getFieldValue('TYPE'));
+	}
+	
 };
+
+
+
+
 
 Blockly.Blocks['procedures_mutatorcontainer'] = {
   /**
@@ -474,7 +505,7 @@ Blockly.Blocks['procedures_mutatorcontainer'] = {
   },
 };
 
-Blockly.Blocks['procedures_mutatorarg'] = {
+Blockly.Blocks['procedures_mutatorarg_Boolean'] = {
   /**
    * Mutator block for procedure argument.
    * @this {Blockly.Block}
@@ -489,14 +520,16 @@ Blockly.Blocks['procedures_mutatorarg'] = {
       this.createdVariables_ = [];
       this.oldShowEditorFn_();
     };
-    field.showEditor_ = newShowEditorFn;
+    field.showEditor_ = newShowEditorFn;		
 
     this.appendDummyInput()
         .appendField(Blockly.Msg['PROCEDURES_MUTATORARG_TITLE'])
-        .appendField(field, 'NAME');
+        .appendField(field, 'NAME')
+				.appendField(new Blockly.FieldLabelSerializable('Boolean'), 'TYPE');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
-    this.setStyle('procedure_blocks');
+		//this.setStyle('procedure_blocks');
+		this.setColour(0);
     this.setTooltip(Blockly.Msg['PROCEDURES_MUTATORARG_TOOLTIP']);
     this.contextMenu = false;
 
@@ -508,6 +541,7 @@ Blockly.Blocks['procedures_mutatorarg'] = {
     field.createdVariables_ = [];
     field.onFinishEditing_('x');
   },
+	
 
   /**
    * Obtain a valid name for the procedure argument. Create a variable if
@@ -519,8 +553,11 @@ Blockly.Blocks['procedures_mutatorarg'] = {
    * @private
    * @this Blockly.FieldTextInput
    */
-  validator_: function(varName) {
+  validator_: function(varName) { 
     var sourceBlock = this.getSourceBlock();
+		
+		//var varName = sourceBlock.getFieldValue('NAME');
+		
     var outerWs = Blockly.Mutator.findParentWs(sourceBlock.workspace);
     varName = varName.replace(/[\s\xa0]+/g, ' ').replace(/^ | $/g, '');
     if (!varName) {
@@ -548,16 +585,19 @@ Blockly.Blocks['procedures_mutatorarg'] = {
     if (sourceBlock.isInFlyout) {
       return varName;
     }
+		
+		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
 
-    var model = outerWs.getVariable(varName, '');
+    var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
     if (model && model.name != varName) {
       // Rename the variable (case change)
       outerWs.renameVariableById(model.getId(), varName);
     }
     if (!model) {
-      model = outerWs.createVariable(varName, '');
+      model = outerWs.createVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
       if (model && this.createdVariables_) {
         this.createdVariables_.push(model);
+				console.log('Creating vatiable NAME:' + model.name + ' TYPE:' + this.getSourceBlock().getFieldValue('TYPE') + '.');
       }
     }
     return varName;
@@ -579,11 +619,266 @@ Blockly.Blocks['procedures_mutatorarg'] = {
     for (var i = 0; i < this.createdVariables_.length; i++) {
       var model = this.createdVariables_[i];
       if (model.name != newText) {
+				console.log('Deleting vatiable NAME:' + model.name + ' TYPE:' + model.type + '.');
         outerWs.deleteVariableById(model.getId());
       }
     }
   }
 };
+
+
+
+
+
+
+
+
+
+Blockly.Blocks['procedures_mutatorarg_Number'] = {
+  /**
+   * Mutator block for procedure argument.
+   * @this {Blockly.Block}
+   */
+  init: function() {
+    var field = new Blockly.FieldTextInput(
+        Blockly.Procedures.DEFAULT_ARG, this.validator_);
+    // Hack: override showEditor to do just a little bit more work.
+    // We don't have a good place to hook into the start of a text edit.
+    field.oldShowEditorFn_ = field.showEditor_;
+    var newShowEditorFn = function() {
+      this.createdVariables_ = [];
+      this.oldShowEditorFn_();
+    };
+    field.showEditor_ = newShowEditorFn;		
+    this.appendDummyInput()
+        .appendField(Blockly.Msg['PROCEDURES_MUTATORARG_TITLE'])
+        .appendField(field, 'NAME')
+				.appendField(new Blockly.FieldLabelSerializable('Number'), 'TYPE');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    //this.setStyle('procedure_blocks');
+		this.setColour(40);
+    this.setTooltip(Blockly.Msg['PROCEDURES_MUTATORARG_TOOLTIP']);
+    this.contextMenu = false;
+
+    // Create the default variable when we drag the block in from the flyout.
+    // Have to do this after installing the field on the block.
+    field.onFinishEditing_ = this.deleteIntermediateVars_;
+    // Create an empty list so onFinishEditing_ has something to look at, even
+    // though the editor was never opened.
+    field.createdVariables_ = [];
+    field.onFinishEditing_('x');
+  },
+	
+
+  /**
+   * Obtain a valid name for the procedure argument. Create a variable if
+   * necessary.
+   * Merge runs of whitespace.  Strip leading and trailing whitespace.
+   * Beyond this, all names are legal.
+   * @param {string} varName User-supplied name.
+   * @return {?string} Valid name, or null if a name was not specified.
+   * @private
+   * @this Blockly.FieldTextInput
+   */
+  validator_: function(varName) { 
+    var sourceBlock = this.getSourceBlock();
+		
+		//var varName = sourceBlock.getFieldValue('NAME');
+		
+    var outerWs = Blockly.Mutator.findParentWs(sourceBlock.workspace);
+    varName = varName.replace(/[\s\xa0]+/g, ' ').replace(/^ | $/g, '');
+    if (!varName) {
+      return null;
+    }
+
+    // Prevents duplicate parameter names in functions
+    var workspace = sourceBlock.workspace.targetWorkspace ||
+        sourceBlock.workspace;
+    var blocks = workspace.getAllBlocks(false);
+    var caselessName = varName.toLowerCase();
+    for (var i = 0; i < blocks.length; i++) {
+      if (blocks[i].id == this.getSourceBlock().id) {
+        continue;
+      }
+      // Other blocks values may not be set yet when this is loaded.
+      var otherVar = blocks[i].getFieldValue('NAME');
+      if (otherVar && otherVar.toLowerCase() == caselessName) {
+        return null;
+      }
+    }
+
+    // Don't create variables for arg blocks that
+    // only exist in the mutator's flyout.
+    if (sourceBlock.isInFlyout) {
+      return varName;
+    }
+		
+		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
+
+    var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
+    if (model && model.name != varName) {
+      // Rename the variable (case change)
+      outerWs.renameVariableById(model.getId(), varName);
+    }
+    if (!model) {
+      model = outerWs.createVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
+      if (model && this.createdVariables_) {
+        this.createdVariables_.push(model);
+				console.log('Creating vatiable NAME:' + model.name + ' TYPE:' + this.getSourceBlock().getFieldValue('TYPE') + '.');
+      }
+    }
+    return varName;
+  },
+
+  /**
+   * Called when focusing away from the text field.
+   * Deletes all variables that were created as the user typed their intended
+   * variable name.
+   * @param {string} newText The new variable name.
+   * @private
+   * @this Blockly.FieldTextInput
+   */
+  deleteIntermediateVars_: function(newText) {
+    var outerWs = Blockly.Mutator.findParentWs(this.getSourceBlock().workspace);
+    if (!outerWs) {
+      return;
+    }
+    for (var i = 0; i < this.createdVariables_.length; i++) {
+      var model = this.createdVariables_[i];
+      if (model.name != newText) {
+				console.log('Deleting vatiable NAME:' + model.name + ' TYPE:' + model.type + '.');
+        outerWs.deleteVariableById(model.getId());
+      }
+    }
+  }
+};
+
+
+
+
+
+Blockly.Blocks['procedures_mutatorarg_String'] = {
+  /**
+   * Mutator block for procedure argument.
+   * @this {Blockly.Block}
+   */
+  init: function() {
+    var field = new Blockly.FieldTextInput(
+        Blockly.Procedures.DEFAULT_ARG, this.validator_);
+    // Hack: override showEditor to do just a little bit more work.
+    // We don't have a good place to hook into the start of a text edit.
+    field.oldShowEditorFn_ = field.showEditor_;
+    var newShowEditorFn = function() {
+      this.createdVariables_ = [];
+      this.oldShowEditorFn_();
+    };
+    field.showEditor_ = newShowEditorFn;		
+    this.appendDummyInput()
+        .appendField(Blockly.Msg['PROCEDURES_MUTATORARG_TITLE'])
+        .appendField(field, 'NAME')
+				.appendField(new Blockly.FieldLabelSerializable('String'), 'TYPE');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    //this.setStyle('procedure_blocks');
+		this.setColour(80);
+    this.setTooltip(Blockly.Msg['PROCEDURES_MUTATORARG_TOOLTIP']);
+    this.contextMenu = false;
+
+    // Create the default variable when we drag the block in from the flyout.
+    // Have to do this after installing the field on the block.
+    field.onFinishEditing_ = this.deleteIntermediateVars_;
+    // Create an empty list so onFinishEditing_ has something to look at, even
+    // though the editor was never opened.
+    field.createdVariables_ = [];
+    field.onFinishEditing_('x');
+  },
+	
+
+  /**
+   * Obtain a valid name for the procedure argument. Create a variable if
+   * necessary.
+   * Merge runs of whitespace.  Strip leading and trailing whitespace.
+   * Beyond this, all names are legal.
+   * @param {string} varName User-supplied name.
+   * @return {?string} Valid name, or null if a name was not specified.
+   * @private
+   * @this Blockly.FieldTextInput
+   */
+  validator_: function(varName) { 
+    var sourceBlock = this.getSourceBlock();
+		
+		//var varName = sourceBlock.getFieldValue('NAME');
+		
+    var outerWs = Blockly.Mutator.findParentWs(sourceBlock.workspace);
+    varName = varName.replace(/[\s\xa0]+/g, ' ').replace(/^ | $/g, '');
+    if (!varName) {
+      return null;
+    }
+
+    // Prevents duplicate parameter names in functions
+    var workspace = sourceBlock.workspace.targetWorkspace ||
+        sourceBlock.workspace;
+    var blocks = workspace.getAllBlocks(false);
+    var caselessName = varName.toLowerCase();
+    for (var i = 0; i < blocks.length; i++) {
+      if (blocks[i].id == this.getSourceBlock().id) {
+        continue;
+      }
+      // Other blocks values may not be set yet when this is loaded.
+      var otherVar = blocks[i].getFieldValue('NAME');
+      if (otherVar && otherVar.toLowerCase() == caselessName) {
+        return null;
+      }
+    }
+
+    // Don't create variables for arg blocks that
+    // only exist in the mutator's flyout.
+    if (sourceBlock.isInFlyout) {
+      return varName;
+    }
+		
+		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
+
+    var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
+    if (model && model.name != varName) {
+      // Rename the variable (case change)
+      outerWs.renameVariableById(model.getId(), varName);
+    }
+    if (!model) {
+      model = outerWs.createVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
+      if (model && this.createdVariables_) {
+        this.createdVariables_.push(model);
+				console.log('Creating vatiable NAME:' + model.name + ' TYPE:' + this.getSourceBlock().getFieldValue('TYPE') + '.');
+      }
+    }
+    return varName;
+  },
+
+  /**
+   * Called when focusing away from the text field.
+   * Deletes all variables that were created as the user typed their intended
+   * variable name.
+   * @param {string} newText The new variable name.
+   * @private
+   * @this Blockly.FieldTextInput
+   */
+  deleteIntermediateVars_: function(newText) {
+    var outerWs = Blockly.Mutator.findParentWs(this.getSourceBlock().workspace);
+    if (!outerWs) {
+      return;
+    }
+    for (var i = 0; i < this.createdVariables_.length; i++) {
+      var model = this.createdVariables_[i];
+      if (model.name != newText) {
+				console.log('Deleting vatiable NAME:' + model.name + ' TYPE:' + model.type + '.');
+        outerWs.deleteVariableById(model.getId());
+      }
+    }
+  }
+};
+
+
 
 Blockly.Blocks['procedures_callnoreturn'] = {
   /**
@@ -592,7 +887,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
    */
   init: function() {
     this.appendDummyInput('TOPROW')
-        .appendField(this.id, 'NAME');
+        .appendField('', 'NAME');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setStyle('procedure_blocks');
@@ -699,8 +994,9 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     // And rebuild the argument model list.
     this.argumentVarModels_ = [];
     for (var i = 0; i < this.arguments_.length; i++) {
-      var variable = Blockly.Variables.getOrCreateVariablePackage(
-          this.workspace, null, this.arguments_[i], '');
+      var variable = Blockly.Variables.getVariable(this.workspace, null, this.arguments_[i], 'Boolean');
+			if (variable == null) variable = Blockly.Variables.getVariable(this.workspace, null, this.arguments_[i], 'Number');
+			if (variable == null) variable = Blockly.Variables.getOrCreateVariablePackage(this.workspace, null, this.arguments_[i], 'String');
       this.argumentVarModels_.push(variable);
     }
 
@@ -739,7 +1035,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         // no need to fire a change event.
         Blockly.Events.disable();
         try {
-          field.setValue(this.arguments_[i]);
+          field.setValue(this.arguments_[i]).setCheck(this.argumentVarModels_[i].type);
         } finally {
           Blockly.Events.enable();
         }
@@ -747,6 +1043,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         // Add new input.
         field = new Blockly.FieldLabel(this.arguments_[i]);
         var input = this.appendValueInput('ARG' + i)
+						.setCheck(this.argumentVarModels_[i].type)
             .setAlign(Blockly.ALIGN_RIGHT)
             .appendField(field, 'ARGNAME' + i);
         input.init();
@@ -873,8 +1170,13 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         block.appendChild(mutation);
         var field = Blockly.utils.xml.createElement('field');
         field.setAttribute('name', 'NAME');
-        field.appendChild(Blockly.utils.xml.createTextNode(
-            this.getProcedureCall()));
+        var callName = this.getProcedureCall();
+        if (!callName) {
+          // Rename if name is empty string.
+          callName = Blockly.Procedures.findLegalName('', this);
+          this.renameProcedure('', callName);
+        }
+        field.appendChild(Blockly.utils.xml.createTextNode(callName));
         block.appendChild(field);
         xml.appendChild(block);
         Blockly.Xml.domToWorkspace(xml, this.workspace);
@@ -955,6 +1257,7 @@ Blockly.Blocks['procedures_callreturn'] = {
     // Tooltip is set in domToMutation.
     this.setHelpUrl(Blockly.Msg['PROCEDURES_CALLRETURN_HELPURL']);
     this.arguments_ = [];
+    this.argumentVarModels_ = [];
     this.quarkConnections_ = {};
     this.quarkIds_ = null;
     this.previousEnabledState_ = true;

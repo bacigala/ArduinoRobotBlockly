@@ -1,4 +1,10 @@
+
 /**
+ * This file was created by modification of the original file described below.
+ * File was modified to support variable types.
+ *
+ * ORIGINAL FILE LICENSE AND AUTHOR:
+ *
  * @license
  * Copyright 2012 Google LLC
  * SPDX-License-Identifier: Apache-2.0
@@ -265,23 +271,31 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
  */
 Blockly.Procedures.updateMutatorFlyout_ = function(workspace) {
   var usedNames = [];
-  var blocks = workspace.getBlocksByType('procedures_mutatorarg', false);
-  for (var i = 0, block; (block = blocks[i]); i++) {
-    usedNames.push(block.getFieldValue('NAME'));
-  }
+	var types = ['Boolean', 'Number', 'String'];
+	var i;
+	
+	for (i in types) {
+		var blocks = workspace.getBlocksByType('procedures_mutatorarg_' + types[i], false);
+		for (var i = 0, block; (block = blocks[i]); i++) {
+			usedNames.push(block.getFieldValue('NAME'));
+		}
+	}
 
   var xml = Blockly.utils.xml.createElement('xml');
-  var argBlock = Blockly.utils.xml.createElement('block');
-  argBlock.setAttribute('type', 'procedures_mutatorarg');
-  var nameField = Blockly.utils.xml.createElement('field');
-  nameField.setAttribute('name', 'NAME');
-  var argValue = Blockly.Variables.generateUniqueNameFromOptions(
-      Blockly.Procedures.DEFAULT_ARG, usedNames);
-  var fieldContent = Blockly.utils.xml.createTextNode(argValue);
 
-  nameField.appendChild(fieldContent);
-  argBlock.appendChild(nameField);
-  xml.appendChild(argBlock);
+	for (i in types) {	
+		var argBlock = Blockly.utils.xml.createElement('block');
+		argBlock.setAttribute('type', 'procedures_mutatorarg_' + types[i]);
+		var nameField = Blockly.utils.xml.createElement('field');
+		nameField.setAttribute('name', 'NAME');
+		var argValue = Blockly.Variables.generateUniqueNameFromOptions(
+				Blockly.Procedures.DEFAULT_ARG, usedNames);
+		var fieldContent = Blockly.utils.xml.createTextNode(argValue);
+		nameField.appendChild(fieldContent);
+		argBlock.appendChild(nameField);
+
+		xml.appendChild(argBlock);
+	}
 
   workspace.updateToolbox(xml);
 };

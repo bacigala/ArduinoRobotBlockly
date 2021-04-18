@@ -396,9 +396,11 @@ public class FXMLMainWindowController implements Initializable {
     public void testButton1Action() {
         System.out.println(blockly.getWorkspace());
         System.out.println(blockly.getWorkspace().replaceAll("\"", "'"));
+        //terminateSimulation();
     }
 
     public void testButton2Action() {
+        simulation.restart();
         String blocklyCode = blockly.getCode();
         if (!blocklyCode.isEmpty()) simulation.loadOttoProgram(blocklyCode);
 
@@ -416,6 +418,7 @@ public class FXMLMainWindowController implements Initializable {
     private Simulation simulation = null;
 
     private void initializeSimulation() {
+        imageView.setVisible(true);
         // start simulation - jMonkeyEngine
         var settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
         simulation = new Simulation();
@@ -435,6 +438,7 @@ public class FXMLMainWindowController implements Initializable {
 
     private void terminateSimulation() {
         if (simulation != null) simulation.stop();
+        imageView.setVisible(false);
     }
 
     /**

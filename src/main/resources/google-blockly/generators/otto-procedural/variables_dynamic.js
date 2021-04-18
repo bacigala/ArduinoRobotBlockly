@@ -35,6 +35,8 @@ Blockly.OttoProcedural['variables_set_dynamic'] = function(block) {
 
 Blockly.OttoProcedural['variables_get_dynamic_String'] = Blockly.OttoProcedural['variables_get_dynamic'];
 Blockly.OttoProcedural['variables_get_dynamic_Number'] = Blockly.OttoProcedural['variables_get_dynamic'];
+Blockly.OttoProcedural['variables_get_dynamic_Boolean'] = Blockly.OttoProcedural['variables_get_dynamic'];
 
 Blockly.OttoProcedural['variables_set_dynamic_String'] = Blockly.OttoProcedural['variables_set_dynamic'];
 Blockly.OttoProcedural['variables_set_dynamic_Number'] = Blockly.OttoProcedural['variables_set_dynamic'];
+Blockly.OttoProcedural['variables_set_dynamic_Boolean'] = Blockly.OttoProcedural['variables_set_dynamic'];

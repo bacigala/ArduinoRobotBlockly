@@ -5,7 +5,7 @@
  */
 
 /**
- * @fileoverview Generating OttoProcedural for procedure blocks.
+ * @fileoverview Generating JavaScript for procedure blocks.
  * @author fraser@google.com (Neil Fraser)
  */
 'use strict';
@@ -15,58 +15,6 @@ goog.provide('Blockly.OttoProcedural.procedures');
 goog.require('Blockly.OttoProcedural');
 
 
-Blockly.OttoProcedural['procedures_defreturn'] = function(block) {
-  // Define a procedure with a return value.
-  var funcName = Blockly.OttoProcedural.variableDB_.getName(
-      block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME);
-  var xfix1 = '';
-  if (Blockly.OttoProcedural.STATEMENT_PREFIX) {
-    xfix1 += Blockly.OttoProcedural.injectId(Blockly.OttoProcedural.STATEMENT_PREFIX,
-        block);
-  }
-  if (Blockly.OttoProcedural.STATEMENT_SUFFIX) {
-    xfix1 += Blockly.OttoProcedural.injectId(Blockly.OttoProcedural.STATEMENT_SUFFIX,
-        block);
-  }
-  if (xfix1) {
-    xfix1 = Blockly.OttoProcedural.prefixLines(xfix1, Blockly.OttoProcedural.INDENT);
-  }
-  var loopTrap = '';
-  if (Blockly.OttoProcedural.INFINITE_LOOP_TRAP) {
-    loopTrap = Blockly.OttoProcedural.prefixLines(
-        Blockly.OttoProcedural.injectId(Blockly.OttoProcedural.INFINITE_LOOP_TRAP,
-        block), Blockly.OttoProcedural.INDENT);
-  }
-  var branch = Blockly.OttoProcedural.statementToCode(block, 'STACK');
-  var returnValue = Blockly.OttoProcedural.valueToCode(block, 'RETURN',
-      Blockly.OttoProcedural.ORDER_NONE) || '';
-  var xfix2 = '';
-  if (branch && returnValue) {
-    // After executing the function body, revisit this block for the return.
-    xfix2 = xfix1;
-  }
-  if (returnValue) {
-    returnValue = Blockly.OttoProcedural.INDENT + 'return ' + returnValue + ';\n';
-  }
-  var args = [];
-  var variables = block.getVars();
-  for (var i = 0; i < variables.length; i++) {
-    args[i] = Blockly.OttoProcedural.variableDB_.getName(variables[i],
-        Blockly.VARIABLE_CATEGORY_NAME);
-  }
-	
-	if (args.length > 0) args = 'int16_t ' + args.join(', int16_t ');
-	
-  var code = 'int16_t ' + funcName + '(' + args + ') {\n' +
-      xfix1 + loopTrap + branch + xfix2 + returnValue + '}';
-  code = Blockly.OttoProcedural.scrub_(block, code);
-  // Add % so as not to collide with helper functions in definitions list.
-  Blockly.OttoProcedural.definitions_['%' + funcName] = code;
-  return null;
-};
-
-// Defining a procedure without a return value uses the same generator as
-// a procedure with a return value.
 Blockly.OttoProcedural['procedures_defnoreturn'] = function(block) {
   // Define a procedure with a return value.
   var funcName = Blockly.OttoProcedural.variableDB_.getName(
@@ -101,18 +49,95 @@ Blockly.OttoProcedural['procedures_defnoreturn'] = function(block) {
     returnValue = Blockly.OttoProcedural.INDENT + 'return ' + returnValue + ';\n';
   }
   var args = [];
-  var variables = block.getVars();
+  var variables = block.getVarModels();
   for (var i = 0; i < variables.length; i++) {
-    args[i] = Blockly.OttoProcedural.variableDB_.getName(variables[i],
-        Blockly.VARIABLE_CATEGORY_NAME);
+		args[i] = '';
+		switch (variables[i].type) {
+			case 'Boolean':
+				args[i] += 'bool';
+				break;
+			case 'Number':
+				args[i] += 'int16_t';
+				break;
+			default:
+				args[i] += variables[i].type;
+		}
+		args[i] += ' ';
+		
+    //args[i] += Blockly.OttoProcedural.variableDB_.getName(variables[i].name, variables[i].type);
+    args[i] += variables[i].name;
+  }
+  var code = 'void ' + funcName + '(' + args.join(', ') + ') {\n' +
+      xfix1 + loopTrap + branch + xfix2 + returnValue + '}';
+  code = Blockly.OttoProcedural.scrub_(block, code);
+  // Add % so as not to collide with helper functions in definitions list.
+  Blockly.OttoProcedural.definitions_['%' + funcName] = code;
+  return null;
+};
+
+Blockly.OttoProcedural['procedures_defreturn'] = function(block) {
+  // Define a procedure with a return value.
+  var funcName = Blockly.OttoProcedural.variableDB_.getName(
+      block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME);
+  var xfix1 = '';
+  if (Blockly.OttoProcedural.STATEMENT_PREFIX) {
+    xfix1 += Blockly.OttoProcedural.injectId(Blockly.OttoProcedural.STATEMENT_PREFIX,
+        block);
+  }
+  if (Blockly.OttoProcedural.STATEMENT_SUFFIX) {
+    xfix1 += Blockly.OttoProcedural.injectId(Blockly.OttoProcedural.STATEMENT_SUFFIX,
+        block);
+  }
+  if (xfix1) {
+    xfix1 = Blockly.OttoProcedural.prefixLines(xfix1, Blockly.OttoProcedural.INDENT);
+  }
+  var loopTrap = '';
+  if (Blockly.OttoProcedural.INFINITE_LOOP_TRAP) {
+    loopTrap = Blockly.OttoProcedural.prefixLines(
+        Blockly.OttoProcedural.injectId(Blockly.OttoProcedural.INFINITE_LOOP_TRAP,
+        block), Blockly.OttoProcedural.INDENT);
+  }
+  var branch = Blockly.OttoProcedural.statementToCode(block, 'STACK');
+  var returnValue = Blockly.OttoProcedural.valueToCode(block, 'RETURN',
+      Blockly.OttoProcedural.ORDER_NONE) || '';
+  var xfix2 = '';
+  if (branch && returnValue) {
+    // After executing the function body, revisit this block for the return.
+    xfix2 = xfix1;
+  }
+  if (returnValue) {
+    returnValue = Blockly.OttoProcedural.INDENT + 'return ' + returnValue + ';\n';
+  } else {
+		returnValue = Blockly.OttoProcedural.INDENT + 'return null;\n';
+		
+		
+	}
+  var args = [];
+  var variables = block.getVarModels();
+  for (var i = 0; i < variables.length; i++) {
+		args[i] = '';
+		switch (variables[i].type) {
+			case 'Boolean':
+				args[i] += 'bool';
+				break;
+			case 'Number':
+				args[i] += 'int16_t';
+				break;
+			default:
+				args[i] += variables[i].type;
+		}
+		args[i] += ' ';
+		
+    //args[i] += Blockly.OttoProcedural.variableDB_.getName(variables[i].name, variables[i].type);
+    args[i] += variables[i].name;
   }
 	
-	// CREATE ARGUMENT LIST
+	var dropdown_type = block.getFieldValue('TYPE');
+	if (dropdown_type == 'Boolean') dropdown_type = 'bool';
+	if (dropdown_type == 'Number') dropdown_type = 'int16_t';
 	
-	if (args.length > 0) args = 'int16_t ' + args.join(', int16_t ');
 	
-	
-  var code = 'void ' + funcName + '(' + args + ') {\n' +
+  var code = dropdown_type + ' ' + funcName + '(' + args.join(', ') + ') {\n' +
       xfix1 + loopTrap + branch + xfix2 + returnValue + '}';
   code = Blockly.OttoProcedural.scrub_(block, code);
   // Add % so as not to collide with helper functions in definitions list.
@@ -128,8 +153,9 @@ Blockly.OttoProcedural['procedures_callreturn'] = function(block) {
   var variables = block.getVars();
   for (var i = 0; i < variables.length; i++) {
     args[i] = Blockly.OttoProcedural.valueToCode(block, 'ARG' + i,
-        Blockly.OttoProcedural.ORDER_COMMA) || 'null';
+        Blockly.OttoProcedural.ORDER_NONE) || 'null';
   }
+
   var code = funcName + '(' + args.join(', ') + ')';
   return [code, Blockly.OttoProcedural.ORDER_FUNCTION_CALL];
 };

@@ -115,6 +115,7 @@ Blockly.OttoProcedural.init = function(workspace) {
 
 	var defNumber = [];
 	var defString = [];
+	var defBoolean = [];
 	
   // Add user variables, but only ones that are being used.
   var variables = Blockly.Variables.allUsedVarModels(workspace);
@@ -122,8 +123,11 @@ Blockly.OttoProcedural.init = function(workspace) {
 		if (variables[i].type === 'Number') {
 			defNumber.push(Blockly.OttoProcedural.variableDB_.getName(variables[i].getId(),
         Blockly.VARIABLE_CATEGORY_NAME));
-		} else {
+		} else if (variables[i].type === 'String')  {
 			defString.push(Blockly.OttoProcedural.variableDB_.getName(variables[i].getId(),
+        Blockly.VARIABLE_CATEGORY_NAME));
+		} else  {
+			defBoolean.push(Blockly.OttoProcedural.variableDB_.getName(variables[i].getId(),
         Blockly.VARIABLE_CATEGORY_NAME));
 		}
   }
@@ -136,8 +140,14 @@ Blockly.OttoProcedural.init = function(workspace) {
 	if (defNumber.length) 
     Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'int16_t ' + defNumber.join(', ') + ';\n';
 	if (defString.length) 
-    Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'String ' + defString.join(', ') + ';\n';		
+    Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'String ' + defString.join(', ') + ';\n';	
+	if (defBoolean.length) 
+    Blockly.OttoProcedural.definitions_['variables'] = Blockly.OttoProcedural.definitions_['variables'] + 'bool ' + defBoolean.join(', ') + ';\n';		
+	
+	Blockly.OttoProcedural.codeFunctions_ = [];
 };
+
+Blockly.OttoProcedural.codeFunctions_ = [];
 
 /**
  * Prepend the generated code with the variable definitions.

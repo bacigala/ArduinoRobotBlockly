@@ -1,4 +1,10 @@
+
 /**
+ * This file was created by modification of the original file described below.
+ * File was modified to support variable types.
+ *
+ * ORIGINAL FILE LICENSE AND AUTHOR:
+ *
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: Apache-2.0
@@ -28,9 +34,9 @@ Blockly.VariablesDynamic.onCreateVariableButtonClick_Number = function(button) {
   Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace(),
       undefined, 'Number');
 };
-Blockly.VariablesDynamic.onCreateVariableButtonClick_Colour = function(button) {
+Blockly.VariablesDynamic.onCreateVariableButtonClick_Boolean = function(button) {
   Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace(),
-      undefined, 'Colour');
+      undefined, 'Boolean');
 };
 /**
  * Construct the elements (blocks and button) required by the flyout for the
@@ -54,6 +60,23 @@ Blockly.VariablesDynamic.flyoutCategory = function(workspace) {
       Blockly.VariablesDynamic.onCreateVariableButtonClick_Number);
 	
   var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'Number');
+  xmlList = xmlList.concat(blockList);
+	
+	// Boolean variables
+	label = document.createElement('label');
+	xmlList.push(label);
+	label = document.createElement('label');
+	label.setAttribute('text', 'Boolean variables');
+	xmlList.push(label);
+
+	var button = document.createElement('button');
+  button.setAttribute('text', 'Create boolean variable');
+  button.setAttribute('callbackKey', 'CREATE_VARIABLE_BOOLEAN');
+  xmlList.push(button);
+	workspace.registerButtonCallback('CREATE_VARIABLE_BOOLEAN',
+      Blockly.VariablesDynamic.onCreateVariableButtonClick_Boolean);
+	
+  var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'Boolean');
   xmlList = xmlList.concat(blockList);
 	
 	// String variables

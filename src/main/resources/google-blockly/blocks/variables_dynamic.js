@@ -1,4 +1,10 @@
 /**
+ * This file was modified to handle variable types of String, Number and Boolean
+ * for project Arduino Robot Blockly
+ * Below is the original copyright.
+ */
+
+/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: Apache-2.0
@@ -53,7 +59,8 @@ Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
       "type": "field_variable",
       "name": "VAR",
       "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
-			"defaultType": "Number"
+			"defaultType": "Number",
+			"variableTypes": ["Number"],
     }],
     "output": "Number",
     "colour": "330",
@@ -69,10 +76,28 @@ Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
       "type": "field_variable",
       "name": "VAR",
       "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
-			"defaultType": "String"
+			"defaultType": "String",
+			"variableTypes": ["String"],
     }],
     "output": "String",
     "colour": "195",
+    "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
+    "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
+    "extensions": ["contextMenu_variableDynamicSetterGetter"]
+  },
+	// Boolean GETTER.
+  {
+    "type": "variables_get_dynamic_Boolean",
+    "message0": "%1",
+    "args0": [{
+      "type": "field_variable",
+      "name": "VAR",
+      "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+			"defaultType": "Boolean",
+			"variableTypes": ["Boolean"],
+    }],
+    "output": "Boolean",
+    "colour": "75",
     "helpUrl": "%{BKY_VARIABLES_GET_HELPURL}",
     "tooltip": "%{BKY_VARIABLES_GET_TOOLTIP}",
     "extensions": ["contextMenu_variableDynamicSetterGetter"]
@@ -144,6 +169,31 @@ Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
     "previousStatement": null,
     "nextStatement": null,
     "colour": 195,
+    "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
+    "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
+    "extensions": ["contextMenu_variableDynamicSetterGetter"]
+  },
+	// BOOLEAN SETTER
+	  {
+    "type": "variables_set_dynamic_Boolean",
+    "message0": "%{BKY_VARIABLES_SET}",
+    "args0": [
+			{
+				"type": "field_variable",
+				"name": "VAR",
+				"variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+				"variableTypes": ["Boolean"],
+				"defaultType": "Boolean"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"check": "Boolean"  
+			}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 75,
     "tooltip": "%{BKY_VARIABLES_SET_TOOLTIP}",
     "helpUrl": "%{BKY_VARIABLES_SET_HELPURL}",
     "extensions": ["contextMenu_variableDynamicSetterGetter"]
@@ -221,7 +271,7 @@ Blockly.Constants.VariablesDynamic.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MI
   onchange: function(_e) {
     var id = this.getFieldValue('VAR');
     var variableModel = Blockly.Variables.getVariable(this.workspace, id);
-    if ((this.type == 'variables_get_dynamic') || (this.type == 'variables_get_dynamic_Number') || (this.type == 'variables_get_dynamic_String')) {
+    if ((this.type == 'variables_get_dynamic') || (this.type == 'variables_get_dynamic_Number') || (this.type == 'variables_get_dynamic_String') || (this.type == 'variables_get_dynamic_Boolean')) {
       this.outputConnection.setCheck(variableModel.type);
     } else {
       this.getInput('VALUE').connection.setCheck(variableModel.type);
