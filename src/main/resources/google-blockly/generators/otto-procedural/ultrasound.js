@@ -1,8 +1,10 @@
 
-// ULTRASOUND GENERATOR
+// GENERATORS - SENSOR
+
+// ULTRASOUND 
 
 Blockly.OttoProcedural['otto_procedural_ultrasound_get_distance'] = function(block) {
-	return ['measure_distance()', Blockly.OttoProcedural.ORDER_NONE];
+	return ['measure_distance()', Blockly.OttoProcedural.ORDER_ATOMIC];
 };
 
 Blockly.OttoProcedural['wait_ultrasound'] = function(block) {
@@ -20,13 +22,24 @@ Blockly.OttoProcedural['wait_ultrasound'] = function(block) {
   return code;
 };
 
+Blockly.OttoProcedural['ulrasonic_gesture_record'] = function(block) {
+  var code = 'ultrasonic_gesture_record(50, 2000, 3000);\n';
+  return code;
+};
+
+Blockly.OttoProcedural['ulrasonic_gesture_last'] = function(block) {
+  var code = 'US_last_seen_gesture';
+  return [code, Blockly.OttoProcedural.ORDER_ATOMIC];
+};
+
+
 // TOUCH
 
 Blockly.OttoProcedural['button_pressed'] = function(block) {
   var dropdown_button = block.getFieldValue('BUTTON');
   if (dropdown_button == 'RIGHT') code = 'digitalRead(TOUCH1)';
   if (dropdown_button == 'LEFT') code = 'digitalRead(TOUCH2)';
-  return [code, Blockly.OttoProcedural.ORDER_NONE];
+  return [code, Blockly.OttoProcedural.ORDER_ATOMIC];
 };
 
 Blockly.OttoProcedural['wait_touch'] = function(block) {
@@ -41,14 +54,14 @@ Blockly.OttoProcedural['wait_touch'] = function(block) {
   return code;
 };
 
-Blockly.OttoProcedural['ulrasonic_gesture_record'] = function(block) {
-  var code = 'ultrasonic_gesture_record(50, 2000, 3000);\n';
+Blockly.OttoProcedural['touch_gesture_record'] = function(block) {
+  var dropdown_button = block.getFieldValue('BUTTON');
+	if (dropdown_button == 'RIGHT') code = 'touch_gesture_record(TOUCH1, 2000, 3000);\n';
+	if (dropdown_button == 'LEFT') code = 'touch_gesture_record(TOUCH2, 2000, 3000);\n';
   return code;
 };
 
-Blockly.OttoProcedural['ulrasonic_gesture_last'] = function(block) {
-  var code = 'US_last_seen_gesture';
-  return [code, Blockly.OttoProcedural.ORDER_NONE];
+Blockly.OttoProcedural['touch_gesture_last'] = function(block) {
+  var code = 'TOUCH_last_seen_gesture';
+  return [code, Blockly.OttoProcedural.ORDER_ATOMIC];
 };
-
-

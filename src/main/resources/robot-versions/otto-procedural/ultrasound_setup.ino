@@ -1,5 +1,4 @@
 
-// ULTRASOUND SETUP
+// SENSOR SETUP
 
 init_ultrasonic();
-	
