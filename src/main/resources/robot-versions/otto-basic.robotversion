@@ -33,6 +33,7 @@
 	programInRam		= true
 	programLocation	= otto-basic/otto-basic.ino
 	codeLoader			= ottoBasic
+	simulation			= true
 
 !Module 1
 	module1.name 				  = Basic

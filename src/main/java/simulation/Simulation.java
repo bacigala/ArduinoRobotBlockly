@@ -78,8 +78,6 @@ public class Simulation extends JmeToJfxApplication {
         // robot Otto model with joints
         robotOtto = new RobotOttoJoints(assetManager, bulletAppState);
         rootNode.attachChild(robotOtto.getRootNode());
-
-        loadOttoProgram("@1000 2 130\n1000 2 130\n0 0 0");
     }
 
     float time = 0f, continualTime = 0;

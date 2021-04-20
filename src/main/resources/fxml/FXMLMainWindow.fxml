@@ -32,7 +32,7 @@
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <SplitPane dividerPositions="0.6264822134387352" orientation="VERTICAL" prefHeight="508.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane fx:id="rightSplitPane" dividerPositions="0.70042194092827" orientation="VERTICAL" prefHeight="508.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
@@ -51,7 +51,7 @@
                                                                <children>
                                                                   <Button fx:id="codeVerifyButton" alignment="CENTER" mnemonicParsing="false" onAction="#codeVerifyButtonAction" prefWidth="60.0" text="Verify" textAlignment="CENTER" />
                                                                   <Button fx:id="codeUploadButton" alignment="CENTER" mnemonicParsing="false" onAction="#codeUploadButtonAction" prefWidth="60.0" text="Upload" textAlignment="CENTER" />
-                                                                  <Button fx:id="codeSendToConsoleButton" mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" prefWidth="120.0" text="Send to console" />
+                                                                  <Button fx:id="codeSendToConsoleButton" mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" text="To console" />
                                                                </children>
                                                                <padding>
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -95,6 +95,7 @@
                             <AnchorPane fx:id="simulationAnchorPane" minHeight="0.0" minWidth="0.0">
                                  <children>
                                     <ImageView fx:id="imageView" disable="true" fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="simulationButton" disable="true" mnemonicParsing="false" onAction="#simulationButtonAction" text="Stop" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
                           </items>

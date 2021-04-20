@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.input.KeyCode;
+import netscape.javascript.JSException;
 import simulation.Simulation;
 
 import java.io.*;
@@ -335,6 +336,8 @@ public class FXMLMainWindowController implements Initializable {
             blockly.setGenerator(robotVersionControl.getProperty("generator"));
             chosenModules.clear();
             robotVersionModulesButtonAction();
+            simulationButton.setDisable(!Boolean.parseBoolean(
+                    robotVersionControl.getProperty("simulation", "false")));
             blocklyWebView.setVisible(true);
         } catch (Exception e) {
             blocklyWebView.setVisible(false);
@@ -400,32 +403,29 @@ public class FXMLMainWindowController implements Initializable {
     }
 
     public void testButton2Action() {
-        simulation.restart();
-        String blocklyCode = blockly.getCode();
-        if (!blocklyCode.isEmpty()) simulation.loadOttoProgram(blocklyCode);
-
+        terminateSimulation();
     }
 
 
     /**
      * Simulation.
      */
-    @FXML
-    javafx.scene.layout.AnchorPane simulationAnchorPane;
-    @FXML
-    javafx.scene.image.ImageView imageView;
+    @FXML javafx.scene.layout.AnchorPane simulationAnchorPane;
+    @FXML javafx.scene.control.SplitPane rightSplitPane;
+    @FXML javafx.scene.image.ImageView imageView;
+    @FXML javafx.scene.control.Button simulationButton;
+    @FXML javafx.scene.control.Button simulationStopButton;
 
     private Simulation simulation = null;
+    private enum SimulationState { STOP, READY, RUN }
+    private SimulationState simulationState;
 
+    // called on application startup
     private void initializeSimulation() {
-        imageView.setVisible(true);
-        // start simulation - jMonkeyEngine
-        var settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
-        simulation = new Simulation();
-        simulation.setSettings(settings);
-        simulation.setShowSettings(false);
-        JmeToJfxIntegrator.startAndBindMainViewPort(simulation, imageView, Thread::new);
-        Logger.getLogger("com.jme3").setLevel(SEVERE);
+        // control
+        simulationState = SimulationState.STOP;
+        simulationButton.setText("Reset");
+        simulationButton.setDisable(true);
 
         // simulation ImageView auto resize
         ChangeListener<Number> sizeChangeListener = (observableValue, number, t1) -> {
@@ -434,11 +434,62 @@ public class FXMLMainWindowController implements Initializable {
         };
         simulationAnchorPane.heightProperty().addListener(sizeChangeListener);
         simulationAnchorPane.widthProperty().addListener(sizeChangeListener);
+        rightSplitPane.setDividerPositions(0.5);
+
+        Logger.getLogger("com.jme3").setLevel(SEVERE);
+    }
+
+    private void prepareSimulation() {
+        simulationButton.setDisable(true);
+        AppSettings settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
+        simulation = new Simulation();
+        simulation.setSettings(settings);
+        simulation.setShowSettings(false);
+        JmeToJfxIntegrator.startAndBindMainViewPort(simulation, imageView, Thread::new);
+        Logger.getLogger("com.jme3").setLevel(SEVERE);
+
+        simulation.enqueue(() -> Platform.runLater(() -> {
+            simulationState = SimulationState.READY;
+            simulationButton.setText("Run");
+            simulationButton.setDisable(false);
+        }));
+    }
+
+    private void loadAndRunSimulation() {
+        String blocklyCode = "";
+        try {
+            blocklyCode = blockly.getCode();
+        } catch (JSException e) {
+            System.err.println("Unable to load Blockly program.");
+        }
+        if (blocklyCode.isEmpty()) return;
+        simulation.loadOttoProgram(blocklyCode);
+
+        simulationState = SimulationState.RUN;
+        simulationButton.setText("Stop");
+
     }
 
     private void terminateSimulation() {
         if (simulation != null) simulation.stop();
-        imageView.setVisible(false);
+        simulation = null;
+
+        simulationState = SimulationState.STOP;
+        simulationButton.setText("Reset");
+    }
+
+    public void simulationButtonAction() {
+        switch (simulationState) {
+            case STOP:
+                prepareSimulation();
+                break;
+            case READY:
+                loadAndRunSimulation();
+                break;
+            case RUN:
+                terminateSimulation();
+                break;
+        }
     }
 
     /**
