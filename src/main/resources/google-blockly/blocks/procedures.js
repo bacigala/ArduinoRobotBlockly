@@ -277,8 +277,8 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    *     - that it DOES NOT have a return value.
    * @this {Blockly.Block}
    */
-  getProcedureDef: function() {
-    return [this.getFieldValue('NAME'), this.arguments_, false];
+  getProcedureDef: function() {						// JAMA: this returned just rguments...
+    return [this.getFieldValue('NAME'), this.argumentVarModels_, false];
   },
   /**
    * Return all variables referenced by this block.
@@ -715,12 +715,24 @@ Blockly.Blocks['procedures_mutatorarg_Number'] = {
     }
 		
 		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
+		
+		 //JAVA try to get universal type 
+		// var modelCheck = outerWs.getVariable(varName, '');
+		// if (modelCheck) {
+			
+		// }
+		 
+		 
+		 
 
     var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
+		
+		
     if (model && model.name != varName) {
       // Rename the variable (case change)
       outerWs.renameVariableById(model.getId(), varName);
     }
+		
     if (!model) {
       model = outerWs.createVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
       if (model && this.createdVariables_) {
@@ -1027,7 +1039,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
    * @this {Blockly.Block}
    */
   updateShape_: function() {
-    for (var i = 0; i < this.arguments_.length; i++) {
+    for (var i = 0; i < this.argumentVarModels_.length; i++) { //JAMA III
       var field = this.getField('ARGNAME' + i);
       if (field) {
         // Ensure argument name is up to date.
@@ -1035,7 +1047,14 @@ Blockly.Blocks['procedures_callnoreturn'] = {
         // no need to fire a change event.
         Blockly.Events.disable();
         try {
-          field.setValue(this.arguments_[i]).setCheck(this.argumentVarModels_[i].type);
+          field.setValue(this.argumentVarModels_[i].name);
+					//field.setCheck(this.argumentVarModels_[i].type);
+					
+					// set check // JAMA $
+					var input = this.getInput('ARG' + i);
+					input.setCheck(this.argumentVarModels_[i].type);
+
+					
         } finally {
           Blockly.Events.enable();
         }
@@ -1077,9 +1096,10 @@ Blockly.Blocks['procedures_callnoreturn'] = {
   mutationToDom: function() {
     var container = Blockly.utils.xml.createElement('mutation');
     container.setAttribute('name', this.getProcedureCall());
-    for (var i = 0; i < this.arguments_.length; i++) {
+    for (var i = 0; i < this.argumentVarModels_.length; i++) { // JAMA II
       var parameter = Blockly.utils.xml.createElement('arg');
-      parameter.setAttribute('name', this.arguments_[i]);
+      parameter.setAttribute('name', this.argumentVarModels_[i].name);
+      parameter.setAttribute('type', this.argumentVarModels_[i].type);
       container.appendChild(parameter);
     }
     return container;
@@ -1096,7 +1116,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     var paramIds = [];
     for (var i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
       if (childNode.nodeName.toLowerCase() == 'arg') {
-        args.push(childNode.getAttribute('name'));
+        args.push(childNode.getAttribute('name')); // JAMA III
         paramIds.push(childNode.getAttribute('paramId'));
       }
     }

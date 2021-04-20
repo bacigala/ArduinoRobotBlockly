@@ -249,7 +249,8 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
       block.appendChild(mutation);
       for (var j = 0; j < args.length; j++) {
         var arg = Blockly.utils.xml.createElement('arg');
-        arg.setAttribute('name', args[j]);
+        arg.setAttribute('name', args[j].name); // JAMA
+        arg.setAttribute('type', args[j].type); // JAMA
         mutation.appendChild(arg);
       }
       xmlList.push(block);
