@@ -2,6 +2,8 @@ package application;
 
 import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.system.AppSettings;
 import dialog.ExampleSelectDialog;
 import dialog.FXMLModuleSelectDialogController;
@@ -22,6 +24,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.SEVERE;
@@ -38,7 +43,7 @@ public class FXMLMainWindowController implements Initializable {
 
     // called after last application window has been closed
     public void applicationClose() {
-        terminateSimulation();
+        terminateSimulation(true);
         terminateSerialCommunication();
     }
 
@@ -46,8 +51,7 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Blockly.
      */
-    @FXML
-    javafx.scene.web.WebView blocklyWebView;
+    @FXML javafx.scene.web.WebView blocklyWebView;
 
     private Blockly blockly = null;
 
@@ -79,14 +83,10 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Console.
      */
-    @FXML
-    javafx.scene.control.TextArea consoleTextArea;
-    @FXML
-    javafx.scene.control.TextField consoleTextField;
-    @FXML
-    javafx.scene.control.Button consoleSendButton;
-    @FXML
-    javafx.scene.control.Button consoleClearButton;
+    @FXML javafx.scene.control.TextArea consoleTextArea;
+    @FXML javafx.scene.control.TextField consoleTextField;
+    @FXML javafx.scene.control.Button consoleSendButton;
+    @FXML javafx.scene.control.Button consoleClearButton;
 
     private boolean lastConsoleWriteBySerial = false;
 
@@ -159,14 +159,10 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Generated code.
      */
-    @FXML
-    javafx.scene.control.TextArea codeTextArea;
-    @FXML
-    javafx.scene.control.Button codeSendToConsoleButton;
-    @FXML
-    javafx.scene.control.Button codeVerifyButton;
-    @FXML
-    javafx.scene.control.Button codeUploadButton;
+    @FXML javafx.scene.control.TextArea codeTextArea;
+    @FXML javafx.scene.control.Button codeSendToConsoleButton;
+    @FXML javafx.scene.control.Button codeVerifyButton;
+    @FXML javafx.scene.control.Button codeUploadButton;
 
     public void codeSendToConsoleButtonAction() {
         consoleSendButton.setDisable(true);
@@ -252,12 +248,9 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Serial connection.
      */
-    @FXML
-    javafx.scene.control.Button connectionConnectButton;
-    @FXML
-    javafx.scene.control.Button connectionSearchButton;
-    @FXML
-    javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> connectionChoiceBox;
+    @FXML javafx.scene.control.Button connectionConnectButton;
+    @FXML javafx.scene.control.Button connectionSearchButton;
+    @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> connectionChoiceBox;
     private final SerialCommunicator serialCommunicator = new SerialCommunicator();
     private boolean isConnected = false;
 
@@ -306,12 +299,9 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Robot version.
      */
-    @FXML
-    javafx.scene.control.Button robotVersionLoadButton;
-    @FXML
-    javafx.scene.control.Button robotVersionSearchButton;
-    @FXML
-    javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
+    @FXML javafx.scene.control.Button robotVersionLoadButton;
+    @FXML javafx.scene.control.Button robotVersionSearchButton;
+    @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
 
     private final RobotVersionControl robotVersionControl = new RobotVersionControl();
     private final ArrayList<Integer> chosenModules = new ArrayList<>();
@@ -397,13 +387,13 @@ public class FXMLMainWindowController implements Initializable {
 
 
     public void testButton1Action() {
-        System.out.println(blockly.getWorkspace());
-        System.out.println(blockly.getWorkspace().replaceAll("\"", "'"));
+        //System.out.println(blockly.getWorkspace());
+        //System.out.println(blockly.getWorkspace().replaceAll("\"", "'"));
         //terminateSimulation();
     }
 
     public void testButton2Action() {
-        terminateSimulation();
+
     }
 
 
@@ -414,15 +404,19 @@ public class FXMLMainWindowController implements Initializable {
     @FXML javafx.scene.control.SplitPane rightSplitPane;
     @FXML javafx.scene.image.ImageView imageView;
     @FXML javafx.scene.control.Button simulationButton;
-    @FXML javafx.scene.control.Button simulationStopButton;
+    @FXML javafx.scene.control.Button simulationControlButton;
+    @FXML javafx.scene.control.Slider simulationSpeedSlider;
 
     private Simulation simulation = null;
     private enum SimulationState { STOP, READY, RUN }
     private SimulationState simulationState;
 
+    private AtomicBoolean programLoading;
+    private AtomicInteger simulationSpeed;
+
     // called on application startup
     private void initializeSimulation() {
-        // control
+        // state
         simulationState = SimulationState.STOP;
         simulationButton.setText("Reset");
         simulationButton.setDisable(true);
@@ -437,25 +431,84 @@ public class FXMLMainWindowController implements Initializable {
         rightSplitPane.setDividerPositions(0.5);
 
         Logger.getLogger("com.jme3").setLevel(SEVERE);
+
+        // camera control
+        final float rotationStep = 5 * FastMath.DEG_TO_RAD;
+        final float moveStep = 10;
+        simulationControlButton.setOnKeyPressed(e -> {
+            switch (e.getCode().getChar().charAt(0)) {
+                case 'A':
+                    simulation.rotateCamera(Simulation.Axis.Y, rotationStep);
+                    break;
+                case 'D':
+                    simulation.rotateCamera(Simulation.Axis.Y, -rotationStep);
+                    break;
+                case 'W':
+                    simulation.rotateCamera(Simulation.Axis.X, -rotationStep);
+                    break;
+                case 'S':
+                    simulation.rotateCamera(Simulation.Axis.X, rotationStep);
+                    break;
+                case 'U':
+                    simulation.moveCamera(Simulation.Axis.Y, -moveStep);
+                    break;
+                case 'O':
+                    simulation.moveCamera(Simulation.Axis.Y, moveStep);
+                    break;
+                case 'I':
+                    simulation.moveCamera(Simulation.Axis.Z, moveStep);
+                    break;
+                case 'K':
+                    simulation.moveCamera(Simulation.Axis.Z, -moveStep);
+                    break;
+                case 'L':
+                    simulation.moveCamera(Simulation.Axis.X, moveStep);
+                    break;
+                case 'J':
+                    simulation.moveCamera(Simulation.Axis.X, -moveStep);
+                    break;
+            }
+        });
+        simulationControlButton.setDisable(true);
+
+        simulationSpeedSlider.setOnMouseDragged(
+                e -> simulationSpeed.set((int) Math.round(simulationSpeedSlider.getValue())));
+        simulationSpeedSlider.setOnKeyTyped(
+                e -> simulationSpeed.set((int) Math.round(simulationSpeedSlider.getValue())));
+        simulationSpeedSlider.setOnMouseClicked(
+                e -> simulationSpeed.set((int) Math.round(simulationSpeedSlider.getValue())));
     }
 
     private void prepareSimulation() {
         simulationButton.setDisable(true);
         AppSettings settings = JmeToJfxIntegrator.prepareSettings(new AppSettings(true), 60);
-        simulation = new Simulation();
+        programLoading = new AtomicBoolean(true);
+        simulationSpeed = new AtomicInteger(3);
+        simulation = new Simulation(programLoading, simulationSpeed);
         simulation.setSettings(settings);
         simulation.setShowSettings(false);
         JmeToJfxIntegrator.startAndBindMainViewPort(simulation, imageView, Thread::new);
         Logger.getLogger("com.jme3").setLevel(SEVERE);
-
         simulation.enqueue(() -> Platform.runLater(() -> {
             simulationState = SimulationState.READY;
             simulationButton.setText("Run");
             simulationButton.setDisable(false);
+            simulationControlButton.setDisable(false);
         }));
     }
 
     private void loadAndRunSimulation() {
+        programLoading.set(true);
+        synchronized(programLoading) {
+            try {
+                // Calling wait() will block this thread until another thread
+                // calls notify() on the object.
+                programLoading.wait();
+            } catch (InterruptedException e) {
+                // Happens if someone interrupts your thread.
+                System.err.println("interrupted");
+            }
+        }
         String blocklyCode = "";
         try {
             blocklyCode = blockly.getCode();
@@ -467,11 +520,26 @@ public class FXMLMainWindowController implements Initializable {
 
         simulationState = SimulationState.RUN;
         simulationButton.setText("Stop");
-
+        programLoading.set(false);
     }
 
-    private void terminateSimulation() {
-        if (simulation != null) simulation.stop();
+    private void terminateSimulation(boolean exitApplication) {
+        simulationControlButton.setDisable(true);
+        programLoading.set(true);
+
+        if (!exitApplication) {
+            synchronized (programLoading) {
+                try {
+                    // Calling wait() will block this thread until another thread
+                    // calls notify() on the object.
+                    programLoading.wait();
+                } catch (InterruptedException e) {
+                    // Happens if someone interrupts your thread.
+                    System.err.println("interrupted");
+                }
+            }
+        }
+        if (simulation != null) simulation.stop(true);
         simulation = null;
 
         simulationState = SimulationState.STOP;
@@ -487,16 +555,17 @@ public class FXMLMainWindowController implements Initializable {
                 loadAndRunSimulation();
                 break;
             case RUN:
-                terminateSimulation();
+                terminateSimulation(false);
                 break;
         }
     }
 
+
+
     /**
      * Load @ program.
      */
-    @FXML
-    javafx.scene.control.MenuItem loadAtProgramButton;
+    @FXML  javafx.scene.control.MenuItem loadAtProgramButton;
 
     public void loadAtProgramButtonAction() {
         String codeLoader = robotVersionControl.getProperty("codeLoader");

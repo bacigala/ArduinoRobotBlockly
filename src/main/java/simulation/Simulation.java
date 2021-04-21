@@ -5,23 +5,27 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.jfx.injfx.JmeToJfxApplication;
-import com.jme3.light.DirectionalLight;
+import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Simulation extends JmeToJfxApplication {
     private RobotOtto robotOtto;
-    private static final Box floor;
+    private static final Box floor = new Box(400f, .1f, 400f);
+    private final AtomicBoolean programLoading;
+    private final AtomicInteger simulationSpeed;
 
-    static {
-        floor = new Box(400f, .1f, 400f);
-        floor.scaleTextureCoordinates(new Vector2f(3, 6));
+
+    public Simulation(AtomicBoolean programLoading, AtomicInteger simulationSpeed) {
+        super();
+        this.programLoading = programLoading;
+        this.simulationSpeed = simulationSpeed;
     }
 
     // start and run simulation in new window
@@ -40,19 +44,13 @@ public class Simulation extends JmeToJfxApplication {
         bulletAppState.setDebugEnabled(true);
         stateManager.attach(bulletAppState);
 
-        // camera
-        cam.setLocation(new Vector3f(0, 50f, 213f));
-        cam.lookAt(new Vector3f(0, 77, 0), Vector3f.UNIT_Y);
-        cam.update();
-        cam.updateViewProjection();
-
         // light
-        DirectionalLight sun = new DirectionalLight();
-        sun.setDirection(new Vector3f(0, -1, -1));
+        AmbientLight sun = new AmbientLight();
+        //sun.setDirection(new Vector3f(0, -1, -1));
         sun.setColor(ColorRGBA.White);
         rootNode.addLight(sun);
 
-        // floor setup
+        // floor
         Geometry floor_geo = new Geometry("Floor", floor);
         Material floor_mat = createMaterial(assetManager, ColorRGBA.LightGray);
         floor_geo.setMaterial(floor_mat);
@@ -63,6 +61,7 @@ public class Simulation extends JmeToJfxApplication {
         floor_geo.addControl(floor_phy);
         floor_phy.setKinematic(true);
         bulletAppState.getPhysicsSpace().add(floor_phy);
+        floor.scaleTextureCoordinates(new Vector2f(3, 6));
 
         // robot Otto model SIMPLE
 //        robotOtto = new RobotOttoSimple(assetManager);
@@ -78,24 +77,84 @@ public class Simulation extends JmeToJfxApplication {
         // robot Otto model with joints
         robotOtto = new RobotOttoJoints(assetManager, bulletAppState);
         rootNode.attachChild(robotOtto.getRootNode());
+
+        // camera
+        cam.setLocation(new Vector3f(0,50, 230));
+        rotateCamera(Axis.Y, FastMath.PI); // rotation setup
     }
 
+
+    /**
+     * Camera.
+     */
+    // rotation
+    public enum Axis { X, Y, Z }
+    float rotationX = 0, rotationY = 0, rotationZ = 0;
+    Quaternion cameraRotation = new Quaternion();
+
+    public void rotateCamera(Axis axis, float delta) {
+        switch (axis) {
+            case X:
+                rotationX += delta;
+                break;
+            case Y:
+                rotationY += delta;
+                break;
+            case Z:
+                rotationZ += delta;
+                break;
+        }
+        cameraRotation.fromAngles(rotationX, rotationY, rotationZ);
+        cam.setRotation(cameraRotation);
+        cam.updateViewProjection();
+    }
+
+    // rotation
+    public void moveCamera(Axis axis, float delta) {
+        Vector3f move = null;
+        switch (axis) {
+            case X:
+                move = cam.getDirection().cross(Vector3f.UNIT_Y);
+                break;
+            case Y:
+                move = cam.getDirection().cross(Vector3f.UNIT_Y);
+                move = move.cross(cam.getDirection());
+                break;
+            case Z:
+                move = cam.getDirection();
+                break;
+        }
+        cam.setLocation(cam.getLocation().add((move.normalize()).mult(delta)));
+        cam.updateViewProjection();
+    }
+
+
+
+
+
     float time = 0f, continualTime = 0;
-    float diff = 0.01f;
     float lastUpdate = 0;
     boolean newMoment = true;
     int oldMoment = 0;
 
     @Override
     public void simpleUpdate(float tpf) {
-        continualTime += diff;
-        time += diff;
+        if (programLoading.get()) {
+            synchronized(programLoading) {
+                programLoading.notify();
+            }
+            return;
+        }
 
+        continualTime += (simulationSpeed.get() / 100f);
+        time += (simulationSpeed.get() / 100f);
         int moment = (int) Math.floor(time);
         if (moment >= motor.size()) {
             time = 0;
             lastUpdate = 0;
-            System.err.println("REPLAY");
+            //System.err.println("REPLAY");
+            oldMoment = 0;
+            newMoment = true;
             return;
         }
         if (moment != oldMoment) {

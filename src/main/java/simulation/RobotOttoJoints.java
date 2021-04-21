@@ -20,7 +20,7 @@ import com.jme3.scene.Spatial;
  */
 public class RobotOttoJoints implements RobotOtto {
     // Node = point of rotation
-    private final Node ottoNode, ottoBottomNode, ottoArmRightNode, ottoArmLeftNode,
+    public final Node ottoNode, ottoBottomNode, ottoArmRightNode, ottoArmLeftNode,
             ottoLegRightNode, ottoLegLeftNode, ottoFootRightNode, ottoFootLeftNode;
 
     private final HingeJoint legLeftJoint, armLeftJoint, armRightJoint, legRightJoint, footLeftJoint, footRightJoint;
