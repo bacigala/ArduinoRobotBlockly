@@ -95,9 +95,9 @@
                               </AnchorPane>
                             <AnchorPane fx:id="simulationAnchorPane" minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <ImageView fx:id="imageView" disable="true" focusTraversable="true" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <Button fx:id="simulationButton" disable="true" mnemonicParsing="false" onAction="#simulationButtonAction" text="Stop" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                                    <Button fx:id="simulationControlButton" mnemonicParsing="false" text="Control" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                                    <ImageView fx:id="simulationImageView" disable="true" focusTraversable="true" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="simulationStartStopButton" disable="true" mnemonicParsing="false" onAction="#simulationStartStopButtonAction" text="Stop" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                    <Button fx:id="simulationCameraControlButton" mnemonicParsing="false" text="Control" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
                                     <Slider fx:id="simulationSpeedSlider" blockIncrement="0.3" layoutX="38.0" layoutY="95.0" max="6.0" showTickMarks="true" value="2.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" />
                                  </children>
                               </AnchorPane>

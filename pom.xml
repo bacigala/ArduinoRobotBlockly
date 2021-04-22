@@ -55,7 +55,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>EvidenciaSkladu</mainClass>
+                    <mainClass>Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -113,11 +113,11 @@
             <artifactId>jme3-bullet</artifactId>
             <version>3.3.2-stable</version>
         </dependency>
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-bullet-native</artifactId>
-            <version>3.3.2-stable</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jmonkeyengine</groupId>-->
+<!--            <artifactId>jme3-bullet-native</artifactId>-->
+<!--            <version>3.3.2-stable</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.jmonkeyengine</groupId>
@@ -125,11 +125,11 @@
             <version>3.1.0-stable</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.jmonkeyengine</groupId>
-            <artifactId>jme3-blender</artifactId>
-            <version>3.1.0-stable</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jmonkeyengine</groupId>-->
+<!--            <artifactId>jme3-blender</artifactId>-->
+<!--            <version>3.1.0-stable</version>-->
+<!--        </dependency>-->
 
 
 

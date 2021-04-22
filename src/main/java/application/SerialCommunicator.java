@@ -57,6 +57,7 @@ public class SerialCommunicator {
             connectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
             setOutputStream(outputStream);
         } catch (Exception e) {
+            connectedPort = null;
             System.err.println("Unable to connect on port " + comPort.fullName);
             e.printStackTrace();
             return false;
@@ -120,6 +121,10 @@ public class SerialCommunicator {
     public void disconnect() {
         if (connectedPort != null) connectedPort.closePort();
         connectedPort = null;
+    }
+
+    public boolean isConnected() {
+        return connectedPort != null;
     }
 
 }
