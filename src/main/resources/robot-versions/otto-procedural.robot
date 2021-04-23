@@ -234,7 +234,7 @@
 	module1.description 	= Basic logic, math, loops, aritmetics, variables
 	module1.required 			= false
 	module1.location			= otto-procedural/basic
-	module1.size					= 0
+	module1.size					= 10
 	module1.categories		= logic, math, loops, variables
 
 !Module 2
@@ -242,7 +242,7 @@
 	module2.description 	= 
 	module2.required 			= false
 	module2.location			= otto-procedural/procedures
-	module2.size					= 0
+	module2.size					= 10
 	module2.categories		= functions
 
 !Module 3
@@ -250,7 +250,7 @@
 	module3.description 	= Checks batteries.
 	module3.required 			= true
 	module3.location			= otto-procedural/vital
-	module3.size					= 0
+	module3.size					= 10
 	module3.categories		= 
 
 !Module 4
@@ -258,7 +258,7 @@
 	module4.description 	= Enables Otto to beep and play mp3 music.
 	module4.required 			= false
 	module4.location			= otto-procedural/sound
-	module4.size					= 0
+	module4.size					= 15
 	module4.categories		= sound
 	
 !Module 5
@@ -266,7 +266,7 @@
 	module5.description 	= 
 	module5.required 			= false
 	module5.location			= otto-procedural/motion
-	module5.size					= 0
+	module5.size					= 20
 	module5.categories		= motion
 	
 !Module 6
@@ -274,7 +274,7 @@
 	module6.description 	= 
 	module6.required 			= false
 	module6.location			= otto-procedural/ultrasound
-	module6.size					= 0
+	module6.size					= 10
 	module6.categories		= ultrasound
 	
 !Module 7
@@ -282,7 +282,7 @@
 	module7.description 	= 
 	module7.required 			= false
 	module7.location			= otto-procedural/serial
-	module7.size					= 0
+	module7.size					= 10
 	module7.categories		= serial
 	
 !Module 8
@@ -290,7 +290,7 @@
 	module8.description 	= 
 	module8.required 			= false
 	module8.location			= otto-procedural/time
-	module8.size					= 0
+	module8.size					= 5
 	module8.categories		= time
 	
 !Example 1

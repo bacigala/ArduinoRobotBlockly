@@ -1,4 +1,4 @@
-package dialog;
+package FXMLDialogController;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,13 +10,17 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class FXMLTextOutputDialogController {
+/**
+ * Simple text output dialog.
+ * Displays text written into OutputStream it provides.
+ */
+public class TextOutputDialog {
 
-    public static FXMLTextOutputDialogController getDialog(String title) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(FXMLTextOutputDialogController.class.getResource(
+    public static TextOutputDialog getDialog(String title) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(TextOutputDialog.class.getResource(
                 "/fxml/FXMLTextOutputDialog.fxml"));
         Parent parent = fxmlLoader.load();
-        FXMLTextOutputDialogController controller = fxmlLoader.getController();
+        TextOutputDialog controller = fxmlLoader.getController();
         controller.initialize(parent, title);
         return controller;
     }
@@ -24,6 +28,11 @@ public class FXMLTextOutputDialogController {
     private @FXML javafx.scene.control.TextArea textArea;
     private Parent root;
     private String title;
+
+    public void initialize(Parent root, String title) {
+        this.root = root;
+        this.title = title;
+    }
 
     public void show() {
         Stage stage = new Stage();
@@ -51,13 +60,9 @@ public class FXMLTextOutputDialogController {
         return new MyOutputStream();
     }
 
-    public void initialize(Parent root, String title) {
-        this.root = root;
-        this.title = title;
-    }
-
-    public void buttonAction() {
+    public void closeButtonAction() {
         Stage stage = (Stage) textArea.getScene().getWindow();
         stage.close();
     }
+
 }

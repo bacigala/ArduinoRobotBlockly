@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+/**
+ * Manages serial communication.
+ * search for available ports, message send & receive
+ */
 public class SerialCommunicator {
 
-    private SerialPort connectedPort = null;
-    private OutputStream outputStream = null;
-
+    /**
+     * Single port instance.
+     */
     public static class ComPort {
         private final String comName, fullName;
 
@@ -29,6 +33,10 @@ public class SerialCommunicator {
         public String getFullName() { return fullName; }
     }
 
+
+    private SerialPort connectedPort = null;
+    private OutputStream outputStream = null;
+
     public ArrayList<ComPort> getAvailablePorts() {
         ArrayList<ComPort> result = new ArrayList<>();
         for (SerialPort port : SerialPort.getCommPorts()) {
@@ -37,7 +45,7 @@ public class SerialCommunicator {
         return result;
     }
 
-    public boolean connectToPort(ComPort comPort) {
+    public void connectPort(ComPort comPort) throws IOException {
         // check whether the port is still available and valid
         boolean isValid = false;
         for (SerialPort availablePort : SerialPort.getCommPorts()) {
@@ -46,10 +54,8 @@ public class SerialCommunicator {
                 break;
             }
         }
-        if (!isValid) {
-            System.err.println("Port " + comPort.fullName + "is no longer available.");
-            return false;
-        }
+        if (!isValid)
+            throw new IOException("Port " + comPort.fullName + "is no longer available.");
 
         try {
             connectedPort = SerialPort.getCommPort(comPort.comName);
@@ -58,16 +64,26 @@ public class SerialCommunicator {
             setOutputStream(outputStream);
         } catch (Exception e) {
             connectedPort = null;
-            System.err.println("Unable to connect on port " + comPort.fullName);
-            e.printStackTrace();
-            return false;
+            throw new IOException("Unable to connect on port " + comPort.fullName);
         }
-        return true;
     }
 
+    public void disconnect() {
+        if (connectedPort != null) connectedPort.closePort();
+        connectedPort = null;
+    }
+
+    public boolean isConnected() {
+        return connectedPort != null;
+    }
+
+    /**
+     * Set OutputStream to receive all data received from connected ComPort.
+     * @param outputStream OutputStream to receive data received from connected ComPort.
+     */
     public void setOutputStream(OutputStream outputStream) {
         if (outputStream == null) return;
-        if (connectedPort == null) {
+        if (!isConnected()) {
             this.outputStream = outputStream;
             return;
         }
@@ -92,16 +108,22 @@ public class SerialCommunicator {
         });
     }
 
+    /**
+     * Send data over connected ComPort.
+     * @param data Data to be transmitted.
+     *    (data.length() == 1) -> single byte is send
+     *    (data.length() > 1) -> message is delimited \r\n
+     */
     public void send(String data) throws IOException {
         if (data == null || data.isEmpty()) return;
-        if (connectedPort == null) {
-            System.err.println("Unable to send data - no port connected.");
-            return;
-        }
+        if (!isConnected())
+            throw new IOException("Unable to send data - no port connected.");
+
         OutputStream out = connectedPort.getOutputStream();
         try {
             if (data.length() == 1) {
                 out.write(data.charAt(0));
+                out.close();
                 return;
             }
             byte[] bytesToSend = new byte[data.length() + 2];
@@ -116,15 +138,6 @@ public class SerialCommunicator {
             System.err.println("application.SerialCommunicator.send: Unable to write to COM port.");
             throw e;
         }
-    }
-
-    public void disconnect() {
-        if (connectedPort != null) connectedPort.closePort();
-        connectedPort = null;
-    }
-
-    public boolean isConnected() {
-        return connectedPort != null;
     }
 
 }

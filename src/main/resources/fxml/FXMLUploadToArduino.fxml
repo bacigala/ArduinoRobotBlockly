@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dialog.FXMLUploadToArduinoDialog">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FXMLDialogController.UploadToArduinoDialog">
    <children>
       <VBox alignment="CENTER" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
@@ -29,8 +29,8 @@
             </VBox>
             <HBox alignment="CENTER" spacing="10.0">
                <children>
-                <Button fx:id="skipButton" cancelButton="true" mnemonicParsing="false" onAction="#skipButtonAction" prefWidth="65.0" text="Skip" />
-                  <Button fx:id="uploadButton" defaultButton="true" mnemonicParsing="false" onAction="#uploadButtonAction" prefWidth="65.0" text="Upload" />
+                <Button cancelButton="true" mnemonicParsing="false" onAction="#skipButtonAction" prefWidth="65.0" text="Skip" />
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#uploadButtonAction" prefWidth="65.0" text="Upload" />
                </children>
             </HBox>
          </children>

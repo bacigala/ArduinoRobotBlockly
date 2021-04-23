@@ -1,5 +1,6 @@
-package dialog;
+package FXMLDialogController;
 
+import application.FXMLMainWindowController;
 import application.RobotVersionControl;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -7,20 +8,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FXMLModuleSelectDialogController {
+/**
+ * Enables user to select modules provided by RobotVersion.
+ */
+public class ModuleSelectDialog {
     public static void display(
             RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(FXMLModuleSelectDialogController.class.getResource(
+        FXMLLoader fxmlLoader = new FXMLLoader(ModuleSelectDialog.class.getResource(
                 "/fxml/FXMLModuleSelectDialog.fxml"));
         Parent root = fxmlLoader.load();
-        FXMLModuleSelectDialogController controller = fxmlLoader.getController();
+        ModuleSelectDialog controller = fxmlLoader.getController();
         controller.initialize(robotVersionControl, chosenModules);
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
@@ -40,12 +46,13 @@ public class FXMLModuleSelectDialogController {
     private final ArrayList<Module> availableModules = new ArrayList<>();
     private int maxMemory = 0;
     private int usedMemory = 0;
+    private int compulsoryModulesMemory = 0;
     private ArrayList<Integer> chosenModules;
 
     /**
      * Sets default values, populates listviews with module info.
      * @param robotVersionControl provides information about modules of robot-version
-     * @param chosenModules contains currently used modules, acts as return value
+     * @param chosenModules contains currently used modules, acts as return value - dialog updates the values
      */
     public void initialize(RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) {
         this.chosenModules = chosenModules;
@@ -65,22 +72,20 @@ public class FXMLModuleSelectDialogController {
             if (module.required) {
                 compulsoryModules.add(module);
                 usedMemory += module.size;
+                compulsoryModulesMemory += module.size;
             } else {
                 availableModules.add(module);
             }
             allModules.add(module);
         }
 
-        // set previously chosen as chosen
+        // mark previously chosen as chosen
         for (Integer i : chosenModules) allModules.get(i-1).chosen.set(true);
 
         // listen to change of checkboxes in listview (selection of module)
-        availableModuleListView.setCellFactory(CheckBoxListCell.forListView(module -> {
+        availableModuleListView.setCellFactory(CheckBoxListCell.forListView((module) -> {
             BooleanProperty observable = new SimpleBooleanProperty();
-            observable.addListener((obs, oldProperty, newProperty) -> {
-                usedMemory += newProperty ? module.size : -module.size;
-                viewUsedMemory();
-            });
+            observable.addListener((observable1, oldValue, newValue) -> viewUsedMemory());
             observable.setValue(module.chosen.get());
             module.chosen = observable;
             return observable;
@@ -104,6 +109,14 @@ public class FXMLModuleSelectDialogController {
      * Updates arraylist of selected modules, then closes the dialog.
      */
     public void confirmButtonAction() {
+        viewUsedMemory(); // recalculate used memory
+        if (!checkMemoryLimit()) {
+            String headline = "Memory limit exceeded!";
+            String message = "Please deselect some modules.";
+            FXMLMainWindowController.showDialog(Alert.AlertType.ERROR, headline, message);
+            return; // restrict confirmation if limit is exceeded
+        }
+
         chosenModules.clear();
         for (Module module : compulsoryModules) chosenModules.add(module.id);
         for (Module module : availableModules) if (module.chosen.get()) chosenModules.add(module.id);
@@ -130,9 +143,18 @@ public class FXMLModuleSelectDialogController {
     }
 
     private void viewUsedMemory() {
+        usedMemory = compulsoryModulesMemory;
+        for (Module module : availableModules) if (module.chosen.get()) usedMemory += module.size;
+
         memoryProgressBar.setProgress(usedMemory / (double)maxMemory);
         usedMemoryLabel.setText(
                 "Used memory: " + usedMemory + " / " + maxMemory + " (" + usedMemory*100 / maxMemory + "%)");
+
+        usedMemoryLabel.setTextFill(Color.color(checkMemoryLimit() ? 0 : 1, 0, 0));
+    }
+
+    private boolean checkMemoryLimit() {
+        return usedMemory <= maxMemory;
     }
 
     private static class Module {

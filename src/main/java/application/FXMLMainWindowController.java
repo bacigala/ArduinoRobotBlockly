@@ -4,10 +4,10 @@ import blockly.Blockly;
 import com.jme3.jfx.injfx.JmeToJfxIntegrator;
 import com.jme3.math.FastMath;
 import com.jme3.system.AppSettings;
-import dialog.ExampleSelectDialog;
-import dialog.FXMLModuleSelectDialogController;
-import dialog.FXMLUploadToArduinoDialog;
-import dialog.TextAreaInputDialog;
+import FXMLDialogController.ExampleSelectDialog;
+import FXMLDialogController.ModuleSelectDialog;
+import FXMLDialogController.UploadToArduinoDialog;
+import FXMLDialogController.TextAreaInputDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -115,10 +115,11 @@ public class FXMLMainWindowController implements Initializable {
                 showDialog("Please choose port first.");
                 return;
             }
-            if (!serialCommunicator.connectToPort(selectedComPort)) {
-                String header = "Unable to establish connection";
+            try {
+                serialCommunicator.connectPort(selectedComPort);
+            } catch (IOException e) {
                 String message = "Try refreshing ports and connecting again.";
-                showDialog(Alert.AlertType.ERROR, header, message);
+                showDialog(Alert.AlertType.ERROR, e.getMessage(), message);
                 return;
             }
         }
@@ -370,8 +371,12 @@ public class FXMLMainWindowController implements Initializable {
             consoleSetDisable(true);
             codeVerifyButton.setDisable(true);
             codeUploadButton.setDisable(true);
+            simulationStartStopButton.setDisable(true);
             showDialog("Error while loading property file of selected version.");
         }
+        consoleTextArea.clear();
+        consoleTextField.clear();
+
         simulation.idle();
         simulationStartStopButton.setText("Load & Play");
         simulationSpeedSlider.setVisible(false);
@@ -396,11 +401,11 @@ public class FXMLMainWindowController implements Initializable {
                 String message = "This version requires you to upload program to robot.";
                 String resourcePath = "/robot-versions/" + robotVersionControl.getProperty("programLocation");
                 URL resource = ArduinoCompiler.class.getResource(resourcePath);
-                FXMLUploadToArduinoDialog.getDialog(message, availablePorts, selectedComPort, resource).show();
+                UploadToArduinoDialog.getDialog(message, availablePorts, selectedComPort, resource).show();
                 toolboxCategories.addAll(robotVersionControl.getAllCategories());
             } else {
                 // open module selection
-                FXMLModuleSelectDialogController.display(robotVersionControl, chosenModules);
+                ModuleSelectDialog.display(robotVersionControl, chosenModules);
                 for (Integer moduleNumber : chosenModules) {
                     ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
                     if (moduleCategories != null) toolboxCategories.addAll(moduleCategories);

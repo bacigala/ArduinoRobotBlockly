@@ -1,32 +1,37 @@
-package dialog;
+package FXMLDialogController;
 
 import application.ArduinoCompiler;
+import application.FXMLMainWindowController;
 import application.SerialCommunicator;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class FXMLUploadToArduinoDialog {
+/**
+ * Dialog for COM port choice and Arduino upload, used when uploading 'static' program to Arduino
+ * (e.g. Otto Basic - compile & upload 'static' program - blockly-produced program is then being send via console)
+ */
+public class UploadToArduinoDialog {
 
-    public static FXMLUploadToArduinoDialog getDialog(
-            String message, ArrayList<SerialCommunicator.ComPort> availablePorts,
-            SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort, URL resource) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(FXMLUploadToArduinoDialog.class.getResource(
+    public static UploadToArduinoDialog getDialog(
+            String message,
+            ArrayList<SerialCommunicator.ComPort> availablePorts,
+            SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort,
+            URL resource) throws IOException {
+
+        FXMLLoader fxmlLoader = new FXMLLoader(UploadToArduinoDialog.class.getResource(
                 "/fxml/FXMLUploadToArduino.fxml"));
         Parent parent = fxmlLoader.load();
-        FXMLUploadToArduinoDialog controller = fxmlLoader.getController();
+        UploadToArduinoDialog controller = fxmlLoader.getController();
         controller.initialize(parent, message, availablePorts, selectedComPort, resource);
         return controller;
     }
@@ -34,8 +39,6 @@ public class FXMLUploadToArduinoDialog {
     private @FXML javafx.scene.control.Label mainLabel;
     private @FXML javafx.scene.control.ChoiceBox<SerialCommunicator.ComPort> serialChoiceBox;
     private @FXML javafx.scene.control.Button serialSearchButton;
-    private @FXML javafx.scene.control.Button skipButton;
-    private @FXML javafx.scene.control.Button uploadButton;
 
     private Parent root;
     private String message;
@@ -72,13 +75,13 @@ public class FXMLUploadToArduinoDialog {
     }
 
     public void skipButtonAction() {
-        closeThisDialog();
+        closeDialog();
     }
 
     public void uploadButtonAction() {
         SerialCommunicator.ComPort selectedPort = serialChoiceBox.getSelectionModel().getSelectedItem();
         if (selectedPort == null) {
-            System.err.println("No port chosen.");
+            FXMLMainWindowController.showDialog("Please choose port.");
             return;
         }
 
@@ -86,8 +89,9 @@ public class FXMLUploadToArduinoDialog {
         ArduinoCompiler.verifyAndUpload(portName, resource.getPath());
     }
 
-    private void closeThisDialog() {
+    private void closeDialog() {
         Stage stage = (Stage) mainLabel.getScene().getWindow();
         stage.close();
     }
+
 }

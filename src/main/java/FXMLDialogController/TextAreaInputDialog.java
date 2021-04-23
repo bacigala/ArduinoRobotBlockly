@@ -1,4 +1,4 @@
-package dialog;
+package FXMLDialogController;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,12 +9,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class FXMLTextInputDialogController {
+/**
+ * Simple text input dialog.
+ * Display message and retrieve multiline text from user (TextArea)
+ */
+public class TextAreaInputDialog {
     public static String display(String message, String defaultText) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(FXMLTextInputDialogController.class.getResource(
-                "/fxml/FXMLTextInputDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(TextAreaInputDialog.class.getResource(
+                "/fxml/FXMLTextAreaInputDialog.fxml"));
         Parent root = fxmlLoader.load();
-        FXMLTextInputDialogController controller = fxmlLoader.getController();
+        TextAreaInputDialog controller = fxmlLoader.getController();
         controller.initialize(message, defaultText);
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
@@ -25,18 +29,19 @@ public class FXMLTextInputDialogController {
     }
 
     private @FXML javafx.scene.control.Label label;
-    private @FXML javafx.scene.control.TextField textField;
+    private @FXML javafx.scene.control.TextArea textArea;
     private String result;
 
     private void initialize(String message, String defaultText) {
         result = defaultText;
         label.setText(message);
-        textField.setText(defaultText);
+        textArea.setText(defaultText);
     }
 
-    public void buttonAction() {
-        result = textField.getText();
+    public void confirmButtonAction() {
+        result = textArea.getText();
         Stage stage = (Stage) label.getScene().getWindow();
         stage.close();
     }
+
 }

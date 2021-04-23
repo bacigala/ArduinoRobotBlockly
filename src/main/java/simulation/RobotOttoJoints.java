@@ -16,34 +16,38 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- * Simple model of robot Otto.
+ * Model of robot Otto with joints -> enables physics simulation.
  */
 public class RobotOttoJoints implements RobotOtto {
+
     // Node = point of rotation
     public final Node ottoNode, ottoBottomNode, ottoArmRightNode, ottoArmLeftNode,
             ottoLegRightNode, ottoLegLeftNode, ottoFootRightNode, ottoFootLeftNode;
 
-    private final HingeJoint legLeftJoint, armLeftJoint, armRightJoint, legRightJoint, footLeftJoint, footRightJoint;
+    // joint constrains movement to some axes and angles
+    private final HingeJoint legLeftJoint, armLeftJoint, armRightJoint, legRightJoint,
+            footLeftJoint, footRightJoint;
 
-    private final RigidBodyControl bottomControl, armLeftControl, armRightControl, legLeftControl, legRightControl,
+    // RigidBodyControl enables physics application (mass and shape -> collision)
+    private final RigidBodyControl armLeftControl, armRightControl, legLeftControl, legRightControl,
             footLeftControl, footRightControl;
 
 
+    /**
+     * Load parts of Otto model and assemble robot.
+     */
     public RobotOttoJoints(AssetManager assetManager, BulletAppState bulletAppState) {
-        // Spatial = model of robot part
-        Spatial ottoBottomSpatial, ottoTopSpatial, ottoArmRightSpatial, ottoArmLeftSpatial, ottoEyesSpatial,
-                ottoLegRightSpatial, ottoLegLeftSpatial, ottoFootRightSpatial, ottoFootLeftSpatial;
 
-        // load models
-        ottoTopSpatial = assetManager.loadModel("models/otto-top.obj");
-        ottoEyesSpatial = assetManager.loadModel("models/otto-eyes.obj");
-        ottoBottomSpatial = assetManager.loadModel("models/otto-bottom.obj");
-        ottoArmRightSpatial = assetManager.loadModel("models/otto-arm-right.obj");
-        ottoArmLeftSpatial = assetManager.loadModel("models/otto-arm-left.obj");
-        ottoLegRightSpatial = assetManager.loadModel("models/otto-leg-right.obj");
-        ottoFootRightSpatial = assetManager.loadModel("models/otto-foot-right.obj");
-        ottoLegLeftSpatial = assetManager.loadModel("models/otto-leg-left.obj");
-        ottoFootLeftSpatial = assetManager.loadModel("models/otto-foot-left.obj");
+        // load 3D models
+        Spatial ottoTopSpatial = assetManager.loadModel("models/otto-top.obj");
+        Spatial ottoEyesSpatial = assetManager.loadModel("models/otto-eyes.obj");
+        Spatial ottoBottomSpatial = assetManager.loadModel("models/otto-bottom.obj");
+        Spatial ottoArmRightSpatial = assetManager.loadModel("models/otto-arm-right.obj");
+        Spatial ottoArmLeftSpatial = assetManager.loadModel("models/otto-arm-left.obj");
+        Spatial ottoLegRightSpatial = assetManager.loadModel("models/otto-leg-right.obj");
+        Spatial ottoFootRightSpatial = assetManager.loadModel("models/otto-foot-right.obj");
+        Spatial ottoLegLeftSpatial = assetManager.loadModel("models/otto-leg-left.obj");
+        Spatial ottoFootLeftSpatial = assetManager.loadModel("models/otto-foot-left.obj");
 
         // setup materials
         Material blueMaterial = createMaterial(assetManager, ColorRGBA.Blue);
@@ -62,10 +66,9 @@ public class RobotOttoJoints implements RobotOtto {
         ottoLegLeftSpatial.setMaterial(cyanMaterial);
         ottoFootLeftSpatial.setMaterial(redMaterial);
 
-        // fix rotation of model definition
+        // fix rotation
         ottoTopSpatial.rotate(0, -FastMath.HALF_PI, 0);
         ottoBottomSpatial.rotate(-FastMath.HALF_PI, FastMath.PI, 0);
-
 
         // ASSEMBLE OTTO
         Quaternion q = new Quaternion();
@@ -77,20 +80,18 @@ public class RobotOttoJoints implements RobotOtto {
         ottoFootRightSpatial.move(0,7f, -12.0665f);
         ottoFootLeftSpatial.move(0f, 7.81f, -12.0665f);
 
-        // nodes = 'hinges' = axes of rotation
+    // CENTRAL NODE
         ottoNode = new Node("ottoNode");
 
     // BOTTOM
         ottoBottomNode = new Node("ottoBottomNode");
-        ottoBottomNode.attachChild(ottoBottomSpatial);
-
+        ottoBottomNode.attachChild(ottoBottomSpatial); // attach visible model
+        bulletAppState.setDebugEnabled(true);
         CollisionShape bottomShape = CollisionShapeFactory.createBoxShape(ottoBottomNode);
-        bottomControl = new RigidBodyControl(bottomShape,1000); //todo
+        RigidBodyControl bottomControl = new RigidBodyControl(bottomShape, 1000);
         bottomControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
         ottoBottomNode.addControl(bottomControl);
-        bottomControl.setPhysicsLocation(new Vector3f(0f,100, 0f)); //todo
-        //q.fromAngles(-FastMath.HALF_PI, FastMath.PI, 0); //todo
-        //bottomControl.setPhysicsRotation(q);
+        bottomControl.setPhysicsLocation(new Vector3f(0f,100, 0f));
         ottoNode.attachChild(ottoBottomNode);
         bulletAppState.getPhysicsSpace().add(ottoBottomNode);
 
@@ -102,168 +103,133 @@ public class RobotOttoJoints implements RobotOtto {
 
     // ARM RIGHT
         ottoArmRightNode = new Node("ottoArmRightNode");
-        //ottoArmRightNode.move(new Vector3f(-49.6626f,10.206f, 0.31f));
         ottoArmRightNode.attachChild(ottoArmRightSpatial);
-        //ottoNode.attachChild(ottoArmRightNode);
-
         CollisionShape armRightShape = CollisionShapeFactory.createBoxShape(ottoArmRightNode);
         armRightControl = new RigidBodyControl(armRightShape,10);
         ottoArmRightNode.addControl(armRightControl);
-        armRightControl.setPhysicsLocation(new Vector3f(50.39f,111f,0f)); //todo
+        armRightControl.setPhysicsLocation(new Vector3f(50.39f,111f,0f));
         armRightControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
-        //q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0); //todo
-        //armLeftControl.setPhysicsRotation(q);
         ottoBottomNode.attachChild(ottoArmRightNode);
         bulletAppState.getPhysicsSpace().add(ottoArmRightNode);
 
-        armRightJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class), // A
-                ottoArmRightNode.getControl(RigidBodyControl.class), // B
-                new Vector3f(-49.6626f,10.206f, 0.31f),  // pivot point local to A
-                new Vector3f(0, 0f, 0f),  // pivot point local to B
-                Vector3f.UNIT_Z,           // DoF Axis of A (Z axis)
-                Vector3f.UNIT_Z);
+        armRightJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class), //A
+                ottoArmRightNode.getControl(RigidBodyControl.class),                      //B
+                new Vector3f(-49.6626f,10.206f, 0.31f), // pivot point A
+                new Vector3f(0, 0f, 0f),                // pivot point B
+                Vector3f.UNIT_Z,  // DOF A
+                Vector3f.UNIT_Z); // DOF B
         bulletAppState.getPhysicsSpace().add(armRightJoint);
-
 
     // ARM LEFT
         ottoArmLeftNode = new Node("ottoArmLeftNode");
-        //ottoArmLeftNode.move(new Vector3f(50.53f,10.206f, 0.31f));
         ottoArmLeftNode.attachChild(ottoArmLeftSpatial);
 
         CollisionShape armLeftShape = CollisionShapeFactory.createBoxShape(ottoArmLeftNode);
         armLeftControl = new RigidBodyControl(armLeftShape,10);
         ottoArmLeftNode.addControl(armLeftControl);
-        armLeftControl.setPhysicsLocation(new Vector3f(50.39f,111f,0f)); //todo
+        armLeftControl.setPhysicsLocation(new Vector3f(50.39f,111f,0f));
         armLeftControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03);
-        //q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0); //todo
-        //armLeftControl.setPhysicsRotation(q);
         ottoBottomNode.attachChild(ottoArmLeftNode);
         bulletAppState.getPhysicsSpace().add(ottoArmLeftNode);
 
-        armLeftJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class), // A
-                ottoArmLeftNode.getControl(RigidBodyControl.class), // B
-                new Vector3f(50.39f, 11f, 0f),  // pivot point local to A
-                new Vector3f(0, 0f, 0f),  // pivot point local to B
-                Vector3f.UNIT_Z,           // DoF Axis of A (Z axis)
+        armLeftJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class),
+                ottoArmLeftNode.getControl(RigidBodyControl.class),
+                new Vector3f(50.39f, 11f, 0f),
+                new Vector3f(0, 0f, 0f),
+                Vector3f.UNIT_Z,
                 Vector3f.UNIT_Z);
         bulletAppState.getPhysicsSpace().add(armLeftJoint);
 
-
-
     // LEG RIGHT
         ottoLegRightNode = new Node("ottoLegRightNode");
-        //ottoLegRightNode.move(-25.5969f,-37.5807f, -1.22899f);
         ottoLegRightNode.attachChild(ottoLegRightSpatial);
 
         CollisionShape legRightShape = CollisionShapeFactory.createBoxShape(ottoLegRightNode);
         legRightControl = new RigidBodyControl(legRightShape,200);
         legRightControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_04);
         ottoLegRightNode.addControl(legRightControl);
-        legRightControl.setPhysicsLocation(new Vector3f(-26.7f,63,0f)); //todo
-
-        //q.fromAngles(0,-FastMath.HALF_PI,0); //todo
-        //legRightControl.setPhysicsRotation(q);
-
+        legRightControl.setPhysicsLocation(new Vector3f(-26.7f,63,0f));
         ottoNode.attachChild(ottoLegRightNode);
         bulletAppState.getPhysicsSpace().add(ottoLegRightNode);
 
-        legRightJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class), // A
-                ottoLegRightNode.getControl(RigidBodyControl.class), // B
-                new Vector3f(-26.07f, -37.27f, 0f),  // pivot point local to A
-                new Vector3f(0, 0, 0f),  // pivot point local to B
-                Vector3f.UNIT_Y,           // DoF Axis of A (Z axis)
+        legRightJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class),
+                ottoLegRightNode.getControl(RigidBodyControl.class),
+                new Vector3f(-26.07f, -37.27f, 0f),
+                new Vector3f(0, 0, 0f),
+                Vector3f.UNIT_Y,
                 Vector3f.UNIT_Y);
         bulletAppState.getPhysicsSpace().add(legRightJoint);
 
     // FOOT RIGHT
         ottoFootRightNode = new Node("ottoFootRightNode");
-        //ottoFootRightNode.move(-1.2f,-12.4261f, 0);
         ottoFootRightNode.attachChild(ottoFootRightSpatial);
 
         CollisionShape footRightShape = CollisionShapeFactory.createBoxShape(ottoFootRightNode);
-        //CollisionShape footRightBoxShape = new BoxCollisionShape(new Vector3f(24,5.44f,70));
         footRightControl = new RigidBodyControl(footRightShape,50);
         footRightControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_05);
         ottoFootRightNode.addControl(footRightControl);
-        footRightControl.setPhysicsLocation(new Vector3f(-26f,50.5f,0f)); //todo
-        q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0); //todo
+        footRightControl.setPhysicsLocation(new Vector3f(-26f,50.5f,0f));
+        q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0);
         footRightControl.setPhysicsRotation(q);
         ottoLegRightNode.attachChild(ottoFootRightNode);
         bulletAppState.getPhysicsSpace().add(ottoFootRightNode);
 
-        footRightJoint = new HingeJoint(ottoLegRightNode.getControl(RigidBodyControl.class), // A
-                ottoFootRightNode.getControl(RigidBodyControl.class), // B
-                new Vector3f(0f, -12.4f, 1.2f),  // pivot point local to A
-                new Vector3f(0, 0, 0f),  // pivot point local to B
-                Vector3f.UNIT_X,           // DoF Axis of A (Z axis)
+        footRightJoint = new HingeJoint(ottoLegRightNode.getControl(RigidBodyControl.class),
+                ottoFootRightNode.getControl(RigidBodyControl.class),
+                new Vector3f(0f, -12.4f, 1.2f),
+                new Vector3f(0, 0, 0f),
+                Vector3f.UNIT_X,
                 Vector3f.UNIT_X);
         bulletAppState.getPhysicsSpace().add(footRightJoint);
 
-
     // LEG LEFT
         ottoLegLeftNode = new Node("ottoLegLeftNode");
-        //ottoLegLeftNode.move(26.4073f,-37.5556f, -1.24322f);
         ottoLegLeftNode.attachChild(ottoLegLeftSpatial);
 
         CollisionShape legLeftShape = CollisionShapeFactory.createBoxShape(ottoLegLeftNode);
         legLeftControl = new RigidBodyControl(legLeftShape,200);
         legLeftControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_04);
         ottoLegLeftNode.addControl(legLeftControl);
-        legLeftControl.setPhysicsLocation(new Vector3f(25f,63,0f)); //todo
-        q.fromAngles(0,-FastMath.HALF_PI,0); //todo
+        legLeftControl.setPhysicsLocation(new Vector3f(25f,63,0f));
+        q.fromAngles(0,-FastMath.HALF_PI,0);
         legLeftControl.setPhysicsRotation(q);
         ottoNode.attachChild(ottoLegLeftNode);
         bulletAppState.getPhysicsSpace().add(ottoLegLeftNode);
 
-        legLeftJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class), // A
-                ottoLegLeftNode.getControl(RigidBodyControl.class), // B
-                new Vector3f(25.06f, -37.27f, 0f),  // pivot point local to A
-                new Vector3f(0, 0, 0f),  // pivot point local to B
-                Vector3f.UNIT_Y,           // DoF Axis of A (Z axis)
+        legLeftJoint = new HingeJoint(ottoBottomNode.getControl(RigidBodyControl.class),
+                ottoLegLeftNode.getControl(RigidBodyControl.class),
+                new Vector3f(25.06f, -37.27f, 0f),
+                new Vector3f(0, 0, 0f),
+                Vector3f.UNIT_Y,
                 Vector3f.UNIT_Y);
         bulletAppState.getPhysicsSpace().add(legLeftJoint);
 
     // FOOT LEFT
         ottoFootLeftNode = new Node("ottoFootLeftNode");
-        //ottoFootLeftNode.move(0,-12.4261f, 1.2f);
         ottoFootLeftNode.attachChild(ottoFootLeftSpatial);
-
         CollisionShape footLeftShape = CollisionShapeFactory.createBoxShape(ottoFootLeftNode);
-        //CollisionShape footLeftBoxShape = new BoxCollisionShape(new Vector3f(24,5.44f,70));
         footLeftControl = new RigidBodyControl(footLeftShape,50f);
-
-//        RigidBodyControl footLeftCollisionControl = new RigidBodyControl(footLeftShape,400);
-//        footLeftCollisionControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_05);
-//        ottoFootLeftSpatial.addControl(footLeftCollisionControl);
-//        footLeftCollisionControl.setPhysicsLocation(new Vector3f(33.35f,27.5f,0f)); //todo
-//        q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0); //todo
-//        footLeftCollisionControl.setPhysicsRotation(q);
-//        //ottoLegLeftNode.attachChild(ottoFootLeftNode);
-//        bulletAppState.getPhysicsSpace().add(footLeftCollisionControl);
-
-
-
         footLeftControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_07);
         ottoFootLeftNode.addControl(footLeftControl);
-        footLeftControl.setPhysicsLocation(new Vector3f(25f,50.5f,0f)); //todo
+        footLeftControl.setPhysicsLocation(new Vector3f(25f,50.5f,0f));
         footLeftControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_06);
-        q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0); //todo
+        q.fromAngles(-FastMath.HALF_PI,-FastMath.HALF_PI,0);
         footLeftControl.setPhysicsRotation(q);
         ottoLegLeftNode.attachChild(ottoFootLeftNode);
         bulletAppState.getPhysicsSpace().add(ottoFootLeftNode);
 
-        footLeftJoint = new HingeJoint(ottoLegLeftNode.getControl(RigidBodyControl.class), // A
-                ottoFootLeftNode.getControl(RigidBodyControl.class), // B
-                new Vector3f(0f, -12.4f, 1.2f),  // pivot point local to A
-                new Vector3f(0, 0, 0f),  // pivot point local to B
-                Vector3f.UNIT_X,           // DoF Axis of A (Z axis)
+        footLeftJoint = new HingeJoint(ottoLegLeftNode.getControl(RigidBodyControl.class),
+                ottoFootLeftNode.getControl(RigidBodyControl.class),
+                new Vector3f(0f, -12.4f, 1.2f),
+                new Vector3f(0, 0, 0f),
+                Vector3f.UNIT_X,
                 Vector3f.UNIT_X);
         bulletAppState.getPhysicsSpace().add(footLeftJoint);
 
 
-        //move motors to calibrated initial position (90 degrees for each motor)
+        // move all motors to calibrated initial position (90 degrees)
         for (OttoMotor motor : OttoMotor.values()) setMotorPosition(motor, 90);
-        bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0, -89.81f, 0));
+        bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0, -100f, 0));
     }
 
 
@@ -312,6 +278,7 @@ public class RobotOttoJoints implements RobotOtto {
                 break;
         }
     }
+
 
 
     /*

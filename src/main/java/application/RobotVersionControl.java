@@ -1,17 +1,20 @@
 package application;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import javafx.scene.control.Alert;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 
+/**
+ * Class responsible for RobotVersion properties loading and parsing.
+ */
 public class RobotVersionControl {
 
-    private ArrayList<RobotVersion> robotVersions = new ArrayList<>();
-    private static final String pathToVersionsFolder = "src\\main\\resources\\robot-versions";
+    // todo: maybe move versions outside app...
+    private final String pathToVersionsFolder = "src\\main\\resources\\robot-versions";
+    private final ArrayList<RobotVersion> robotVersions = new ArrayList<>();
     private Properties loadedVersion;
 
     public ArrayList<RobotVersion> getAvailableVersions() {
@@ -19,44 +22,38 @@ public class RobotVersionControl {
     }
 
     public void refreshAvailableVersionsList() {
-        robotVersions = new ArrayList<>();
-
+        robotVersions.clear();
         File folder = new File(pathToVersionsFolder);
-        File[] folderItems = folder.listFiles((directory, name) -> name.endsWith(".robotversion"));
-        if (folderItems == null) throw new NullPointerException("Could not access versions folder.");
+        File[] folderItems = folder.listFiles((directory, name) -> name.endsWith(".robot"));
+        if (folderItems == null) {
+            FXMLMainWindowController.showDialog(
+                    Alert.AlertType.ERROR, "ERROR", "Could not access versions folder.");
+            return;
+        }
         for (File folderItem : folderItems) {
             if (folderItem.isFile()) {
                 try {
                     InputStream input = new FileInputStream(folderItem);
                     Properties prop = new Properties();
                     prop.load(input);
-
                     RobotVersion rv = new RobotVersion(prop.getProperty("name"), folderItem.getName());
                     robotVersions.add(rv);
                 } catch (Exception ex) {
-                    System.err.println("some .robotversion files could not be loaded");
+                    FXMLMainWindowController.showDialog("Some .robot files could not be loaded");
                 }
             }
         }
     }
 
-    public void loadVersion(RobotVersion version) throws FileNotFoundException {
+    public void loadVersion(RobotVersion version) throws IOException {
         if (!robotVersions.contains(version))
             throw new FileNotFoundException("Such version does not exist.");
 
         File file = new File(pathToVersionsFolder + "\\" + version.fileName);
-        try {
-            InputStream input = new FileInputStream(file);
-            Properties prop = new Properties();
-            prop.load(input);
-            loadedVersion = prop;
-        } catch (Exception ex) {
-            System.err.println("Unable to to load RobotVersion.");
-        }
-    }
-
-    public boolean hasLoadedVersion() {
-        return loadedVersion != null;
+        InputStream input = new FileInputStream(file);
+        Properties prop = new Properties();
+        prop.load(input);
+        loadedVersion = prop;
     }
 
     public String getProperty(String propertyName, String ifNotSet) {
@@ -79,17 +76,13 @@ public class RobotVersionControl {
         return getProperty("module" + moduleNumber + "." + property);
     }
 
-    public String getModuleCategoryName(int moduleNumber, int categoryNumber) {
-        return getProperty("module" + moduleNumber + ".category" + categoryNumber);
-    }
-
     public String getExampleProperty(int exampleNumber, String property) {
         return getProperty("example" + exampleNumber + "." + property);
     }
 
     public ArrayList<String> getExampleModules(int exampleNo) {
         String modules = getExampleProperty(exampleNo, "modules");
-        if (modules.isEmpty()) return null;
+        if (modules.isEmpty()) return new ArrayList<>();
         return new ArrayList<>(Arrays.asList(modules.split(",[ ]*")));
     }
 
@@ -104,6 +97,10 @@ public class RobotVersionControl {
         return new ArrayList<>(Arrays.asList(categories.split(",[ ]*")));
     }
 
+
+    /**
+     * Represents one .robot file.
+     */
     public static class RobotVersion {
         private final String name, fileName;
 

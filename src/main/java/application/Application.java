@@ -10,6 +10,7 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // load and show main window
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("/fxml/FXMLMainWindow.fxml"));
         Parent root = fxmlLoader.load();
         mainWindowController = fxmlLoader.getController();
@@ -21,7 +22,7 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void stop(){
-        // application stop -> notify controller to stop simulation
+        // notify main window controller (stop simulation, serial...)
         if (mainWindowController != null) mainWindowController.applicationClose();
     }
 

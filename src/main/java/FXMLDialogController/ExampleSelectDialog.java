@@ -1,5 +1,6 @@
-package dialog;
+package FXMLDialogController;
 
+import application.FXMLMainWindowController;
 import application.RobotVersionControl;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,8 +12,27 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Dialog for choice of example code provided by RobotVersion.
+ * List examples with associated description.
+ */
 public class ExampleSelectDialog {
+    /**
+     * Load and display ExampleSelectDialog.
+     * @param robotVersionControl RobotVersionControl to retrieve examples from
+     * @param chosenModules ArrayList<Integer> to store modules required by the selected example
+     * @return String - Blockly XML workspace associated with the chosen example
+     * @throws IOException on FXML load issue
+     */
     public static String display(RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) throws IOException {
+        // check if there are examples for selected RobotVersion
+        int exampleCount = Integer.parseInt(robotVersionControl.getProperty("exampleCount", "0"));
+        if (exampleCount == 0) {
+            FXMLMainWindowController.showDialog("No examples found for this RobotVersion :(");
+            return "";
+        }
+
+        // show examples dialog
         FXMLLoader fxmlLoader = new FXMLLoader(ExampleSelectDialog.class.getResource(
                 "/fxml/FXMLExampleSelectDialog.fxml"));
         Parent root = fxmlLoader.load();
@@ -23,7 +43,7 @@ public class ExampleSelectDialog {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Examples");
         stage.showAndWait();
-        return controller.getWorkspace();
+        return controller.workspace;
     }
 
     @FXML javafx.scene.control.ListView<Example> exampleListView;
@@ -33,11 +53,11 @@ public class ExampleSelectDialog {
     private RobotVersionControl robotVersionControl;
     private String workspace = "";
 
-    public void initialize(RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) {
+    private void initialize(RobotVersionControl robotVersionControl, ArrayList<Integer> chosenModules) {
         this.chosenModules = chosenModules;
         this.robotVersionControl = robotVersionControl;
 
-        // get example information
+        // get available examples info
         int exampleCount = Integer.parseInt(robotVersionControl.getProperty("exampleCount", "0"));
         for (int exampleNo = 1; exampleNo <= exampleCount ; exampleNo++) {
             Example ex = new Example();
@@ -46,22 +66,25 @@ public class ExampleSelectDialog {
             ex.number = exampleNo;
             exampleListView.getItems().add(ex);
         }
+
+        exampleInfoTextArea.setText("Select example to view details.");
     }
 
-    /**
-     * Closes the dialog.
-     */
+    // close dialog, no changes applied
     public void cancelButtonAction() {
         Stage stage = (Stage) exampleListView.getScene().getWindow();
         stage.close();
     }
 
+    // apply changes, close dialog
     public void confirmButtonAction() {
+        // get selected example
         Example selected = exampleListView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            System.err.println("select an example!");
+            FXMLMainWindowController.showDialog("Please select an example!");
             return;
         }
+
         // add modules required by example
         chosenModules.clear();
         for (String moduleNo : robotVersionControl.getExampleModules(selected.number))
@@ -70,18 +93,13 @@ public class ExampleSelectDialog {
         // set workspace
         workspace = robotVersionControl.getExampleProperty(selected.number, "workspace");
 
+        // close dialog
         cancelButtonAction();
     }
 
+    // example list clicked -> view example details
     public void exampleListViewClickAction() {
-        viewExampleInfo(exampleListView.getSelectionModel().getSelectedItem());
-    }
-
-    private String getWorkspace() {
-        return workspace;
-    }
-
-    private void viewExampleInfo(Example example) {
+        Example example = exampleListView.getSelectionModel().getSelectedItem();
         if (example == null) {
             exampleInfoTextArea.setText("Select example to view details.");
             return;
@@ -90,6 +108,7 @@ public class ExampleSelectDialog {
         exampleInfoTextArea.appendText(example.description);
     }
 
+    // example instance for listView
     private static class Example {
         public String name, description;
         int number;
@@ -99,4 +118,5 @@ public class ExampleSelectDialog {
             return name;
         }
     }
+
 }
