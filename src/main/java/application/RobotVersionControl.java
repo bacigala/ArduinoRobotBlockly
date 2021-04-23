@@ -60,7 +60,7 @@ public class RobotVersionControl {
     }
 
     public String getProperty(String propertyName, String ifNotSet) {
-        if (loadedVersion == null) throw new NullPointerException("No RobotVersion set.");
+        if (loadedVersion == null) return ifNotSet;
         String propertyValue;
         try {
             propertyValue = loadedVersion.getProperty(propertyName, ifNotSet);

@@ -13,6 +13,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.input.KeyCode;
 import netscape.javascript.JSException;
@@ -111,13 +112,13 @@ public class FXMLMainWindowController implements Initializable {
         } else {
             SerialCommunicator.ComPort selectedComPort = connectionChoiceBox.getSelectionModel().getSelectedItem();
             if (selectedComPort == null) {
-                //todo: error - choose port
-                System.err.println("No port chosen.");
+                showDialog("Please choose port first.");
                 return;
             }
             if (!serialCommunicator.connectToPort(selectedComPort)) {
-                //todo: error - connection not established
-                System.err.println("Connection was not established.");
+                String header = "Unable to establish connection";
+                String message = "Try refreshing ports and connecting again.";
+                showDialog(Alert.AlertType.ERROR, header, message);
                 return;
             }
         }
@@ -134,6 +135,12 @@ public class FXMLMainWindowController implements Initializable {
         consoleSendButton.setDisable(!isConnected);
         consoleTextField.setDisable(!isConnected);
         if (isConnected) Platform.runLater(() -> consoleTextField.requestFocus());
+
+        boolean codeToConsole = Boolean.parseBoolean(
+                robotVersionControl.getProperty("codeToConsole", "false"));
+        codeSendToConsoleButton.setDisable(!codeToConsole || !isConnected);
+        codeVerifyButton.setDisable(codeToConsole);
+        codeUploadButton.setDisable(codeToConsole || !isConnected);
     }
 
 
@@ -175,11 +182,12 @@ public class FXMLMainWindowController implements Initializable {
 
     public void consoleSendButtonAction() {
         consoleSendButton.setDisable(true);
+        boolean codeSendToConsoleButtonDisable = codeSendToConsoleButton.isDisable();
         codeSendToConsoleButton.setDisable(true);
         sendToConsole(consoleTextField.getText());
         consoleTextField.clear();
         consoleSendButton.setDisable(false);
-        codeSendToConsoleButton.setDisable(false); // todo set default
+        codeSendToConsoleButton.setDisable(codeSendToConsoleButtonDisable);
     }
 
     public void consoleClearButtonAction() {
@@ -226,11 +234,12 @@ public class FXMLMainWindowController implements Initializable {
 
     public void codeSendToConsoleButtonAction() {
         consoleSendButton.setDisable(true);
+        boolean codeSendToConsoleButtonDisable = codeSendToConsoleButton.isDisable();
         codeSendToConsoleButton.setDisable(true);
         String blocklyCode = blockly.getCode();
         if (!blocklyCode.isEmpty()) sendToConsole(blocklyCode);
         consoleSendButton.setDisable(false);
-        codeSendToConsoleButton.setDisable(false); // todo default
+        codeSendToConsoleButton.setDisable(codeSendToConsoleButtonDisable);
     }
 
     public void codeVerifyButtonAction() {
@@ -238,16 +247,22 @@ public class FXMLMainWindowController implements Initializable {
             assembleFileToCompile();
             ArduinoCompiler.verify(new File("generated-code.ino").getAbsolutePath());
         } catch (IOException e) {
+            showDialog();
             e.printStackTrace();
         }
     }
 
     public void codeUploadButtonAction() {
+        String portName = connectionChoiceBox.getSelectionModel().getSelectedItem().getComName();
+        if (portName == null) {
+            showDialog("Please chose port.");
+            return;
+        }
         try {
-            String portName = connectionChoiceBox.getSelectionModel().getSelectedItem().getComName(); //todo: NULL -> error no pot chosen
             assembleFileToCompile();
             ArduinoCompiler.verifyAndUpload(portName, new File("generated-code.ino").getAbsolutePath());
         } catch (Exception e) {
+            showDialog();
             e.printStackTrace();
         }
     }
@@ -256,18 +271,19 @@ public class FXMLMainWindowController implements Initializable {
         // get paths to all required files
         ArrayList<String> modulePaths = new ArrayList<>();
         for (int moduleNo : chosenModules) {
-            System.out.println(moduleNo);
-            modulePaths.add("/robot-versions/" + robotVersionControl.getModuleProperty(moduleNo, "location"));
+            try {
+                modulePaths.add("/robot-versions/" + robotVersionControl.getModuleProperty(moduleNo, "location"));
+            } catch (Exception e) {
+                showDialog(Alert.AlertType.ERROR, "Module location not set", "module " + moduleNo);
+            }
         }
 
         // create output file
         FileWriter writer = new FileWriter("generated-code.ino");
 
-        // output file header
+        // append HEADER sections of modules
         for (String file : modulePaths) {
-            System.out.println("looking for resource: " + file + "_header.ino");
             URL resource = ArduinoCompiler.class.getResource(file + "_header.ino");
-            System.out.println(resource.getPath());
             BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
             String line;
             while ((line = br.readLine()) != null)
@@ -275,7 +291,7 @@ public class FXMLMainWindowController implements Initializable {
             br.close();
         }
 
-        // output setup section
+        // append SETUP sections of modules
         writer.append("\r\nvoid setup() {\r\n");
         for (String file : modulePaths) {
             URL resource = ArduinoCompiler.class.getResource(file + "_setup.ino");
@@ -287,10 +303,10 @@ public class FXMLMainWindowController implements Initializable {
         }
         writer.append("\r\n}\r\n\r\n");
 
-        // get blockly code (the loop part and user-defined functions)
+        // append BLOCKLY CODE (main loop section and user-defined functions)
         writer.append(blockly.getCode()).append("\r\n\r\n");
 
-        // output support functions from modules
+        // append FOOTER sections of modules
         for (String file : modulePaths) {
             URL resource = ArduinoCompiler.class.getResource(file + "_footer.ino");
             BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
@@ -309,6 +325,7 @@ public class FXMLMainWindowController implements Initializable {
     /**
      * Robot version.
      */
+
     @FXML javafx.scene.control.Button robotVersionLoadButton;
     @FXML javafx.scene.control.Button robotVersionSearchButton;
     @FXML javafx.scene.control.ChoiceBox<RobotVersionControl.RobotVersion> robotVersionChoiceBox;
@@ -335,38 +352,54 @@ public class FXMLMainWindowController implements Initializable {
             robotVersionControl.loadVersion(robotVersionChoiceBox.getSelectionModel().getSelectedItem());
             blockly.setGenerator(robotVersionControl.getProperty("generator"));
             chosenModules.clear();
-            robotVersionModulesButtonAction();
-            simulationStartStopButton.setDisable(!Boolean.parseBoolean(
-                    robotVersionControl.getProperty("simulation", "false")));
+            openModuleChoiceDialog();
             blocklyWebView.setVisible(true);
+
+            boolean simulationEnabled = Boolean.parseBoolean(
+                    robotVersionControl.getProperty("simulation", "false"));
+            simulationStartStopButton.setDisable(!simulationEnabled);
+            rightSplitPane.setDividerPositions(simulationEnabled ? 0.66 : 1);
+
+            boolean codeToConsole = Boolean.parseBoolean(
+                    robotVersionControl.getProperty("codeToConsole", "false"));
+            codeSendToConsoleButton.setDisable(!codeToConsole || !serialCommunicator.isConnected());
+            codeVerifyButton.setDisable(codeToConsole);
+            codeUploadButton.setDisable(codeToConsole || !serialCommunicator.isConnected());
         } catch (Exception e) {
             blocklyWebView.setVisible(false);
-            System.err.println("Error while loading property file of selected version. OR no version chosen");
-            System.err.println("EXCEPTION INFO: " + e.getMessage());
+            consoleSetDisable(true);
+            codeVerifyButton.setDisable(true);
+            codeUploadButton.setDisable(true);
+            showDialog("Error while loading property file of selected version.");
         }
+        simulation.idle();
+        simulationStartStopButton.setText("Load & Play");
+        simulationSpeedSlider.setVisible(false);
+        simulationCameraControlButton.setVisible(false);
+        simulationState = SimulationState.STOP;
     }
+
 
 
     /**
      * Modules.
      */
-    private void robotVersionModulesButtonAction() {
 
+    private void openModuleChoiceDialog() {
         try {
             ArrayList<String> toolboxCategories = new ArrayList<>();
-
-            boolean programInRam = Boolean.parseBoolean(robotVersionControl.getProperty("programInRam"));
+            boolean programInRam = Boolean.parseBoolean(robotVersionControl.getProperty("programInRam", "false"));
             if (programInRam) {
+                // offer control program upload
                 ArrayList<SerialCommunicator.ComPort> availablePorts = serialCommunicator.getAvailablePorts();
                 SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort = connectionChoiceBox.getSelectionModel();
                 String message = "This version requires you to upload program to robot.";
-
                 String resourcePath = "/robot-versions/" + robotVersionControl.getProperty("programLocation");
                 URL resource = ArduinoCompiler.class.getResource(resourcePath);
                 FXMLUploadToArduinoDialog.getDialog(message, availablePorts, selectedComPort, resource).show();
                 toolboxCategories.addAll(robotVersionControl.getAllCategories());
             } else {
-                //open module selection
+                // open module selection
                 FXMLModuleSelectDialogController.display(robotVersionControl, chosenModules);
                 for (Integer moduleNumber : chosenModules) {
                     ArrayList<String> moduleCategories = robotVersionControl.getModuleCategories(moduleNumber);
@@ -374,6 +407,7 @@ public class FXMLMainWindowController implements Initializable {
                 }
             }
 
+            // update Blockly GUI
             blockly.setToolbox(robotVersionControl.getProperty("toolbox"));
             blockly.hideCategories(robotVersionControl.getAllCategories());
             blockly.showCategories(toolboxCategories);
@@ -393,19 +427,6 @@ public class FXMLMainWindowController implements Initializable {
         }
         blockly.hideCategories(robotVersionControl.getAllCategories());
         blockly.showCategories(toolboxCategories);
-    }
-
-
-    public void testButton1Action() {
-        //System.out.println(blockly.getWorkspace());
-        //System.out.println(blockly.getWorkspace().replaceAll("\"", "'"));
-        //terminateSimulation();
-        simulation.waitForMainLoopPause();
-    }
-
-    public void testButton2Action() {
-        //simulation.reset();
-        simulation.waitForMainLoopResume();
     }
 
 
@@ -517,7 +538,7 @@ public class FXMLMainWindowController implements Initializable {
                 try {
                     blocklyCode = blockly.getCode();
                 } catch (JSException e) {
-                    System.err.println("Unable to load Blockly program."); // todo dialog
+                    showDialog("Unable to load Blockly program.");
                 }
                 if (blocklyCode.isEmpty()) return;
 
@@ -555,15 +576,16 @@ public class FXMLMainWindowController implements Initializable {
 
 
     /**
-     * Load @ program.
+     * Parser for @ Otto program from user.
+     * Available for 2 RobotVersions - ottoBasic and ottoProcedural
      */
+
     @FXML  javafx.scene.control.MenuItem loadAtProgramButton;
 
-    public void loadAtProgramButtonAction() {
+    public void parseProgramButtonAction() {
         String codeLoader = robotVersionControl.getProperty("codeLoader");
-        if (codeLoader == null) {
-            // todo: unsupported operation dialog / disable this option
-            System.err.println("Unsupported operation");
+        if (codeLoader == null || (!codeLoader.equals("ottoProcedural") && !codeLoader.equals("ottoBasic"))) {
+            showDialog("Cannot parse @ program for selected RobotVersion");
             return;
         }
         try {
@@ -577,7 +599,7 @@ public class FXMLMainWindowController implements Initializable {
             if (codeLines.isEmpty()) throw new IllegalArgumentException("No code to parse.");
 
             StringBuilder workspace = new StringBuilder();
-            workspace.append("<xml><block type='otto_basic_loop' deletable='false' movable='false'><statement name='PROGRAM'>");
+            workspace.append("<xml><block type='otto_basic_loop' deletable='false' movable='false'><statement name='PROGRAM'>"); // main block
             int relativeOrder = 0;
             int absoluteOrder = 0;
             int[] triplet = new int[3];
@@ -621,7 +643,7 @@ public class FXMLMainWindowController implements Initializable {
             blockly.setWorkspace(workspace.toString());
 
         } catch (Exception e) {
-            System.err.println("Cannot parse @ code" + e.getMessage()); //todo error dialog
+            showDialog(Alert.AlertType.ERROR, "Parser error", "Cannot parse @ code :(");
             e.printStackTrace();
         }
     }
@@ -701,13 +723,13 @@ public class FXMLMainWindowController implements Initializable {
                 break;
         }
         return block;
-
     }
+
+
 
     /**
      *  Load example program.
      */
-    @FXML javafx.scene.control.MenuItem loadExampleButton;
 
     public void loadExampleButtonAction() {
         try {
@@ -717,9 +739,44 @@ public class FXMLMainWindowController implements Initializable {
             blockly.setWorkspace(workspace);
             reloadBlocklyCode();
         } catch (IOException e) {
-            System.err.println("Unable to open examples dialog.");
+            showDialog("Unable to open examples dialog.");
             e.printStackTrace();
         }
+    }
+
+
+
+    /**
+     * Show simple alert dialog. (error, warning, info)
+     */
+
+    public static void showDialog() {
+        showDialog(Alert.AlertType.ERROR, "ERROR", "Unexpected error occurred.");
+    }
+
+    public static void showDialog(String message) {
+        showDialog(Alert.AlertType.WARNING, null, message);
+    }
+
+    public static void showDialog(Alert.AlertType alertType, String header, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setHeaderText(header);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
+
+    /**
+     * Test buttons.
+     */
+
+    public void testButton1Action() { // T1
+
+    }
+
+    public void testButton2Action() { // T2
+
     }
 
 }

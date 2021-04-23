@@ -50,9 +50,9 @@
                                                          <bottom>
                                                             <HBox alignment="TOP_CENTER" prefHeight="25.0" prefWidth="200.0" spacing="4.0" style="-fx-background-color: #c7c7ff;" BorderPane.alignment="CENTER">
                                                                <children>
-                                                                  <Button fx:id="codeVerifyButton" alignment="CENTER" mnemonicParsing="false" onAction="#codeVerifyButtonAction" prefWidth="60.0" text="Verify" textAlignment="CENTER" />
-                                                                  <Button fx:id="codeUploadButton" alignment="CENTER" mnemonicParsing="false" onAction="#codeUploadButtonAction" prefWidth="60.0" text="Upload" textAlignment="CENTER" />
-                                                                  <Button fx:id="codeSendToConsoleButton" mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" text="To console" />
+                                                                  <Button fx:id="codeVerifyButton" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#codeVerifyButtonAction" prefWidth="60.0" text="Verify" textAlignment="CENTER" />
+                                                                  <Button fx:id="codeUploadButton" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#codeUploadButtonAction" prefWidth="60.0" text="Upload" textAlignment="CENTER" />
+                                                                  <Button fx:id="codeSendToConsoleButton" disable="true" mnemonicParsing="false" onAction="#codeSendToConsoleButtonAction" text="To console" />
                                                                </children>
                                                                <padding>
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -118,7 +118,7 @@
                      <menus>
                         <Menu mnemonicParsing="false" text="Options">
                            <items>
-                              <MenuItem fx:id="loadAtProgramButton" mnemonicParsing="false" onAction="#loadAtProgramButtonAction" text="Load @ program" />
+                              <MenuItem fx:id="loadAtProgramButton" mnemonicParsing="false" onAction="#parseProgramButtonAction" text="Load @ program" />
                               <MenuItem fx:id="loadExampleButton" mnemonicParsing="false" onAction="#loadExampleButtonAction" text="Load example program" />
                            </items>
                         </Menu>
