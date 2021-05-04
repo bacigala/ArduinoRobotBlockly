@@ -60,7 +60,7 @@ public class SerialCommunicator {
         try {
             connectedPort = SerialPort.getCommPort(comPort.comName);
             connectedPort.openPort();
-            connectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+            connectedPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
             setOutputStream(outputStream);
         } catch (Exception e) {
             connectedPort = null;

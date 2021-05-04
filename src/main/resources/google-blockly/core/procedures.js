@@ -185,6 +185,7 @@ Blockly.Procedures.rename = function(name) {
   return legalName;
 };
 
+
 /**
  * Construct the blocks required by the flyout for the procedure category.
  * @param {!Blockly.Workspace} workspace The workspace containing procedures.

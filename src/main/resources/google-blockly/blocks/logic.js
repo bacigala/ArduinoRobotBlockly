@@ -1,5 +1,4 @@
 /**
- * This is modified file, by original author licensed as follows: 
  * @license
  * Copyright 2012 Google LLC
  * SPDX-License-Identifier: Apache-2.0

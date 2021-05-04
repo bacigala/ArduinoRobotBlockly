@@ -1,0 +1,4 @@
+Liscened to {hanacek true} {eric true} 
+ License: cc-nc
+
+Original file was not modified, just converted .stl -> .obj

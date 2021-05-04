@@ -2,10 +2,13 @@ package blockly;
 
 import application.FXMLMainWindowController;
 import FXMLDialogController.TextInputDialog;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.web.WebEngine;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Represents Blockly instance.
@@ -33,6 +36,17 @@ public class Blockly {
 
         // enable JavaScript to open alert dialog
         webEngine.setOnAlert(alert -> FXMLMainWindowController.showDialog(alert.getData()));
+
+        // enable JavaScript to open confirmation dialogs (e.g. when variable is being deleted)
+        webEngine.setConfirmHandler((message) -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Blockly");
+            alert.setHeaderText("Are you sure?");
+            alert.setContentText(message);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            return  result.isPresent() && (result.get() == ButtonType.OK);
+        });
 
     // enable communication JS -> Java
 //        webEngine.getLoadWorker().stateProperty().addListener(

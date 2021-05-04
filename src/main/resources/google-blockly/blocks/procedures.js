@@ -1,7 +1,7 @@
 
 /**
  * This file was created by modification of the original file described below.
- * File was modified to support variable types.
+ * File was modified to support variable types of Boolean, String and Number.
  *
  * ORIGINAL FILE LICENSE AND AUTHOR:
  *
@@ -435,7 +435,10 @@ Blockly.Blocks['procedures_defreturn'] = {
     this.appendValueInput('RETURN').setCheck('Boolean')
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField(Blockly.Msg['PROCEDURES_DEFRETURN_RETURN']);
-		this.appendDummyInput().appendField(new Blockly.FieldDropdown([['Boolean', 'Boolean'],['Number', 'Number'],['String', 'String']]), "TYPE");
+				
+		// field for return type choice, notify return blocks and return value blocks by validator call
+		this.appendDummyInput().appendField(new Blockly.FieldDropdown([['Boolean', 'Boolean'],['Number', 'Number'],['String', 'String']], this.changeReturnType), "TYPE");
+		
     this.setMutator(new Blockly.Mutator(['procedures_mutatorarg_Boolean','procedures_mutatorarg_Number', 'procedures_mutatorarg_String']));
     if ((this.workspace.options.comments ||
          (this.workspace.options.parentWorkspace &&
@@ -476,9 +479,24 @@ Blockly.Blocks['procedures_defreturn'] = {
   customContextMenu: Blockly.Blocks['procedures_defnoreturn'].customContextMenu,
   callType_: 'procedures_callreturn',
 	
-	onchange : function() {
-		var typeField = this.getInput('RETURN');
-		typeField.setCheck(this.getFieldValue('TYPE'));
+	onchange : function() {},
+	
+	// called when return type dropdown changes
+	changeReturnType : function(requestedType) 
+		// change check of return field
+		var returnField = this.getInput('RETURN');
+		returnField.setCheck(this.getFieldValue('TYPE'));
+		
+		// change return value tpe of any call blocks
+		var blocks = this.getSourceBlock().workspace.getAllBlocks(false);
+		for (var i = 0; i < blocks.length; i++) {
+			if (blocks[i].changeProcedureReturnValue) {
+				var procedureBlock = blocks[i];
+				procedureBlock.changeProcedureReturnValue(requestedType);
+			}
+		}
+		
+		return requestedType;		
 	}
 	
 };
@@ -1295,7 +1313,12 @@ Blockly.Blocks['procedures_callreturn'] = {
   onchange: Blockly.Blocks['procedures_callnoreturn'].onchange,
   customContextMenu:
       Blockly.Blocks['procedures_callnoreturn'].customContextMenu,
-  defType_: 'procedures_defreturn'
+  defType_: 'procedures_defreturn',
+	
+	// notification that procedure type is changing AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	changeProcedureReturnValue : function(newType) {
+		window.alert("It is changing!");
+	}
 };
 
 Blockly.Blocks['procedures_ifreturn'] = {

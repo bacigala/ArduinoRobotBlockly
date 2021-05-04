@@ -125,18 +125,7 @@ Blockly.Variables.flyoutCategory = function(workspace) {
     Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace());
   });
 	xmlList.push(button);
-	
-	// panda button
-	button = document.createElement('button');
-  button.setAttribute('text', 'Create Panda varialbe');
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE');
-  workspace.registerButtonCallback('CREATE_VARIABLE_PANDA', function(button) {
-    Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace(), undefined, 'panda');
-  });
-	xmlList.push(button);
-
-
-	
+		
 	var blockList = Blockly.Variables.flyoutCategoryBlocks(workspace);
   xmlList = xmlList.concat(blockList);
   return xmlList;
@@ -162,44 +151,23 @@ Blockly.Variables.flyoutCategoryBlocks = function(workspace) {
       block.appendChild(
           Blockly.Variables.generateVariableFieldDom(mostRecentVariable));
       xmlList.push(block);
+    }	
+		
+    if (Blockly.Blocks['math_change']) {
+      var block = Blockly.utils.xml.createElement('block');
+      block.setAttribute('type', 'math_change');
+      block.setAttribute('gap', Blockly.Blocks['variables_get'] ? 20 : 8);
+      block.appendChild(
+          Blockly.Variables.generateVariableFieldDom(mostRecentVariable));
+      var value = Blockly.Xml.textToDom(
+          '<value name="DELTA">' +
+          '<shadow type="math_number">' +
+          '<field name="NUM">1</field>' +
+          '</shadow>' +
+          '</value>');
+      block.appendChild(value);
+      xmlList.push(block);
     }
-		
-		
-		// panda
-		// if (Blockly.Blocks['variables_set_panda']) {
-      // var block = Blockly.utils.xml.createElement('block');
-      // block.setAttribute('type', 'variables_set_panda');
-      // block.setAttribute('gap', Blockly.Blocks['math_change'] ? 8 : 24);
-			// var hasChildren = false;
-			// for (var i = 0; i < variableModelList.length; i++) {
-				// var variable = variableModelList[i];
-				// if (variable.type === 'Panda') {
-					// block.appendChild(Blockly.Variables.generateVariableFieldDom(variable));
-					// hasChildren = true;
-				// }
-      // }
-      // if (hasChildren) xmlList.push(block);
-    // }
-		
-		
-		
-		
-		
-    // if (Blockly.Blocks['math_change']) {
-      // var block = Blockly.utils.xml.createElement('block');
-      // block.setAttribute('type', 'math_change');
-      // block.setAttribute('gap', Blockly.Blocks['variables_get'] ? 20 : 8);
-      // block.appendChild(
-          // Blockly.Variables.generateVariableFieldDom(mostRecentVariable));
-      // var value = Blockly.Xml.textToDom(
-          // '<value name="DELTA">' +
-          // '<shadow type="math_number">' +
-          // '<field name="NUM">1</field>' +
-          // '</shadow>' +
-          // '</value>');
-      // block.appendChild(value);
-      // xmlList.push(block);
-    // }
 
     if (Blockly.Blocks['variables_get']) {
       variableModelList.sort(Blockly.VariableModel.compareByName);

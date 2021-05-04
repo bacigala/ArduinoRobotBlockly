@@ -111,7 +111,6 @@ public class Simulation extends JmeToJfxApplication {
 //        bulletAppState.getPhysicsSpace().add(otto_phy);
     }
 
-    // put pan loop
     public void waitForMainLoopPause() {
         synchronized (shouldRun) {
             shouldRun.set(false);
@@ -312,17 +311,16 @@ public class Simulation extends JmeToJfxApplication {
     }
 
     public void moveCamera(Axis axis, float delta) {
-        Vector3f move = null;
+        Vector3f move = cam.getDirection();
         switch (axis) {
             case X:
-                move = cam.getDirection().cross(Vector3f.UNIT_Y);
+                move.crossLocal(Vector3f.UNIT_Y);
                 break;
             case Y:
-                move = cam.getDirection().cross(Vector3f.UNIT_Y);
-                move = move.cross(cam.getDirection());
+                move.crossLocal(Vector3f.UNIT_Y);
+                move.crossLocal(cam.getDirection());
                 break;
             case Z:
-                move = cam.getDirection();
                 break;
         }
         cam.setLocation(cam.getLocation().add((move.normalize()).mult(delta)));

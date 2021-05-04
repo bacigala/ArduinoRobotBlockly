@@ -30,10 +30,9 @@ public class TextInputDialog {
 
     private @FXML javafx.scene.control.Label label;
     private @FXML javafx.scene.control.TextField textField;
-    private String result;
+    private String result = "";
 
     private void initialize(String message, String defaultText) {
-        result = defaultText;
         label.setText(message);
         textField.setText(defaultText);
     }

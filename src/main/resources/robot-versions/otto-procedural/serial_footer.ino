@@ -30,8 +30,6 @@ int nacitajCislo()
 
 // nasleduje softverova implementacia serioveho portu
 
-
-
 void init_serial(uint32_t baud_rate)
 {
   pinMode(BT_RX, INPUT);

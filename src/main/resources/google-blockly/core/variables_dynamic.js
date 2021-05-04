@@ -1,7 +1,7 @@
 
 /**
  * This file was created by modification of the original file described below.
- * File was modified to support variable types.
+ * File was modified to support variable types of String, Number and Boolean.
  *
  * ORIGINAL FILE LICENSE AND AUTHOR:
  *
@@ -109,6 +109,8 @@ Blockly.VariablesDynamic.flyoutCategoryBlocks = function(workspace, type) {
 
   var xmlList = [];
   if (variableModelList.length > 0) {
+		
+		// create block - variable setter
     if (Blockly.Blocks['variables_set_dynamic']) {
       var firstVariable = variableModelList[variableModelList.length - 1];
       var block = Blockly.utils.xml.createElement('block');
@@ -119,6 +121,7 @@ Blockly.VariablesDynamic.flyoutCategoryBlocks = function(workspace, type) {
       xmlList.push(block);
     }
 		
+		// create block - variable getter for each variable of type 
     if (Blockly.Blocks['variables_get_dynamic']) {
       variableModelList.sort(Blockly.VariableModel.compareByName);
       for (var i = 0, variable; (variable = variableModelList[i]); i++) {
