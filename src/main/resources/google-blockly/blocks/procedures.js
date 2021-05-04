@@ -469,7 +469,7 @@ Blockly.Blocks['procedures_defreturn'] = {
    * @this {Blockly.Block}
    */
   getProcedureDef: function() {
-    return [this.getFieldValue('NAME'), this.arguments_, true];
+    return [this.getFieldValue('NAME'), this.arguments_, true, this.getFieldValue('TYPE')]; // add return value to the tuple (to be able to create init return type of call blocks in menu flyout)
   },
   getVars: Blockly.Blocks['procedures_defnoreturn'].getVars,
   getVarModels: Blockly.Blocks['procedures_defnoreturn'].getVarModels,
@@ -482,17 +482,17 @@ Blockly.Blocks['procedures_defreturn'] = {
 	onchange : function() {},
 	
 	// called when return type dropdown changes
-	changeReturnType : function(requestedType) 
+	changeReturnType : function(requestedType) {
 		// change check of return field
-		var returnField = this.getInput('RETURN');
-		returnField.setCheck(this.getFieldValue('TYPE'));
+		var returnField = this.getSourceBlock().getInput('RETURN');
+		returnField.setCheck(requestedType);
 		
-		// change return value tpe of any call blocks
+		// change return value tpe of any call blocks QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
 		var blocks = this.getSourceBlock().workspace.getAllBlocks(false);
 		for (var i = 0; i < blocks.length; i++) {
 			if (blocks[i].changeProcedureReturnValue) {
 				var procedureBlock = blocks[i];
-				procedureBlock.changeProcedureReturnValue(requestedType);
+				procedureBlock.changeProcedureReturnValue(this.getSourceBlock().getFieldValue('NAME'), requestedType);
 			}
 		}
 		
@@ -1114,6 +1114,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
   mutationToDom: function() {
     var container = Blockly.utils.xml.createElement('mutation');
     container.setAttribute('name', this.getProcedureCall());
+    container.setAttribute('returnType', this.returnType);
     for (var i = 0; i < this.argumentVarModels_.length; i++) { // JAMA II
       var parameter = Blockly.utils.xml.createElement('arg');
       parameter.setAttribute('name', this.argumentVarModels_[i].name);
@@ -1127,9 +1128,21 @@ Blockly.Blocks['procedures_callnoreturn'] = {
    * @param {!Element} xmlElement XML storage element.
    * @this {Blockly.Block}
    */
+	 
+	returnType : null,
+	 
   domToMutation: function(xmlElement) {
     var name = xmlElement.getAttribute('name');
     this.renameProcedure(this.getProcedureCall(), name);
+		
+		
+		
+		var returnType = xmlElement.getAttribute('returnType');	// set type of this block
+		this.returnType = returnType;
+		this.setOutput(true, returnType);
+		console.log("nastavujem si output: " + returnType);
+		
+		
     var args = [];
     var paramIds = [];
     for (var i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
@@ -1300,6 +1313,8 @@ Blockly.Blocks['procedures_callreturn'] = {
     this.quarkIds_ = null;
     this.previousEnabledState_ = true;
   },
+	
+	returnType : null,
 
   getProcedureCall: Blockly.Blocks['procedures_callnoreturn'].getProcedureCall,
   renameProcedure: Blockly.Blocks['procedures_callnoreturn'].renameProcedure,
@@ -1316,8 +1331,12 @@ Blockly.Blocks['procedures_callreturn'] = {
   defType_: 'procedures_defreturn',
 	
 	// notification that procedure type is changing AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	changeProcedureReturnValue : function(newType) {
-		window.alert("It is changing!");
+	changeProcedureReturnValue : function(name, newType) {
+		if (Blockly.Names.equals(name, this.getProcedureCall())) {
+      this.setOutput(true, newType);
+			this.returnType = newType;
+			window.alert("aloha Teraz som: " + newType);
+    }
 	}
 };
 

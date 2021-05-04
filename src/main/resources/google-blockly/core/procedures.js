@@ -247,6 +247,7 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
       block.setAttribute('gap', 16);
       var mutation = Blockly.utils.xml.createElement('mutation');
       mutation.setAttribute('name', name);
+			if (templateName === 'procedures_callreturn') mutation.setAttribute('returnType', procedureList[i][3]);
       block.appendChild(mutation);
       for (var j = 0; j < args.length; j++) {
         var arg = Blockly.utils.xml.createElement('arg');
