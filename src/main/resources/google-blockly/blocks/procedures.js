@@ -1,7 +1,8 @@
 
 /**
- * This file was created by modification of the original file described below.
+ * This is a modification of a file licensed as stated below.
  * File was modified to support variable types of Boolean, String and Number.
+ * 
  *
  * ORIGINAL FILE LICENSE AND AUTHOR:
  *
@@ -117,7 +118,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
       var argModel = this.argumentVarModels_[i];
       parameter.setAttribute('name', argModel.name);
       parameter.setAttribute('varid', argModel.getId());
-      parameter.setAttribute('vartype', argModel.type); //JAMA
+      parameter.setAttribute('vartype', argModel.type);
       if (opt_paramIds && this.paramIds_) {
         parameter.setAttribute('paramId', this.paramIds_[i]);
       }
@@ -141,11 +142,11 @@ Blockly.Blocks['procedures_defnoreturn'] = {
     for (var i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
       if (childNode.nodeName.toLowerCase() == 'arg') {
         var varName = childNode.getAttribute('name');
-        var varType = childNode.getAttribute('vartype'); //JAMA
+        var varType = childNode.getAttribute('vartype');
         var varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
         this.arguments_.push(varName);
         var variable = Blockly.Variables.getOrCreateVariablePackage(
-            this.workspace, varId, varName, varType); //JAMA
+            this.workspace, varId, varName, varType);
         if (variable != null) {
           this.argumentVarModels_.push(variable);
         } else {
@@ -232,7 +233,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
     var paramBlock = containerBlock.getInputTargetBlock('STACK');
     while (paramBlock && !paramBlock.isInsertionMarker()) {
       var varName = paramBlock.getFieldValue('NAME');
-      var varType = paramBlock.getFieldValue('TYPE'); // JAMA
+      var varType = paramBlock.getFieldValue('TYPE');
       this.arguments_.push(varName);
       var variable = this.workspace.getVariable(varName, varType);
 			console.log('pushung: ' + varName + ' ' + varType + ' ' + this.workspace.getVariable(varName, varType));
@@ -277,7 +278,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    *     - that it DOES NOT have a return value.
    * @this {Blockly.Block}
    */
-  getProcedureDef: function() {						// JAMA: this returned just rguments...
+  getProcedureDef: function() {
     return [this.getFieldValue('NAME'), this.argumentVarModels_, false];
   },
   /**
@@ -308,10 +309,6 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    */
   renameVarById: function(oldId, newId) {
     var oldVariable = this.workspace.getVariableById(oldId);
-    //if (oldVariable.type != '') {
-      // Procedure arguments always have the empty type. // JAMA: not true anymore
-      //return;
-    //}
     var oldName = oldVariable.name;
     var newVar = this.workspace.getVariableById(newId);
 
@@ -469,7 +466,8 @@ Blockly.Blocks['procedures_defreturn'] = {
    * @this {Blockly.Block}
    */
   getProcedureDef: function() {
-    return [this.getFieldValue('NAME'), this.arguments_, true, this.getFieldValue('TYPE')]; // add return value to the tuple (to be able to create init return type of call blocks in menu flyout)
+		// add return value to the tuple (to be able to create init return type of call blocks in menu flyout)
+    return [this.getFieldValue('NAME'), this.arguments_, true, this.getFieldValue('TYPE')];
   },
   getVars: Blockly.Blocks['procedures_defnoreturn'].getVars,
   getVarModels: Blockly.Blocks['procedures_defnoreturn'].getVarModels,
@@ -487,7 +485,7 @@ Blockly.Blocks['procedures_defreturn'] = {
 		var returnField = this.getSourceBlock().getInput('RETURN');
 		returnField.setCheck(requestedType);
 		
-		// change return value tpe of any call blocks QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+		// change return value type of any call blocks
 		var blocks = this.getSourceBlock().workspace.getAllBlocks(false);
 		for (var i = 0; i < blocks.length; i++) {
 			if (blocks[i].changeProcedureReturnValue) {
@@ -500,10 +498,6 @@ Blockly.Blocks['procedures_defreturn'] = {
 	}
 	
 };
-
-
-
-
 
 Blockly.Blocks['procedures_mutatorcontainer'] = {
   /**
@@ -645,13 +639,6 @@ Blockly.Blocks['procedures_mutatorarg_Boolean'] = {
 };
 
 
-
-
-
-
-
-
-
 Blockly.Blocks['procedures_mutatorarg_Number'] = {
   /**
    * Mutator block for procedure argument.
@@ -701,7 +688,6 @@ Blockly.Blocks['procedures_mutatorarg_Number'] = {
    */
   validator_: function(varName) { 
     var sourceBlock = this.getSourceBlock();
-		
 		//var varName = sourceBlock.getFieldValue('NAME');
 		
     var outerWs = Blockly.Mutator.findParentWs(sourceBlock.workspace);
@@ -732,19 +718,7 @@ Blockly.Blocks['procedures_mutatorarg_Number'] = {
       return varName;
     }
 		
-		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
-		
-		 //JAVA try to get universal type 
-		// var modelCheck = outerWs.getVariable(varName, '');
-		// if (modelCheck) {
-			
-		// }
-		 
-		 
-		 
-
     var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
-		
 		
     if (model && model.name != varName) {
       // Rename the variable (case change)
@@ -783,9 +757,6 @@ Blockly.Blocks['procedures_mutatorarg_Number'] = {
     }
   }
 };
-
-
-
 
 
 Blockly.Blocks['procedures_mutatorarg_String'] = {
@@ -868,8 +839,6 @@ Blockly.Blocks['procedures_mutatorarg_String'] = {
       return varName;
     }
 		
-		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
-
     var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
     if (model && model.name != varName) {
       // Rename the variable (case change)
@@ -1068,11 +1037,9 @@ Blockly.Blocks['procedures_callnoreturn'] = {
           field.setValue(this.argumentVarModels_[i].name);
 					//field.setCheck(this.argumentVarModels_[i].type);
 					
-					// set check // JAMA $
 					var input = this.getInput('ARG' + i);
 					input.setCheck(this.argumentVarModels_[i].type);
 
-					
         } finally {
           Blockly.Events.enable();
         }
@@ -1135,19 +1102,15 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     var name = xmlElement.getAttribute('name');
     this.renameProcedure(this.getProcedureCall(), name);
 		
-		
-		
 		var returnType = xmlElement.getAttribute('returnType');	// set type of this block
 		this.returnType = returnType;
 		this.setOutput(true, returnType);
-		console.log("nastavujem si output: " + returnType);
-		
 		
     var args = [];
     var paramIds = [];
     for (var i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
       if (childNode.nodeName.toLowerCase() == 'arg') {
-        args.push(childNode.getAttribute('name')); // JAMA III
+        args.push(childNode.getAttribute('name'));
         paramIds.push(childNode.getAttribute('paramId'));
       }
     }
@@ -1330,12 +1293,11 @@ Blockly.Blocks['procedures_callreturn'] = {
       Blockly.Blocks['procedures_callnoreturn'].customContextMenu,
   defType_: 'procedures_defreturn',
 	
-	// notification that procedure type is changing AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	// notification that procedure type is changing
 	changeProcedureReturnValue : function(name, newType) {
 		if (Blockly.Names.equals(name, this.getProcedureCall())) {
       this.setOutput(true, newType);
 			this.returnType = newType;
-			window.alert("aloha Teraz som: " + newType);
     }
 	}
 };
@@ -1421,6 +1383,11 @@ Blockly.Blocks['procedures_ifreturn'] = {
       if (!this.isInFlyout) {
         this.setEnabled(true);
       }
+			
+			// setup return value to be the same as the one of the closest surrounding procedure
+			if (block.type == 'procedures_defreturn')
+				this.getInput('VALUE').setCheck(block.getFieldValue('TYPE'));
+			
     } else {
       this.setWarningText(Blockly.Msg['PROCEDURES_IFRETURN_WARNING']);
       if (!this.isInFlyout && !this.getInheritedDisabled()) {
