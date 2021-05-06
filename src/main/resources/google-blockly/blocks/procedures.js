@@ -82,7 +82,6 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    * @this {Blockly.Block}
    */
   updateParams_: function() {
-
     // Merge the arguments into a human-readable list.
     var paramString = '';
     if (this.argumentVarModels_.length) { //JAMA arg -> arg models
@@ -404,7 +403,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
 
         var argXmlField = Blockly.Variables.generateVariableFieldDom(argVar);
         var argXmlBlock = Blockly.utils.xml.createElement('block');
-        argXmlBlock.setAttribute('type', 'variables_get');
+        argXmlBlock.setAttribute('type', 'variables_get_dynamic_' + this.argumentVarModels_[i].type);
         argXmlBlock.appendChild(argXmlField);
         argOption.callback =
             Blockly.ContextMenu.callbackFactory(this, argXmlBlock);
@@ -466,8 +465,8 @@ Blockly.Blocks['procedures_defreturn'] = {
    * @this {Blockly.Block}
    */
   getProcedureDef: function() {
-		// add return value to the tuple (to be able to create init return type of call blocks in menu flyout)
-    return [this.getFieldValue('NAME'), this.arguments_, true, this.getFieldValue('TYPE')];
+		// add return value to the tuple (to be able to create init return type of call blocks in menu flyout)	 	arguments_
+    return [this.getFieldValue('NAME'), this.argumentVarModels_, true, this.getFieldValue('TYPE')];
   },
   getVars: Blockly.Blocks['procedures_defnoreturn'].getVars,
   getVarModels: Blockly.Blocks['procedures_defnoreturn'].getVarModels,
@@ -568,7 +567,7 @@ Blockly.Blocks['procedures_mutatorarg_Boolean'] = {
   validator_: function(varName) { 
     var sourceBlock = this.getSourceBlock();
 		
-		//var varName = sourceBlock.getFieldValue('NAME');
+		var oldName = sourceBlock.getFieldValue('NAME');
 		
     var outerWs = Blockly.Mutator.findParentWs(sourceBlock.workspace);
     varName = varName.replace(/[\s\xa0]+/g, ' ').replace(/^ | $/g, '');
@@ -591,6 +590,37 @@ Blockly.Blocks['procedures_mutatorarg_Boolean'] = {
         return null;
       }
     }
+		
+		//todo: do not allow duplicates globally
+		var mod = '';
+		var thisType = this.getSourceBlock().getFieldValue('TYPE');
+		
+		if (thisType !== 'Boolean') {
+			mod = outerWs.getVariable(varName, 'Boolean');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		if (thisType !== 'Number') {
+			mod = outerWs.getVariable(varName, 'Number');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		if (thisType !== 'String') {
+			mod = outerWs.getVariable(varName, 'String');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		
+		
+		
+		
+		
 
     // Don't create variables for arg blocks that
     // only exist in the mutator's flyout.
@@ -601,10 +631,13 @@ Blockly.Blocks['procedures_mutatorarg_Boolean'] = {
 		console.log('type is ' + this.getSourceBlock().getFieldValue('TYPE'));
 
     var model = outerWs.getVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
+		console.log(model ? "modl" : "no modl");
     if (model && model.name != varName) {
       // Rename the variable (case change)
       outerWs.renameVariableById(model.getId(), varName);
+			console.log("RENAME");
     }
+		
     if (!model) {
       model = outerWs.createVariable(varName, this.getSourceBlock().getFieldValue('TYPE'));
       if (model && this.createdVariables_) {
@@ -711,6 +744,34 @@ Blockly.Blocks['procedures_mutatorarg_Number'] = {
         return null;
       }
     }
+		
+		
+				//todo: do not allow duplicates globally
+		var mod = '';
+		var thisType = this.getSourceBlock().getFieldValue('TYPE');
+		
+		if (thisType !== 'Boolean') {
+			mod = outerWs.getVariable(varName, 'Boolean');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		if (thisType !== 'Number') {
+			mod = outerWs.getVariable(varName, 'Number');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		if (thisType !== 'String') {
+			mod = outerWs.getVariable(varName, 'String');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		
 
     // Don't create variables for arg blocks that
     // only exist in the mutator's flyout.
@@ -832,6 +893,33 @@ Blockly.Blocks['procedures_mutatorarg_String'] = {
         return null;
       }
     }
+		
+		
+				//todo: do not allow duplicates globally
+		var mod = '';
+		var thisType = this.getSourceBlock().getFieldValue('TYPE');
+		
+		if (thisType !== 'Boolean') {
+			mod = outerWs.getVariable(varName, 'Boolean');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		if (thisType !== 'Number') {
+			mod = outerWs.getVariable(varName, 'Number');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
+		if (thisType !== 'String') {
+			mod = outerWs.getVariable(varName, 'String');
+			if (mod) {
+				console.log("ER: vatiable of other type exists!")
+				return null;
+			}
+		}
 
     // Don't create variables for arg blocks that
     // only exist in the mutator's flyout.
@@ -1102,9 +1190,11 @@ Blockly.Blocks['procedures_callnoreturn'] = {
     var name = xmlElement.getAttribute('name');
     this.renameProcedure(this.getProcedureCall(), name);
 		
-		var returnType = xmlElement.getAttribute('returnType');	// set type of this block
-		this.returnType = returnType;
-		this.setOutput(true, returnType);
+		if (this.defType_ != 'procedures_defnoreturn') {
+			var returnType = xmlElement.getAttribute('returnType');	// set type of this block
+			this.returnType = returnType;
+			this.setOutput(true, returnType);
+		}
 		
     var args = [];
     var paramIds = [];

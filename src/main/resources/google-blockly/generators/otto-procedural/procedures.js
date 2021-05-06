@@ -108,7 +108,7 @@ Blockly.OttoProcedural['procedures_defreturn'] = function(block) {
   if (returnValue) {
     returnValue = Blockly.OttoProcedural.INDENT + 'return ' + returnValue + ';\n';
   } else {
-		returnValue = Blockly.OttoProcedural.INDENT + 'return null;\n';
+		returnValue = Blockly.OttoProcedural.INDENT + 'return NULL;\n';
 		
 		
 	}
@@ -153,7 +153,7 @@ Blockly.OttoProcedural['procedures_callreturn'] = function(block) {
   var variables = block.getVars();
   for (var i = 0; i < variables.length; i++) {
     args[i] = Blockly.OttoProcedural.valueToCode(block, 'ARG' + i,
-        Blockly.OttoProcedural.ORDER_NONE) || 'null';
+        Blockly.OttoProcedural.ORDER_NONE) || 'NULL';
   }
 
   var code = funcName + '(' + args.join(', ') + ')';
@@ -182,7 +182,7 @@ Blockly.OttoProcedural['procedures_ifreturn'] = function(block) {
   }
   if (block.hasReturnValue_) {
     var value = Blockly.OttoProcedural.valueToCode(block, 'VALUE',
-        Blockly.OttoProcedural.ORDER_NONE) || 'null';
+        Blockly.OttoProcedural.ORDER_NONE) || 'NULL';
     code += Blockly.OttoProcedural.INDENT + 'return ' + value + ';\n';
   } else {
     code += Blockly.OttoProcedural.INDENT + 'return;\n';

@@ -113,9 +113,12 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "message0": "%{BKY_CONTROLS_FOR_TITLE}",
     "args0": [
       {
-        "type": "field_variable",
-        "name": "VAR",
-        "variable": null
+				// MODIFICATION: only iterate with Number variable
+				"type": "field_variable",
+				"name": "VAR",
+				"variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+				"defaultType": "Number",
+				"variableTypes": ["Number"]
       },
       {
         "type": "input_value",
@@ -203,6 +206,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   }
 ]);  // END JSON EXTRACT (Do not delete this comment.)
 
+
 /**
  * Tooltips for the 'controls_whileUntil' block, keyed by MODE value.
  * @see {Blockly.Extensions#buildTooltipForDropdown}
@@ -248,24 +252,25 @@ Blockly.Constants.Loops.CUSTOM_CONTEXT_MENU_CREATE_VARIABLES_GET_MIXIN = {
    * @param {!Array} options List of menu options to add to.
    * @this {Blockly.Block}
    */
-  customContextMenu: function(options) {
-    if (this.isInFlyout) {
-      return;
-    }
-    var variable = this.getField('VAR').getVariable();
-    var varName = variable.name;
-    if (!this.isCollapsed() && varName != null) {
-      var option = {enabled: true};
-      option.text =
-          Blockly.Msg['VARIABLES_SET_CREATE_GET'].replace('%1', varName);
-      var xmlField = Blockly.Variables.generateVariableFieldDom(variable);
-      var xmlBlock = Blockly.utils.xml.createElement('block');
-      xmlBlock.setAttribute('type', 'variables_get');
-      xmlBlock.appendChild(xmlField);
-      option.callback = Blockly.ContextMenu.callbackFactory(this, xmlBlock);
-      options.push(option);
-    }
-  }
+	 // DO NOT ALLOW CREATION OF VARIABLE, VARIABLES ARE IN VARIABLE TOOLBOX
+  // customContextMenu: function(options) {
+    // if (this.isInFlyout) {
+      // return;
+    // }
+    // var variable = this.getField('VAR').getVariable();
+    // var varName = variable.name;
+    // if (!this.isCollapsed() && varName != null) {
+      // var option = {enabled: true};
+      // option.text =
+          // Blockly.Msg['VARIABLES_SET_CREATE_GET'].replace('%1', varName);
+      // var xmlField = Blockly.Variables.generateVariableFieldDom(variable);
+      // var xmlBlock = Blockly.utils.xml.createElement('block');
+      // xmlBlock.setAttribute('type', 'variables_get_dynamic_Number');
+      // xmlBlock.appendChild(xmlField);
+      // option.callback = Blockly.ContextMenu.callbackFactory(this, xmlBlock);
+      // options.push(option);
+    // }
+  // }
 };
 
 Blockly.Extensions.registerMixin('contextMenu_newGetVariableBlock',

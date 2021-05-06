@@ -79,7 +79,7 @@ Blockly.FieldVariable = function(varName, opt_validator, opt_variableTypes,
   opt_validator && this.setValidator(opt_validator);
 
   if (!opt_config) {  // Only do one kind of configuration or the other.
-    this.setTypes_(opt_variableTypes, opt_defaultType);
+    //this.setTypes_(opt_variableTypes, opt_defaultType);
   }
 };
 Blockly.utils.object.inherits(Blockly.FieldVariable, Blockly.FieldDropdown);
@@ -344,7 +344,7 @@ Blockly.FieldVariable.prototype.setTypes_ = function(opt_variableTypes,
     opt_defaultType) {
   // If you expected that the default type would be the same as the only entry
   // in the variable types array, tell the Blockly team by commenting on #1499.
-  var defaultType = opt_defaultType || '';
+  var defaultType = opt_defaultType || 'Number';
   // Set the allowable variable types.  Null means all types on the workspace.
   if (opt_variableTypes == null || opt_variableTypes == undefined) {
     var variableTypes = null;

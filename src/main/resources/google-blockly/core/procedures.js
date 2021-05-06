@@ -253,6 +253,7 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
         var arg = Blockly.utils.xml.createElement('arg');
         arg.setAttribute('name', args[j].name); // JAMA
         arg.setAttribute('type', args[j].type); // JAMA
+				console.log(args[j].name + " " + args[j].type);  //XAMP
         mutation.appendChild(arg);
       }
       xmlList.push(block);
@@ -283,7 +284,13 @@ Blockly.Procedures.updateMutatorFlyout_ = function(workspace) {
 			usedNames.push(block.getFieldValue('NAME'));
 		}
 	}
-
+	
+	// also add all variables in the main ws
+	let globalVarNameList = Blockly.mainWorkspace.getAllVariableNames();
+	for (let i = 0; i < globalVarNameList.length; i++) {
+		usedNames.push(globalVarNameList[i]);
+	}
+	
   var xml = Blockly.utils.xml.createElement('xml');
 
 	for (i in types) {	

@@ -116,9 +116,9 @@ Blockly.OttoProcedural['logic_ternary'] = function(block) {
   var value_if = Blockly.OttoProcedural.valueToCode(block, 'IF',
       Blockly.OttoProcedural.ORDER_CONDITIONAL) || 'false';
   var value_then = Blockly.OttoProcedural.valueToCode(block, 'THEN',
-      Blockly.OttoProcedural.ORDER_CONDITIONAL) || 'null';
+      Blockly.OttoProcedural.ORDER_CONDITIONAL) || 'NULL';
   var value_else = Blockly.OttoProcedural.valueToCode(block, 'ELSE',
-      Blockly.OttoProcedural.ORDER_CONDITIONAL) || 'null';
+      Blockly.OttoProcedural.ORDER_CONDITIONAL) || 'NULL';
   var code = value_if + ' ? ' + value_then + ' : ' + value_else;
   return [code, Blockly.OttoProcedural.ORDER_CONDITIONAL];
 };
