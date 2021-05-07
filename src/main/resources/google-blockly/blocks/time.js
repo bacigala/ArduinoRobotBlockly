@@ -8,7 +8,7 @@ Blockly.defineBlocksWithJsonArray([
   "type": "get_time",
   "message0": "Current time",
   "output": "Number",
-  "colour": 210,
+  "colour": 330,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -39,7 +39,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 210,
+  "colour": 330,
   "tooltip": "",
   "helpUrl": ""
 },
@@ -69,10 +69,8 @@ Blockly.defineBlocksWithJsonArray([
     }
   ],
   "output": "Number",
-  "colour": 210,
+  "colour": 330,
   "tooltip": "",
   "helpUrl": ""
 }
-
-
 ]);

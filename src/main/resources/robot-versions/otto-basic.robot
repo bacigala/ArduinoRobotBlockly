@@ -41,7 +41,6 @@
 	module1.name 				  = Basic
 	module1.description 	= This version consists of one module only which handles everything.
 	module1.required 			= true
-	module1.location			= 
 	module1.size					= 20
 	module1.categories		= motion, sound, setup
 

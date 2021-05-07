@@ -16,8 +16,8 @@ Blockly.OttoProcedural['wait_ultrasound'] = function(block) {
 	if (dropdown_relation == 'MORE') code += '<';
 	code += value_distance;
 	code += ') {\n';
-	code += 'delay(300);\n';
-	code += 'check_battery();\n';
+	code += '  delay(300);\n';
+	code += '  check_battery();\n';
 	code += '}\n';
   return code;
 };
@@ -37,16 +37,16 @@ Blockly.OttoProcedural['ulrasonic_gesture_last'] = function(block) {
 
 Blockly.OttoProcedural['button_pressed'] = function(block) {
   var dropdown_button = block.getFieldValue('BUTTON');
-  if (dropdown_button == 'RIGHT') code = 'digitalRead(TOUCH1)';
-  if (dropdown_button == 'LEFT') code = 'digitalRead(TOUCH2)';
+  if (dropdown_button === 'RIGHT') code = 'digitalRead(TOUCH1)';
+  if (dropdown_button === 'LEFT') code = 'digitalRead(TOUCH2)';
   return [code, Blockly.OttoProcedural.ORDER_ATOMIC];
 };
 
 Blockly.OttoProcedural['wait_touch'] = function(block) {
   var dropdown_button = block.getFieldValue('BUTTON');
 	var code = 'while (! ';
-	if (dropdown_button == 'RIGHT') code += 'digitalRead(TOUCH1)';
-	if (dropdown_button == 'LEFT') code += 'digitalRead(TOUCH2)';
+	if (dropdown_button === 'RIGHT') code += 'digitalRead(TOUCH1)';
+	if (dropdown_button === 'LEFT') code += 'digitalRead(TOUCH2)';
 	code += ') {\n';
 	code += 'delay(300);\n';
 	code += 'check_battery();\n';
@@ -56,8 +56,8 @@ Blockly.OttoProcedural['wait_touch'] = function(block) {
 
 Blockly.OttoProcedural['touch_gesture_record'] = function(block) {
   var dropdown_button = block.getFieldValue('BUTTON');
-	if (dropdown_button == 'RIGHT') code = 'touch_gesture_record(TOUCH1, 2000, 3000);\n';
-	if (dropdown_button == 'LEFT') code = 'touch_gesture_record(TOUCH2, 2000, 3000);\n';
+	if (dropdown_button === 'RIGHT') code = 'touch_gesture_record(TOUCH1, 2000, 3000);\n';
+	if (dropdown_button === 'LEFT') code = 'touch_gesture_record(TOUCH2, 2000, 3000);\n';
   return code;
 };
 

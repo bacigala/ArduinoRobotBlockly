@@ -1,5 +1,5 @@
-//TIME HEADE
+// MODULE TIME - HEADER
 
-uint32_t timer1;
-uint32_t timer2;
-uint32_t timer3;
+uint16_t timer1;
+uint16_t timer2;
+uint16_t timer3;

@@ -40,6 +40,8 @@
 		<script src="generators/otto-procedural/ultrasound.js"></script>
 		<script src="generators/otto-procedural/serial.js"></script>
 		<script src="generators/otto-procedural/time.js"></script>
+		<script src="generators/otto-procedural/vital.js"></script>
+		<script src="generators/otto-procedural/bluetooth.js"></script>
 		
 		<script src="blocks/otto-basic.js"></script>
 		<script src="blocks/lists.js"></script>
@@ -55,6 +57,8 @@
 		<script src="blocks/ultrasound.js"></script>
 		<script src="blocks/serial.js"></script>
 		<script src="blocks/time.js"></script>
+		<script src="blocks/vital.js"></script>
+		<script src="blocks/bluetooth.js"></script>
 		
 		<xml id='toolbox-otto-procedural' style='display: none'>
 			<category name='Logic' categorystyle='logic_category' toolboxitemid='logic'>
@@ -257,6 +261,10 @@
 								<block type='serial_get_number'></block>
 								<block type='otto_basic_loop'></block>
 								<block type='comment_block'></block>
+							</category>
+							
+						<category name='Otto' colour='240' toolboxitemid='vital'>
+								<block type='get_battery_level'></block>
 							</category>
 		</xml>
 

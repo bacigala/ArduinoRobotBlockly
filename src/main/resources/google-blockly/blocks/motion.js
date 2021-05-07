@@ -92,7 +92,25 @@ Blockly.defineBlocksWithJsonArray([
   "tooltip": "",
   "helpUrl": ""
 },
-// coplex turn left / right
+// set slowdown
+{
+  "type": "set_slowdown",
+  "message0": "Set slowdown to %1",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "SLOWDOWN_LEVEL",
+      "check": "Number"
+    }
+  ],
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
+},
+// complex turn left / right
 {
   "type": "turn_complex",
   "message0": "Turn %1",
@@ -141,7 +159,17 @@ Blockly.defineBlocksWithJsonArray([
 },
 {
   "type": "wave_hand",
-  "message0": "Wave hand.",
+  "message0": "Wave hand",
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 60,
+  "tooltip": "",
+  "helpUrl": ""
+},
+{
+  "type": "wave_hand2",
+  "message0": "Wave hand 2",
   "inputsInline": true,
   "previousStatement": null,
   "nextStatement": null,

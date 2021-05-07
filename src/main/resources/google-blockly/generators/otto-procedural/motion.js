@@ -2,10 +2,10 @@
 // MOTION BLOCKS GENERATOR
 
 Blockly.OttoProcedural['otto_procedural_motor_move'] = function(block) {
-	var motorNo = block.getFieldValue('MOTOR_NUMBER');
-	var motorPosition = Blockly.OttoProcedural.valueToCode(block, 'MOTOR_POSITION', Blockly.OttoProcedural.ORDER_ATOMIC);
-	var code = 'nastav_koncatinu(' + motorNo + ', ' + motorPosition + ");\n";
-	return code;
+	let motorNo = block.getFieldValue('MOTOR_NUMBER');
+	let motorPosition = Blockly.OttoProcedural.valueToCode(
+		block, 'MOTOR_POSITION', Blockly.OttoProcedural.ORDER_ATOMIC);
+	return 'motor_set(' + motorNo + ', ' + motorPosition + ");\n";
 };
 
 Blockly.OttoProcedural['reset_motors'] = function(block) {
@@ -13,37 +13,42 @@ Blockly.OttoProcedural['reset_motors'] = function(block) {
 };
 
 Blockly.OttoProcedural['move_complex'] = function(block) {
-  var dropdown_direction = block.getFieldValue('DIRECTION');
+  let dropdown_direction = block.getFieldValue('DIRECTION');
   switch (dropdown_direction) {
 		case "FWD":
-			return 'chod_smerom(1);\n';
+			return 'go_forward();\n';
 		case "BWD":
-			return 'chod_smerom(2);\n';
+			return 'go_backward();\n';
 	}
 };
 
 Blockly.OttoProcedural['turn_complex'] = function(block) {
-  var dropdown_direction = block.getFieldValue('DIRECTION');
+  let dropdown_direction = block.getFieldValue('DIRECTION');
   switch (dropdown_direction) {
 		case "LEFT":
-			return 'chod_smerom(4);\n';
+			return 'turn_left();\n';
 		case "RIGHT":
-			return 'chod_smerom(3);\n';
+			return 'turn_right();\n';
 	}
 };
 
+Blockly.OttoProcedural['set_slowdown'] = function(block) {
+	let level = Blockly.OttoProcedural.valueToCode(block, 'SLOWDOWN_LEVEL', Blockly.OttoProcedural.ORDER_ATOMIC);
+	return 'slowdown = ' + level + ';\n';
+};
+
 Blockly.OttoProcedural['tiptoes'] = function(block) {
-  var code = 'to_tiptoes();\n';
-  return code;
+	return 'stand_on_tiptoes();\n';
 };
 
 Blockly.OttoProcedural['heels'] = function(block) {
-  var code = 'to_heels();\n';
-  return code;
+	return 'stand_on_heels();\n';
 };
 
 Blockly.OttoProcedural['wave_hand'] = function(block) {
-  var code = 'wave_hand();\n';
-  return code;
+	return 'wave_hand();\n';
 };
 
+Blockly.OttoProcedural['wave_hand2'] = function(block) {
+	return 'wave_hand2();\n';
+};

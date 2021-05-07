@@ -1,4 +1,8 @@
-//SOUND FOOTER
+// MODULE SOUND - FOOTER
+
+/*
+ * SOUND EFFECTS
+ */
 
 void sound_effect1() {
   uint16_t fre = 100;
@@ -9,109 +13,89 @@ void sound_effect1() {
   }
 }
 
-void sound_effect2()
-{
+void sound_effect2() {
   uint16_t fre = 2060;
-  for (int i = 0; i < 200; i++)
-  {
+  for (int i = 0; i < 200; i++) {
     tone2(fre, 2);
     fre -= 10;
     delay(2);
   }
 }
 
-void sound_effect3()
-{
+void sound_effect3() {
   uint16_t fre;
-  for (int i = 0; i < 200; i++)
-  {
+  for (int i = 0; i < 200; i++) {
     fre = random(3000) + 20;
     tone2(fre, 2);
     delay(2);
   }
 }
 
-void sound_effect4()
-{
+void sound_effect4() {
   uint16_t fre = 100;
-  for (int i = 0; i < 200; i++)
-  {
+  for (int i = 0; i < 200; i++) {
     (i & 1) ? tone2(fre, 2) : tone2(2100 - fre, 2);
     fre += 10;
     delay(2);
   }
 }
 
-void sound_effect5()
-{
+void sound_effect5() {
   uint16_t fre = 100;
-  for (int i = 0; i < 100; i++)
-  {
+  for (int i = 0; i < 100; i++) {
     (i & 1) ? tone2(fre, 4) : tone2(2100 - fre, 4);
     fre += 20;
     delay(4);
   }
 }
 
-void sound_effect6()
-{
+void sound_effect6() {
   uint16_t d = 12;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(1760, 10);
     delay(d);
     d += 3;
   }
 }
 
-void sound_effect7()
-{
-  for (int i = 0; i < 40; i++)
-  {
+void sound_effect7() {
+  for (int i = 0; i < 40; i++) {
     if (i & 1) tone2(1760, 10);
     delay(10);
   }
 }
 
-void sound_effect8()
-{
+void sound_effect8() {
   uint16_t d = 72;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(1760, 10);
     delay(d);
     d -= 3;
   }
 }
 
-void sound_effect9()
-{
+void sound_effect9() {
   float fre = 3500;
-  while (fre > 30)
-  {
+  while (fre > 30) {
     tone2((uint16_t)fre, 2);
     fre *= 0.97;
     delay(2);
   }
 }
 
-void sound_effect10()
-{
+void sound_effect10() {
   float fre = 30;
-  while (fre < 3000)
-  {
+  while (fre < 3000) {
     tone2((uint16_t)fre, 2);
     fre *= 1.03;
     delay(2);
   }
 }
 
-void sound_effect11()
-{
+void sound_effect11() {
   uint16_t fre = 3500;
   uint16_t d = 42;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(fre, d);
     fre -= 165;
     delay(d);
@@ -119,12 +103,10 @@ void sound_effect11()
   }
 }
 
-void sound_effect12()
-{
+void sound_effect12() {
   float fre = 110;
   uint8_t d = 42;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(fre, d);
     fre += 165;
     delay(d);
@@ -132,13 +114,11 @@ void sound_effect12()
   }
 }
 
-void sound_effect13()
-{
+void sound_effect13() {
   uint16_t fre = 3400;
   uint8_t d = 200;
   uint8_t delta = 1;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(fre, d);
     fre -= 165;
     delay(d);
@@ -149,12 +129,10 @@ void sound_effect13()
   delay(1000);
 }
 
-void sound_effect14()
-{
+void sound_effect14() {
   uint16_t fre = 880;
   int16_t d = 20;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(fre, d);
     delay(d);
     fre += random(50) - 25;
@@ -163,12 +141,10 @@ void sound_effect14()
   }
 }
 
-void sound_effect15()
-{
+void sound_effect15() {
   uint16_t fre = 440;
   int16_t d = 20;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(fre, d);
     delay(d);
     fre += random(25) - 12;
@@ -177,12 +153,10 @@ void sound_effect15()
   }
 }
 
-void sound_effect16()
-{
+void sound_effect16() {
   uint16_t fre = 1760;
   int16_t d = 20;
-  for (int i = 0; i < 20; i++)
-  {
+  for (int i = 0; i < 20; i++) {
     tone2(fre, d);
     delay(d);
     fre += random(100) - 50;
@@ -192,13 +166,41 @@ void sound_effect16()
 }
 
 void beep() {
-  tone2( 1568, 50);
+  tone2(1568, 50);
   delay(100);
-  tone2( 1357, 50);
+  tone2(1357, 50);
 }
 
-// MELODIE
-void melodia_jedna_druhej()
+
+/*
+ * MELODIES
+ */
+
+// used when battery level is too low (MODULE VITAL)
+void SOS()
+{
+  pinMode(SIREN, OUTPUT);
+  for (uint8_t i = 0; i < 3; i++)
+  {
+    tone2(1680, 100);
+    delay(150);
+  }
+  delay(300);
+  for (uint8_t i = 0; i < 3; i++)
+  {
+    tone2(1680, 300);
+    delay(350);
+  }
+  delay(300);
+  for (uint8_t i = 0; i < 3; i++)
+  {
+    tone2(1680, 100);
+    delay(150);
+  }
+  delay(500);
+}
+
+void melody_jedna_druhej()
 {
   for (int i = 0; i < 2; i++)
   {
@@ -220,19 +222,18 @@ void melodia_jedna_druhej()
   }
 }
 
-// prehravanie melodie a hranie cez timer2 v pozadi
-#define SIRENE_PORT  PORTB
-#define SIRENE_DDR   DDRB
-#define SIRENE_PIN   5
+#define SIREN_PORT  PORTB
+#define SIREN_DDR   DDRB
+#define SIREN_PIN   5
 
 #define FIS3 2960
 #define G3 3136
 
 float octave_4[] = { 2093.00, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.00, 3729.31, 3951.07 };
+uint16_t melody_length[] = {0, 386, 26, 281, 217, 36, 234 };
 
 //popcorn
-uint16_t dlzka_melodia[] = {0, 386, 26, 281, 217, 36, 234 };
-const uint8_t melodia1[] PROGMEM = { 252, 50, 149,  49,
+const uint8_t melody1[] PROGMEM = { 252, 50, 149,  49,
                                      28, 31, 35, 40, 49, 99, 38, 49, 99, 40, 49, 99, 35, 49, 99, 31, 49, 99, 35, 49, 99, 28, 49, 99, 49,
                                      28, 31, 35, 40, 49, 99, 38, 49, 99, 40, 49, 99, 35, 49, 99, 31, 49, 99, 35, 49, 99, 28, 49, 99, 149,
                                      40, 49, 99, 42, 49, 99, 43, 49, 99, 42, 49, 99, 43, 49, 99, 40, 49, 99, 42, 49, 99, 40, 49, 99, 42, 49, 99, 38, 49, 99, 40, 49, 99, 38, 49, 99, 40, 49, 99, 36, 49, 99, 40, 49, 99,
@@ -248,10 +249,10 @@ const uint8_t melodia1[] PROGMEM = { 252, 50, 149,  49,
                                    };
 
 //kohutik jarabi
-const uint8_t melodia2[] PROGMEM = { 252, 150, 119, 121, 173, 174, 124, 124, 124, 123, 171, 173, 123, 123, 123, 121, 169, 171, 121, 121, 121, 123, 171, 169, 119, 119 };
+const uint8_t melody2[] PROGMEM = { 252, 150, 119, 121, 173, 174, 124, 124, 124, 123, 171, 173, 123, 123, 123, 121, 169, 171, 121, 121, 121, 123, 171, 169, 119, 119 };
 
 //kankan
-const uint8_t melodia3[] PROGMEM = { 252, 100,
+const uint8_t melody3[] PROGMEM = { 252, 100,
                                      251, 1, 184, 1, 32, 126, 149, 251, 1, 184, 1, 32, 126, 149, 251, 1, 184, 1, 32, 126, 251, 1, 184, 1, 32, 126, 251, 1, 184, 1, 32, 126, 251, 1, 184, 1, 32, 126,
                                      64, 71, 71, 73, 71, 69, 69, 73, 74, 78, 81, 78, 78, 76, 251, 1, 184, 1, 32, 126, 78, 68, 68, 78, 76, 69, 69, 73, 73, 71, 73, 71, 85, 83, 85, 83,
                                      64, 71, 71, 73, 71, 69, 69, 73, 74, 78, 81, 78, 78, 76, 251, 1, 184, 1, 32, 126, 78, 68, 68, 78, 76, 69, 69, 73, 73, 71, 73, 71, 71, 69, 119,
@@ -269,7 +270,7 @@ const uint8_t melodia3[] PROGMEM = { 252, 100,
                                    };
 
 //labutie jazero
-const uint8_t melodia4[] PROGMEM = {
+const uint8_t melody4[] PROGMEM = {
   252, 220, 66, 69, 73, 69, 66, 69, 73, 69, 66, 69, 73, 69, 66, 69, 73, 69,
   185, 78, 80, 81, 83, 251, 5, 39, 3, 8, 81, 251, 5, 39, 3, 8, 81, 251, 5, 39, 3, 8, 78, 81, 78, 73, 81, 178,
   99, 83, 81, 80,
@@ -282,12 +283,12 @@ const uint8_t melodia4[] PROGMEM = {
 };
 
 //let it be https://www.musicnotes.com/sheetmusic/mtd.asp?ppn=MN0101556
-const uint8_t melodia5[] PROGMEM = { 252, 200, 26, 26, 76, 26, 253, 78, 73, 76, 76, 31, 253, 83, 35, 85, 253, 85, 
+const uint8_t melody5[] PROGMEM = { 252, 200, 26, 26, 76, 26, 253, 78, 73, 76, 76, 31, 253, 83, 35, 85, 253, 85,
                                      83, 83, 81, 131, 35, 253, 85, 86, 35, 35, 85, 83, 99, 35, 33, 83, 81, 181 
 };
 
 // koleda
-const uint8_t melodia6[] PROGMEM = { 252, 50, 121, 130, 128, 126, 171, 121, 71, 71, 121, 130, 128, 126, 173, 123, 
+const uint8_t melody6[] PROGMEM = { 252, 50, 121, 130, 128, 126, 171, 121, 71, 71, 121, 130, 128, 126, 173, 123,
         123, 123, 131, 130, 128, 175, 125, 125, 133, 133, 131, 128, 230, 121, 130, 128, 126, 171, 121, 
         71, 71, 121, 130, 128, 126, 173, 123, 123, 123, 131, 130, 128, 133, 133, 133, 133, 135, 133, 
         131, 140, 238, 130, 130, 180, 130, 130, 180, 130, 133, 126, 76, 78, 180, 130, 149, 131, 131, 
@@ -303,23 +304,23 @@ const uint8_t melodia6[] PROGMEM = { 252, 50, 121, 130, 128, 126, 171, 121, 71, 
         133, 133, 131, 128, 176, 138, 149 };
 
 volatile int16_t music_speed = 800 / 16;
-volatile const uint8_t *current_note ;
+volatile const uint8_t *current_note;
 volatile uint16_t notes_remaining;
 uint8_t dotted_note = 0;
 
-void melody_play(uint8_t cislo)
+void melody_play(uint8_t melody_number)
 {
-  if (cislo == 1) current_note = melodia1;
-  else if (cislo == 2) current_note = melodia2;
-  else if (cislo == 3) current_note = melodia3;
-  else if (cislo == 4) current_note = melodia4;
-  else if (cislo == 5) current_note = melodia5;
-  else if (cislo == 6) current_note = melodia6;
-	else if (cislo == 7) {
-		melodia_jedna_druhej();
+  if (melody_number == 1) current_note = melody1;
+  else if (melody_number == 2) current_note = melody2;
+  else if (melody_number == 3) current_note = melody3;
+  else if (melody_number == 4) current_note = melody4;
+  else if (melody_number == 5) current_note = melody5;
+  else if (melody_number == 6) current_note = melody6;
+	else if (melody_number == 7) {
+		melody_jedna_druhej();
 		return;
 	}
-  notes_remaining = dlzka_melodia[cislo];
+  notes_remaining = melody_length[melody_number];
   next_note();
 }
 
@@ -421,7 +422,7 @@ void init_tone2()
   TCCR2A = 2;
   TCCR2B = 0;
   TIMSK2 = 2;
-  SIRENE_DDR |= (1 << SIRENE_PIN);
+  SIREN_DDR |= (1 << SIREN_PIN);
 }
 
 ISR(TIMER2_COMPA_vect)
@@ -430,12 +431,12 @@ ISR(TIMER2_COMPA_vect)
   {
     if (tone2_state)
     {
-      SIRENE_PORT |= (1 << SIRENE_PIN);
+      SIREN_PORT |= (1 << SIREN_PIN);
       tone2_state = 0;
     }
     else
     {
-      SIRENE_PORT &= ~(1 << SIRENE_PIN);
+      SIREN_PORT &= ~(1 << SIREN_PIN);
       tone2_state = 1;
     }
   }
@@ -518,17 +519,48 @@ void melody_stop()
   notes_remaining = 0;
 }
 
-// dfplayer mini
+
+/*
+ * MP3 - dfplayer mini
+ */
 
 // volume 0-30
 void mp3_set_volume(uint8_t volume)
 {
- mp3_send_packet(0x06, volume);  
+  if (volume > 30) volume = 30;
+  mp3_volume = volume;
+  mp3_send_packet(0x06, volume);
 }
 
 void mp3_play(uint8_t song_number)
 {
- mp3_send_packet(0x03, song_number);  
+  mp3_send_packet(0x03, song_number);
+}
+
+void mp3_playback()
+{
+  mp3_send_packet(0x0D, 0x00);
+}
+
+void mp3_pause()
+{
+  mp3_send_packet(0x0E, 0x00);
+}
+
+void mp3_send_packet(uint8_t cmd, uint16_t param)
+{
+  mp3_send_byte(MP3_OUTPUT_PIN, 0x7E);
+  mp3_send_byte(MP3_OUTPUT_PIN, 0xFF);
+  mp3_send_byte(MP3_OUTPUT_PIN, 0x06);
+  mp3_send_byte(MP3_OUTPUT_PIN, cmd);
+  mp3_send_byte(MP3_OUTPUT_PIN, 0x00);
+  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(param >> 8));
+  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(param & 0xFF));
+  uint16_t chksm = 0xFF + 0x06 + cmd + (param >> 8) + (param & 0xFF);
+  chksm = -chksm;
+  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(chksm >> 8));
+  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(chksm & 0xFF));
+  mp3_send_byte(MP3_OUTPUT_PIN, 0xEF);
 }
 
 void mp3_send_byte(uint8_t pin, uint8_t val)
@@ -553,20 +585,4 @@ void mp3_send_byte(uint8_t pin, uint8_t val)
   next_change = micros() + 2 * one_bit;
   while (micros() < next_change);
   pinMode(MP3_OUTPUT_PIN, INPUT);
-}
-
-void mp3_send_packet(uint8_t cmd, uint16_t param)
-{
-  mp3_send_byte(MP3_OUTPUT_PIN, 0x7E);
-  mp3_send_byte(MP3_OUTPUT_PIN, 0xFF);
-  mp3_send_byte(MP3_OUTPUT_PIN, 0x06);
-  mp3_send_byte(MP3_OUTPUT_PIN, cmd);
-  mp3_send_byte(MP3_OUTPUT_PIN, 0x00);
-  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(param >> 8));
-  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(param & 0xFF));
-  uint16_t chksm = 0xFF + 0x06 + cmd + (param >> 8) + (param & 0xFF);
-  chksm = -chksm;
-  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(chksm >> 8));
-  mp3_send_byte(MP3_OUTPUT_PIN, (uint8_t)(chksm & 0xFF));
-  mp3_send_byte(MP3_OUTPUT_PIN, 0xEF);
 }

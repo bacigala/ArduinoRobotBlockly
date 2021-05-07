@@ -38,6 +38,42 @@ Blockly.defineBlocksWithJsonArray([
   "tooltip": "Allowed range: 0..30",
   "helpUrl": ""
 },
+  // get mp3 volume level
+{
+  "type": "mp3_get_volume",
+  "message0": "Volume of mp3 player",
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "",
+  "helpUrl": ""
+},
+// mp3 function
+{
+  "type": "mp3_complex",
+  "message0": "mp3 player %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "FUNCTION",
+      "options": [
+        [
+          "playback",
+          "PLAYBACK"
+        ],
+        [
+          "pause",
+          "PAUSE"
+        ]
+      ]
+    }
+  ],
+  "inputsInline": true,
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 30,
+  "tooltip": "",
+  "helpUrl": ""
+},
 // melody - play
 {
   "type": "melody_play",

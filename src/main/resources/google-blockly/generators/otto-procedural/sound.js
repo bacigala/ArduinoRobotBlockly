@@ -2,15 +2,29 @@
 // SOUND BLOCKS GENERATOR
 
 Blockly.OttoProcedural['mp3_play_song'] = function(block) {
-  var song_no = Blockly.OttoProcedural.valueToCode(block, 'SONG_NO', Blockly.OttoProcedural.ORDER_ATOMIC);
-  var code = 'mp3_play(' + song_no + ');\n';
-  return code;
+  let song_no = Blockly.OttoProcedural.valueToCode(block, 'SONG_NO', Blockly.OttoProcedural.ORDER_ATOMIC);
+  return 'mp3_play(' + song_no + ');\n';
 };
 
 Blockly.OttoProcedural['mp3_set_volume'] = function(block) {
   var volume_level = Blockly.OttoProcedural.valueToCode(block, 'VOLUME_LEVEL', Blockly.OttoProcedural.ORDER_ATOMIC);
   var code = 'mp3_set_volume(' + volume_level + ');\n';
   return code;
+};
+
+Blockly.OttoProcedural['mp3_get_volume'] = function(block) {
+  let code = 'mp3_volume';
+  return [code, Blockly.OttoProcedural.ORDER_NONE];
+};
+
+Blockly.OttoProcedural['mp3_complex'] = function(block) {
+  let fun = block.getFieldValue('FUNCTION');
+  switch (fun) {
+    case "PLAYBACK":
+      return 'mp3_playback();\n';
+    case "PAUSE":
+      return 'mp3_pause();\n';
+  }
 };
 
 Blockly.OttoProcedural['melody_play'] = function(block) {

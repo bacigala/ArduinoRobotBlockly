@@ -1,108 +1,96 @@
-//VITAL FOOTER
-int measure_bat()
+// MODULE VITAL -  FOOTER
+
+/*
+ *  BATTERY MONITORING
+ */
+
+int measure_battery()
 {
-  analogReference(INTERNAL); 
-  float volt = analogRead(A0); 
+  analogReference(INTERNAL);
+  float volt = analogRead(A0);
   analogReference(DEFAULT);
-  return (int)(0.5 + 100.0 * volt * 0.01209021768);   
+  // volt * 1.1 * 92.2 / 8.2 / 1023 (8k2 Ohm out of 82k+8k2=92.2 KOhm)
+  return (int)(0.5 + 100.0 * volt * 0.01209021768);
 }
 
+// check battery, stop robot if necessary
 void check_battery()
 {
   static long last_measurement = 0;
-  static long measurement_count = 0;
+  static long low_battery_measurement_count = 0;
 
   if (ignore_batteries) return;
-  long tm = millis();
-  if (tm - last_measurement > 500)
-  {
-    last_measurement = tm;
-    if (measure_bat() < 620)  
-    {
-      measurement_count++;
-      if (measurement_count < 5) return;
-      delay(50);
-#ifdef MODULE_SERIAL
-      serial_println_flash(PSTR("!!!!!!!!!!!!!!!! Replace batteries !!!!!!!!!!!!!!!!!!!!")); 
+
+  long time = millis();
+  if (time - last_measurement < 500) return;
+
+  last_measurement = time;
+
+  if (measure_battery() > 620) {
+    // battery OK
+    low_battery_measurement_count = 0;
+    return;
+  }
+  low_battery_measurement_count++;
+  if (low_battery_measurement_count < 5) return;
+
+  // battery level is too low -> send SOS signal, stop robot
+  delay(50);
+#ifdef MODULE_BLUETOOTH
+  bluetooth_println_flash(PSTR("!!!!!!!!!!!!!!!! Replace batteries !!!!!!!!!!!!!!!!!!!!"));
 #endif
-#ifdef MODULE_SOUND
-      mp3_set_volume(0);
+#ifdef MODULE_SERIAL
+  Serial.println(F("!!!!!!!!!!!!!!!! Replace batteries !!!!!!!!!!!!!!!!!!!!"));
 #endif
 #ifdef MODULE_MOTION
-      for (int i = 0; i < 6; i++)
-        s[i].detach();
+  motion_disable();
 #endif
-      for (int i = 2; i < 20; i++)
-        pinMode(i, INPUT);
+  for (int i = 2; i < 20; i++)
+    pinMode(i, INPUT);
 #ifdef MODULE_SOUND
-      while(1) SOS();
-#else
-			while(1);
+  mp3_set_volume(0);
+  while(1) SOS();
 #endif
-    }
-    else measurement_count = 0;
-  }
+  while(1); //stop
 }
 
-#ifdef MODULE_SOUND
-	void SOS()
-	{
-		pinMode(SIRENA, OUTPUT);
-		for (uint8_t i = 0; i < 3; i++)
-		{
-			tone2(1680, 100);
-			delay(150);
-		}
-		delay(300);
-		for (uint8_t i = 0; i < 3; i++)
-		{
-			tone2(1680, 300);
-			delay(350);
-		}
-		delay(300);
-		for (uint8_t i = 0; i < 3; i++)
-		{
-			tone2(1680, 100);
-			delay(150);
-		}
-		delay(500);
-	}
-#endif
 
+/*
+ *  INTERRUPT MANAGEMENT
+ */
 
-// SHARED WITH SERIAL & ULTRASOUND
+static uint8_t old_pinb, new_pinb;
+
 ISR(PCINT0_vect)
 {
   new_pinb = PINB;
 	
 	#ifdef MODULE_ULTRASOUND
-		if ((new_pinb ^ old_pinb) & 1)
-		{
-			if (new_pinb & 1) pulse_start = micros();
-			else 
-			{
+		if ((new_pinb ^ old_pinb) & 1) {
+			if (new_pinb & 1)
+			  pulse_start = micros();
+			else {
 				distance = (int16_t)((micros() - pulse_start) / 58);
 				new_distance = 1;
 			}
 		}
 	#endif
 
-	#ifdef MODULE_SERIAL
-		if ((new_pinb ^ old_pinb) & 16)
-		{
+	#ifdef MODULE_BLUETOOTH
+		if ((new_pinb ^ old_pinb) & 16)	{
 			uint32_t tm = micros();
-			if (serial_state == SERIAL_STATE_IDLE)
+			if (bluetooth_state == BLUETOOTH_STATE_IDLE)
 			{
 				time_startbit_noticed = tm;
-				serial_state = SERIAL_STATE_RECEIVING;
+				bluetooth_state = BLUETOOTH_STATE_RECEIVING;
 				receiving_byte = 0xFF;
 				next_bit_order = 0;
 			}
 			else if (tm - time_startbit_noticed > one_byte_duration)
 			{
-				serial_buffer[serial_buf_wp] = receiving_byte;
-				serial_buf_wp++;
-				if (serial_buf_wp == SERIAL_BUFFER_LENGTH) serial_buf_wp = 0;
+				bluetooth_buffer[bluetooth_buf_wp] = receiving_byte;
+				bluetooth_buf_wp++;
+				if (bluetooth_buf_wp == BLUETOOTH_BUFFER_LENGTH) bluetooth_buf_wp = 0;
 				time_startbit_noticed = tm;
 				receiving_byte = 0xFF;
 				next_bit_order = 0;
@@ -117,10 +105,10 @@ ISR(PCINT0_vect)
 				}
 				if (next_bit_order == 8)
 				{
-					serial_buffer[serial_buf_wp] = receiving_byte;
-					serial_buf_wp++;
-					if (serial_buf_wp == SERIAL_BUFFER_LENGTH) serial_buf_wp = 0;
-					serial_state = SERIAL_STATE_IDLE;
+					bluetooth_buffer[bluetooth_buf_wp] = receiving_byte;
+					bluetooth_buf_wp++;
+					if (bluetooth_buf_wp == BLUETOOTH_BUFFER_LENGTH) bluetooth_buf_wp = 0;
+					bluetooth_state = BLUETOOTH_STATE_IDLE;
 				}
 			} else
 				next_bit_order = (tm - time_startbit_noticed - half_of_one_bit_duration) / one_bit_duration;
@@ -129,4 +117,3 @@ ISR(PCINT0_vect)
 
   old_pinb = new_pinb;
 }
-

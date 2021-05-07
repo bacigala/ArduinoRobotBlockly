@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ public class FXMLMainWindowController implements Initializable {
     // called once on application startup
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initializeSerialConnection();
         initializeBlockly();
         initializeSimulation();
         initializeConsole();
@@ -95,11 +97,27 @@ public class FXMLMainWindowController implements Initializable {
 
     private final SerialCommunicator serialCommunicator = new SerialCommunicator();
 
+    private void initializeSerialConnection() {
+        connectionConnectButton.setDisable(true);
+
+        // listen to choice made -> enable to connect and upload
+        connectionChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
+                (observableValue, oldIndex, newIndex) -> {
+                    boolean portChosen = (newIndex.intValue() >= 0);
+                    connectionConnectButton.setDisable(!portChosen);
+                    boolean codeToConsole = Boolean.parseBoolean(
+                            robotVersionControl.getProperty("codeToConsole", "false"));
+                    codeVerifyButton.setDisable(codeToConsole);
+                    codeUploadButton.setDisable(!portChosen || codeToConsole);
+                });
+    }
+
     private void terminateSerialCommunication() {
         serialCommunicator.disconnect();
     }
 
     public void connectionSearchButtonAction() {
+        if (serialCommunicator.isConnected()) connectionConnectButtonAction(); // disconnect
         connectionSearchButton.setDisable(true);
         ArrayList<SerialCommunicator.ComPort> availablePorts = serialCommunicator.getAvailablePorts();
         connectionChoiceBox.setItems(FXCollections.observableArrayList(availablePorts));
@@ -130,7 +148,7 @@ public class FXMLMainWindowController implements Initializable {
         // update GUI
         connectionSearchButton.setDisable(isConnected);
         connectionChoiceBox.setDisable(isConnected);
-        connectionConnectButton.setText(isConnected ? "Disconnect" : "Connect");
+        connectionConnectButton.setText((isConnected ? "Disconnect" : "Connect") + "SERIAL");
         consoleTextArea.setText("");
         consoleTextArea.appendText(isConnected ? " * * * Connection established * * * \n" : "No connection.\n");
         consoleSendButton.setDisable(!isConnected);
@@ -141,7 +159,9 @@ public class FXMLMainWindowController implements Initializable {
                 robotVersionControl.getProperty("codeToConsole", "false"));
         codeSendToConsoleButton.setDisable(!codeToConsole || !isConnected);
         codeVerifyButton.setDisable(codeToConsole);
-        codeUploadButton.setDisable(codeToConsole || !isConnected);
+
+        boolean portSelected = connectionChoiceBox.getSelectionModel().getSelectedItem() != null;
+        codeUploadButton.setDisable(codeToConsole || !portSelected);
     }
 
 
@@ -153,6 +173,7 @@ public class FXMLMainWindowController implements Initializable {
     @FXML javafx.scene.control.TextField consoleTextField;
     @FXML javafx.scene.control.Button consoleSendButton;
     @FXML javafx.scene.control.Button consoleClearButton;
+    @FXML javafx.scene.control.CheckMenuItem consoleAutoSendCheckMenuItem;
 
     private boolean lastConsoleWriteBySerial = false;
 
@@ -175,6 +196,11 @@ public class FXMLMainWindowController implements Initializable {
         // pressing enter sends text to serial
         consoleTextField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) consoleSendButtonAction();
+        });
+
+        // auto-send 
+        consoleTextField.setOnKeyTyped(e -> {
+            if (consoleAutoSendCheckMenuItem.isSelected()) consoleSendButtonAction();
         });
 
         // gui defaults
@@ -247,8 +273,8 @@ public class FXMLMainWindowController implements Initializable {
         try {
             assembleFileToCompile();
             ArduinoCompiler.verify(new File("generated-code.ino").getAbsolutePath());
-        } catch (IOException e) {
-            showDialog();
+        } catch (Exception e) {
+            showDialog(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -259,66 +285,62 @@ public class FXMLMainWindowController implements Initializable {
             showDialog("Please chose port.");
             return;
         }
+        if (serialCommunicator.isConnected()) connectionConnectButtonAction(); // disconnect, make serial available
         try {
             assembleFileToCompile();
             ArduinoCompiler.verifyAndUpload(portName, new File("generated-code.ino").getAbsolutePath());
         } catch (Exception e) {
-            showDialog();
+            showDialog(e.getMessage());
             e.printStackTrace();
         }
     }
 
     private void assembleFileToCompile() throws IOException {
-        // get paths to all required files
-        ArrayList<String> modulePaths = new ArrayList<>();
-        for (int moduleNo : chosenModules) {
-            try {
-                modulePaths.add("/robot-versions/" + robotVersionControl.getModuleProperty(moduleNo, "location"));
-            } catch (Exception e) {
-                showDialog(Alert.AlertType.ERROR, "Module location not set", "module " + moduleNo);
-            }
-        }
-
         // create output file
         FileWriter writer = new FileWriter("generated-code.ino");
 
-        // append HEADER sections of modules
-        for (String file : modulePaths) {
-            URL resource = ArduinoCompiler.class.getResource(file + "_header.ino");
-            BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
-            String line;
-            while ((line = br.readLine()) != null)
-                writer.append(line).append("\r\n");
-            br.close();
-        }
+        // assemble & append header part of modules
+        appendModuleParts(writer, "header");
 
-        // append SETUP sections of modules
+        // assemble & append setup part of modules
         writer.append("\r\nvoid setup() {\r\n");
-        for (String file : modulePaths) {
-            URL resource = ArduinoCompiler.class.getResource(file + "_setup.ino");
-            BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
-            String line;
-            while ((line = br.readLine()) != null)
-                writer.append(line).append("\r\n");
-            br.close();
-        }
+        appendModuleParts(writer, "setup");
         writer.append("\r\n}\r\n\r\n");
 
         // append BLOCKLY CODE (main loop section and user-defined functions)
-        writer.append(blockly.getCode()).append("\r\n\r\n");
+        writer.append(blockly.getCode());
+        writer.append("\r\n\r\n");
 
-        // append FOOTER sections of modules
-        for (String file : modulePaths) {
-            URL resource = ArduinoCompiler.class.getResource(file + "_footer.ino");
+        // assemble & append footer part of modules
+        appendModuleParts(writer, "footer");
+
+        writer.flush();
+        writer.close();
+    }
+
+    private void appendModuleParts(FileWriter writer, String partName) throws IOException {
+        Collections.sort(chosenModules);
+
+        // get paths
+        ArrayList<String> modulePartPaths = new ArrayList<>();
+        for (int moduleNo : chosenModules) {
+            String modulePartPath = robotVersionControl.getModuleProperty(moduleNo, partName);
+            if (modulePartPath != null && !modulePartPath.isEmpty())
+                modulePartPaths.add("/robot-versions/" + modulePartPath + ".ino");
+        }
+
+        // append to writer
+        for (String file : modulePartPaths) {
+            URL resource = ArduinoCompiler.class.getResource(file);
+            if (resource == null) {
+                throw new IOException("Error: module part \"" + file + "\" not found.");
+            }
             BufferedReader br = new BufferedReader(new FileReader(new File(resource.getFile())));
             String line;
             while ((line = br.readLine()) != null)
                 writer.append(line).append("\r\n");
             br.close();
         }
-
-        writer.flush();
-        writer.close();
     }
 
 
@@ -365,7 +387,9 @@ public class FXMLMainWindowController implements Initializable {
                     robotVersionControl.getProperty("codeToConsole", "false"));
             codeSendToConsoleButton.setDisable(!codeToConsole || !serialCommunicator.isConnected());
             codeVerifyButton.setDisable(codeToConsole);
-            codeUploadButton.setDisable(codeToConsole || !serialCommunicator.isConnected());
+
+            boolean portSelected = connectionChoiceBox.getSelectionModel().getSelectedItem() != null;
+            codeUploadButton.setDisable(codeToConsole || !portSelected);
         } catch (Exception e) {
             blocklyWebView.setVisible(false);
             consoleSetDisable(true);

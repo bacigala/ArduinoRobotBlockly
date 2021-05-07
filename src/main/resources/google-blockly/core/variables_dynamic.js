@@ -47,24 +47,7 @@ Blockly.VariablesDynamic.onCreateVariableButtonClick_Boolean = function(button) 
 Blockly.VariablesDynamic.flyoutCategory = function(workspace) {
   var xmlList = [];
   
-	// Number variables
-	var label = document.createElement('label');
-	label.setAttribute('text', 'Number variables');
-	xmlList.push(label);
-
-	var button = document.createElement('button');
-  button.setAttribute('text', 'Create number variable');
-  button.setAttribute('callbackKey', 'CREATE_VARIABLE_NUMBER');
-  xmlList.push(button);
-	workspace.registerButtonCallback('CREATE_VARIABLE_NUMBER',
-      Blockly.VariablesDynamic.onCreateVariableButtonClick_Number);
-	
-  var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'Number');
-  xmlList = xmlList.concat(blockList);
-	
 	// Boolean variables
-	label = document.createElement('label');
-	xmlList.push(label);
 	label = document.createElement('label');
 	label.setAttribute('text', 'Boolean variables');
 	xmlList.push(label);
@@ -77,6 +60,23 @@ Blockly.VariablesDynamic.flyoutCategory = function(workspace) {
       Blockly.VariablesDynamic.onCreateVariableButtonClick_Boolean);
 	
   var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'Boolean');
+  xmlList = xmlList.concat(blockList);
+	
+	// Number variables
+	label = document.createElement('label');
+	xmlList.push(label);
+	var label = document.createElement('label');
+	label.setAttribute('text', 'Number variables');
+	xmlList.push(label);
+
+	var button = document.createElement('button');
+  button.setAttribute('text', 'Create number variable');
+  button.setAttribute('callbackKey', 'CREATE_VARIABLE_NUMBER');
+  xmlList.push(button);
+	workspace.registerButtonCallback('CREATE_VARIABLE_NUMBER',
+      Blockly.VariablesDynamic.onCreateVariableButtonClick_Number);
+	
+  var blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace, 'Number');
   xmlList = xmlList.concat(blockList);
 	
 	// String variables

@@ -63,7 +63,7 @@ public class RobotVersionControl {
             propertyValue = loadedVersion.getProperty(propertyName, ifNotSet);
         } catch (Exception e) {
             System.err.println("Cannot read property " + propertyName);
-            return "";
+            return ifNotSet;
         }
         return propertyValue;
     }
@@ -72,8 +72,12 @@ public class RobotVersionControl {
         return getProperty(propertyName, null);
     }
 
+    public String getModuleProperty(int moduleNumber, String property, String ifNotSet) {
+        return getProperty("module" + moduleNumber + "." + property, ifNotSet);
+    }
+
     public String getModuleProperty(int moduleNumber, String property) {
-        return getProperty("module" + moduleNumber + "." + property);
+        return getModuleProperty(moduleNumber, property, null);
     }
 
     public String getExampleProperty(int exampleNumber, String property) {

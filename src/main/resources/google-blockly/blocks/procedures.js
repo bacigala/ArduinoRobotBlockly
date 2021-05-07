@@ -41,7 +41,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         .appendField(Blockly.Msg['PROCEDURES_DEFNORETURN_TITLE'])
         .appendField(nameField, 'NAME')
         .appendField('', 'PARAMS');
-    this.setMutator(new Blockly.Mutator(['procedures_mutatorarg_Boolean','procedures_mutatorarg_Number', 'procedures_mutatorarg_String']));
+    this.setMutator(new Blockly.Mutator(['procedures_mutatorarg_Number', 'procedures_mutatorarg_Boolean', 'procedures_mutatorarg_String']));
     if ((this.workspace.options.comments ||
          (this.workspace.options.parentWorkspace &&
           this.workspace.options.parentWorkspace.options.comments)) &&
@@ -540,7 +540,7 @@ Blockly.Blocks['procedures_mutatorarg_Boolean'] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
 		//this.setStyle('procedure_blocks');
-		this.setColour(0);
+		this.setColour(75);
     this.setTooltip(Blockly.Msg['PROCEDURES_MUTATORARG_TOOLTIP']);
     this.contextMenu = false;
 
@@ -695,7 +695,7 @@ Blockly.Blocks['procedures_mutatorarg_Number'] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     //this.setStyle('procedure_blocks');
-		this.setColour(40);
+		this.setColour(330);
     this.setTooltip(Blockly.Msg['PROCEDURES_MUTATORARG_TOOLTIP']);
     this.contextMenu = false;
 
@@ -843,7 +843,7 @@ Blockly.Blocks['procedures_mutatorarg_String'] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     //this.setStyle('procedure_blocks');
-		this.setColour(80);
+		this.setColour(195);
     this.setTooltip(Blockly.Msg['PROCEDURES_MUTATORARG_TOOLTIP']);
     this.contextMenu = false;
 
