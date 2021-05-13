@@ -137,7 +137,7 @@ public class ModuleSelectDialog {
             return;
         }
         moduleInfoTextArea.setText("Name:\t" + module.name + "\n");
-        moduleInfoTextArea.appendText("Size:\t\t" + module.size + "\n");
+        moduleInfoTextArea.appendText("Size:\t\t~" + module.size + " bytes\n");
         moduleInfoTextArea.appendText("Required:\t" + (module.required ? "yes" : "no") + "\n\n");
         moduleInfoTextArea.appendText("Description:\n" + module.description);
     }
@@ -148,7 +148,7 @@ public class ModuleSelectDialog {
 
         memoryProgressBar.setProgress(usedMemory / (double)maxMemory);
         usedMemoryLabel.setText(
-                "Used memory: " + usedMemory + " / " + maxMemory + " (" + usedMemory*100 / maxMemory + "%)");
+                "Used memory: ~" + usedMemory + " / " + maxMemory + " bytes (" + usedMemory*100 / maxMemory + "%)");
 
         usedMemoryLabel.setTextFill(Color.color(checkMemoryLimit() ? 0 : 1, 0, 0));
     }

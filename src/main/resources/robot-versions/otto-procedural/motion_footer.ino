@@ -4,46 +4,39 @@
  * COMPLEX MOTION (short choreography)
  */
 
-uint16_t fwd_time[] = {100,1,1,100,1,1,1,100,1,1,1,100,1,100,1};
-uint8_t fwd_servo[] = {1,2,6,4,3,6,5,1,2,6,5,3,4,1,2};
-uint8_t fwd_val[] = 	{48,69,180,104,104,90,0,111,146,0,90,62,69,46,69};
-uint8_t fwd_len = 15;
+uint8_t move_len = 20;
+uint16_t move_time[] = {1,100,1,1,1,100,1,1,1,100,1,100,1,1,100,1,100,1,1,0};
+uint8_t move_servo[] = {10,1,2,1,6,4,3,6,5,1,2,2,6,5,3,4,1,2,1,0};
 
-uint8_t bwd_val[] = {6,2,36,66,90,180,60,60,90,0,109,156,90,0,90,120,120,36,70,90,6,0};
-uint8_t lt_val[] = {6,5,36,66,90,180,120,80,90,0,111,156,90,0,90,110,80,36,70,90,6,0};
-uint8_t rt_val[] = {6,4,36,66,90,180,80,120,90,0,109,156,90,0,90,80,110,36,70,90,6,0};
+uint8_t fwd_val[] = {6,36,66,90,180,120,120,90,0,109,156,90,0,90,60,60,36,70,90,0};
+uint8_t bwd_val[] = {6,36,66,90,180,60,60,90,0,109,156,90,0,90,120,120,36,70,90,0};
+uint8_t lt_val[] = {6,36,66,90,180,120,80,90,0,111,156,90,0,90,110,80,36,70,90,0};
+uint8_t rt_val[] = {6,36,66,90,180,80,120,90,0,109,156,90,0,90,80,110,36,70,90,0};
 
 void turn_left() {
-  complex_move(fwd_time, fwd_servo, lt_val, fwd_len);
+  complex_move(move_time, move_servo, lt_val, move_len);
 }
 
 void turn_right() {
-  complex_move(fwd_time, fwd_servo, rt_val, fwd_len);
+  complex_move(move_time, move_servo, rt_val, move_len);
 }
 
 void go_forward() {
-  complex_move(fwd_time, fwd_servo, fwd_val, fwd_len);
+  complex_move(move_time, move_servo, fwd_val, move_len);
 }
 
 void go_backward() {
-  complex_move(fwd_time, fwd_servo, bwd_val, fwd_len);
+  complex_move(move_time, move_servo, bwd_val, move_len);
 }
 
 void complex_move(uint16_t *ch_time, uint8_t *ch_servo, uint8_t *ch_val, int ch_len ) {
   for (int i = 0; i < ch_len - 1; i++) {
     delay(ch_time[i]);
     if (ch_servo[i] < 7) motor_set(ch_servo[i], ch_val[i]);
-    else i = special_command(i, ch_servo[i], ch_val[i], ch_len);
+    else if (ch_servo[i] == 10) slowdown = ch_val[i];
     check_battery();
   }
 }
-
-int special_command(uint16_t i, uint8_t command, uint8_t argument, int len) {
-  if (command == 10) slowdown = argument;
-	else if (command == 14) reset_motors();
-  return i;
-}
-
 
 /*
  * SIMPLE MOTION GESTURES

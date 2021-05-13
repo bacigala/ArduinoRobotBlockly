@@ -1,7 +1,8 @@
-
 // MODULE SENSOR - FOOTER
 
-// ULTRASONIC
+/*
+ * ULTRASOUND
+ */
 
 void init_ultrasonic()
 {
@@ -48,12 +49,12 @@ int16_t measure_distance()
 }
 
 /**
- *	Waits for ultrasonic gesture input (#defined distance is recognised)
+ *	Wait for ultrasonic gesture input (# defined distance is recognised)
  *  Result is stored in global uint16_t US_last_seen_gesture
  * 
  *	@param max_distance - greater distances do not count
  *	@param time_ignore - shortest time between measurements
- * 					(if distance < max_distance for more than time_ignore, #gesture is incerased
+ * 					(if distance < max_distance for more than time_ignore, gesture++ is recognised
  * 	@param time_max_wait - no gesture recognised for more than this exits gesture recognition
  */
 void ultrasonic_gesture_record(uint16_t max_distance, uint16_t time_ignore, uint16_t time_max_wait)
@@ -69,9 +70,9 @@ void ultrasonic_gesture_record(uint16_t max_distance, uint16_t time_ignore, uint
       if (no_valid_distance == 20) {
 				count++;
 				
-#ifdef MODULE_SOUND
+        #ifdef MODULE_SOUND
 				tone2(1680, 300);
-#endif
+        #endif
 
         // *** wait time_ignore OR recognise distance > max_distance
         no_valid_distance = 0;
@@ -99,7 +100,9 @@ void ultrasonic_gesture_record(uint16_t max_distance, uint16_t time_ignore, uint
 }
 
 
-// TOUCH
+/*
+ * ULTRASOUND
+ */
 
 /**
  *	Wait for touch gesture input (bumps / hold time)
@@ -123,9 +126,9 @@ void touch_gesture_record(uint8_t sensor, uint16_t time_ignore, uint16_t time_ma
       if (no_valid_gesture == 20) {
 				count++;
 				
-#ifdef MODULE_SOUND
+        #ifdef MODULE_SOUND
 				tone2(1680, 300);
-#endif
+        #endif
 
         // *** wait time_ignore OR recognise button release
         no_valid_gesture = 0;

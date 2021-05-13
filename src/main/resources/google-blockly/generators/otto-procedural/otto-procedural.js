@@ -156,12 +156,12 @@ Blockly.OttoProcedural.codeFunctions_ = [];
  */
 Blockly.OttoProcedural.finish = function(code) {
 	
-	var variables = Blockly.OttoProcedural.definitions_['variables'];
+	let variables = Blockly.OttoProcedural.definitions_['variables'];
 	delete Blockly.OttoProcedural.definitions_['variables'];
 	
   // Convert the definitions dictionary into a list.
-  var definitions = [];
-  for (var name in Blockly.OttoProcedural.definitions_) {
+  let definitions = [];
+  for (let name in Blockly.OttoProcedural.definitions_) {
     definitions.push(Blockly.OttoProcedural.definitions_[name]);
   }
   // Clean up temporary data.
@@ -170,12 +170,12 @@ Blockly.OttoProcedural.finish = function(code) {
   Blockly.OttoProcedural.variableDB_.reset();
 	
 	var result = '';
-	if (variables) result += variables + '\n\n';
+	if (variables) result += variables + '\n';
 	// result += 'void setup() {\n'
 	// result += '\t\\\\ SETUP CODE HERE\n';
 	// result += '}\n\n';
 	result += 'void loop() {\n';
-	result += code + '\n';
+	result += code;
 	result += '  check_battery();\n'
 	//result += 'delay(500);\n'
 	result += '}\n\n';

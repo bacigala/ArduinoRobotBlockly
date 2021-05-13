@@ -13,8 +13,8 @@ void init_bluetooth(uint32_t baud_rate)
   half_of_one_bit_duration = 500000 / baud_rate;
 
   PCMSK0 |= 16; //PCINT4;
-  PCIFR &= ~1; //PCIF0;
-  PCICR |= 1; // PCIE0;
+  PCIFR &= ~1; 	//PCIF0;
+  PCICR |= 1; 	//PCIE0;
 }
 
 uint8_t bluetooth_available()

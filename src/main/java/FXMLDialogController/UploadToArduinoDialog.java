@@ -25,7 +25,7 @@ public class UploadToArduinoDialog {
     public static UploadToArduinoDialog getDialog(
             String message,
             ArrayList<SerialCommunicator.ComPort> availablePorts,
-            SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort,
+            SerialCommunicator.ComPort selectedComPort,
             URL resource) throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(UploadToArduinoDialog.class.getResource(
@@ -43,12 +43,12 @@ public class UploadToArduinoDialog {
     private Parent root;
     private String message;
     private ArrayList<SerialCommunicator.ComPort> availablePorts;
-    private SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort;
+    private SerialCommunicator.ComPort selectedComPort;
     private final SerialCommunicator serialCommunicator= new SerialCommunicator();
     private URL resource;
 
     public void initialize(Parent root, String message, ArrayList<SerialCommunicator.ComPort> availablePorts,
-                           SingleSelectionModel<SerialCommunicator.ComPort> selectedComPort, URL resource) {
+                           SerialCommunicator.ComPort selectedComPort, URL resource) {
         this.root = root;
         this.message = message;
         this.availablePorts = availablePorts;
@@ -63,8 +63,10 @@ public class UploadToArduinoDialog {
         stage.setTitle("Upload to Arduino");
         stage.show();
         mainLabel.setText(message);
-        serialChoiceBox.setItems(FXCollections.observableArrayList(availablePorts));
-        if (selectedComPort != null) serialChoiceBox.setSelectionModel(selectedComPort);
+        if (availablePorts != null) {
+            serialChoiceBox.setItems(FXCollections.observableArrayList(availablePorts));
+            if (selectedComPort != null) serialChoiceBox.setValue(selectedComPort);
+        }
     }
 
     public void serialSearchButtonAction() {
@@ -87,6 +89,7 @@ public class UploadToArduinoDialog {
 
         String portName = selectedPort.getComName();
         ArduinoCompiler.verifyAndUpload(portName, resource.getPath());
+        closeDialog();
     }
 
     private void closeDialog() {

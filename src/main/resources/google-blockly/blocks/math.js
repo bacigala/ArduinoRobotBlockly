@@ -184,7 +184,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
           ["%{BKY_MATH_IS_EVEN}", "EVEN"],
           ["%{BKY_MATH_IS_ODD}", "ODD"],
           // ["%{BKY_MATH_IS_PRIME}", "PRIME"],
-          ["%{BKY_MATH_IS_WHOLE}", "WHOLE"],
+          //["%{BKY_MATH_IS_WHOLE}", "WHOLE"],
           ["%{BKY_MATH_IS_POSITIVE}", "POSITIVE"],
           ["%{BKY_MATH_IS_NEGATIVE}", "NEGATIVE"],
           ["%{BKY_MATH_IS_DIVISIBLE_BY}", "DIVISIBLE_BY"]

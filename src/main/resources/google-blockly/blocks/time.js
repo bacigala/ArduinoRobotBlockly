@@ -23,15 +23,15 @@ Blockly.defineBlocksWithJsonArray([
       "name": "TIMER_NAME",
       "options": [
         [
-          "timer1",
+          "stopwatch1",
           "timer1"
         ],
         [
-          "timer2",
+          "stopwatch2",
           "timer2"
         ],
         [
-          "timer3",
+          "stopwatch3",
           "timer3"
         ]
       ]
@@ -54,15 +54,15 @@ Blockly.defineBlocksWithJsonArray([
       "name": "TIMER_NAME",
       "options": [
         [
-          "timer1",
+          "stopwatch1",
           "timer1"
         ],
         [
-          "timer2",
+          "stopwatch2",
           "timer2"
         ],
         [
-          "timer3",
+          "stopwatch3",
           "timer3"
         ]
       ]

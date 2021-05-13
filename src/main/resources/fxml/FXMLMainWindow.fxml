@@ -117,6 +117,12 @@
                <top>
                   <MenuBar BorderPane.alignment="CENTER">
                      <menus>
+                        <Menu mnemonicParsing="false" text="Project">
+                           <items>
+                              <MenuItem mnemonicParsing="false" onAction="#openProjectMenuItemAction" text="Open project" />
+                              <MenuItem mnemonicParsing="false" onAction="#saveProjectMenuItemAction" text="Save project" />
+                           </items>
+                        </Menu>
                         <Menu mnemonicParsing="false" text="Program">
                            <items>
                               <MenuItem fx:id="loadAtProgramButton" mnemonicParsing="false" onAction="#parseProgramButtonAction" text="Load @ program" />
@@ -125,7 +131,8 @@
                         </Menu>
                         <Menu mnemonicParsing="false" text="Console">
                            <items>
-                              <CheckMenuItem fx:id="consoleAutoSendCheckMenuItem" mnemonicParsing="false" text="auto-send" />
+                              <CheckMenuItem fx:id="consoleAutoSendCheckMenuItem" mnemonicParsing="false" text="Auto send" />
+                              <CheckMenuItem fx:id="consoleEchoSentMessagesCheckMenuItem" mnemonicParsing="false" selected="true" text="Show sent messages" />
                            </items>
                         </Menu>
                      </menus>

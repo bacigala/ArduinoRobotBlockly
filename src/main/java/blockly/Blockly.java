@@ -91,8 +91,16 @@ public class Blockly {
 
     public void setWorkspace(String workspace) {
         clearWorkspace();
+        if (workspace.isEmpty()) return;
         webEngine.executeScript(
                 "Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, Blockly.Xml.textToDom(\"" + workspace + "\"));");
+    }
+
+    public void setWorkspace2(String workspace) {
+        clearWorkspace();
+        if (workspace.isEmpty()) return;
+        webEngine.executeScript(
+                "Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, Blockly.Xml.textToDom('" + workspace + "'));");
     }
 
     public void clearWorkspace() {

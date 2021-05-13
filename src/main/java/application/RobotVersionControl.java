@@ -12,7 +12,6 @@ import java.util.Properties;
  */
 public class RobotVersionControl {
 
-    // todo: maybe move versions outside app...
     private final String pathToVersionsFolder = "src\\main\\resources\\robot-versions";
     private final ArrayList<RobotVersion> robotVersions = new ArrayList<>();
     private Properties loadedVersion;

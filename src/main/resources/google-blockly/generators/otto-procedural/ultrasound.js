@@ -48,8 +48,8 @@ Blockly.OttoProcedural['wait_touch'] = function(block) {
 	if (dropdown_button === 'RIGHT') code += 'digitalRead(TOUCH1)';
 	if (dropdown_button === 'LEFT') code += 'digitalRead(TOUCH2)';
 	code += ') {\n';
-	code += 'delay(300);\n';
-	code += 'check_battery();\n';
+	code += '  delay(300);\n';
+	code += '  check_battery();\n';
 	code += '}\n';
   return code;
 };

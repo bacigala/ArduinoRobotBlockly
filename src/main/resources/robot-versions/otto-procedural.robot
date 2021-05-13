@@ -181,7 +181,7 @@
 								</block>\
 							</category>\
 							\
-							<category name='Sensors' colour='90' toolboxitemid='ultrasound'>\
+							<category name='Sensors' colour='90' toolboxitemid='sensor'>\
 								<label text='Ultrasound'></label>\
 								<block type='otto_procedural_ultrasound_get_distance'></block>\
 								<block type='wait_ultrasound'>\
@@ -257,12 +257,12 @@
 						</xml>
 
 	workspace = <xml>\
-								<block type='otto_basic_loop' deletable='false' movable='false'></block>\
+								<block type="otto_basic_loop" deletable="false" movable="false"></block>\
 							</xml>
 
 	robotMaxMemory 	= 30720
 	moduleCount		 	= 9
-	categories		 	= vital, logic, math, loops, variables, functions, sound, motion, ultrasound, serial, time, bluetooth
+	categories		 	= vital, logic, math, loops, variables, functions, sound, motion, sensor, serial, time, bluetooth
 	generator				= OttoProcedural
 	programInRam		= false
 	codeLoader			= ottoProcedural
@@ -277,12 +277,12 @@
 	
 !Module 2
 	module2.name 				  = Serial
-	module2.description 	= 
+	module2.description 	= Functions for serial communication via USB serial port.
 	module2.required 			= false
 	module2.header				= otto-procedural/serial_header
 	module2.setup					= otto-procedural/serial_setup
 	module2.footer				= otto-procedural/serial_footer
-	module2.size					= 1798
+	module2.size					= 1313
 	module2.categories		= serial
 
 !Module 3
@@ -292,7 +292,7 @@
 	module3.header				= otto-procedural/vital_header
 	module3.setup					= otto-procedural/vital_setup
 	module3.footer				= otto-procedural/vital_footer
-	module3.size					= 1180
+	module3.size					= 2444
 	module3.categories		= vital
 
 !Module 4
@@ -302,12 +302,12 @@
 	module4.header				= otto-procedural/sound_header
 	module4.setup					= otto-procedural/sound_setup
 	module4.footer				= otto-procedural/sound_footer
-	module4.size					= 3340
+	module4.size					= 2500
 	module4.categories		= sound
 	
 !Module 5
 	module5.name 				  = Motion
-	module5.description 	= 
+	module5.description 	= Functions for motor control.
 	module5.required 			= false
 	module5.header				= otto-procedural/motion_header
 	module5.setup					= otto-procedural/motion_setup
@@ -316,14 +316,14 @@
 	module5.categories		= motion
 	
 !Module 6
-	module6.name 				  = Ultrasound
-	module6.description 	= 
+	module6.name 				  = Sensors
+	module6.description 	= Control functions for ultrasonic and touch sensors.
 	module6.required 			= false
-	module6.header				= otto-procedural/ultrasound_header
-	module6.setup					= otto-procedural/ultrasound_setup
-	module6.footer				= otto-procedural/ultrasound_footer
-	module6.size					= 340
-	module6.categories		= ultrasound
+	module6.header				= otto-procedural/sensor_header
+	module6.setup					= otto-procedural/sensor_setup
+	module6.footer				= otto-procedural/sensor_footer
+	module6.size					= 300
+	module6.categories		= sensor
 	
 !Module 7
 	module7.name 				  = Procedures
@@ -334,11 +334,11 @@
 	
 !Module 8
 	module8.name 				  = Time
-	module8.description 	= 
+	module8.description 	= Timers and time management.
 	module8.required 			= false
 	module8.header				= otto-procedural/time_header
 	module8.setup					= otto-procedural/time_setup
-	module8.size					= 36
+	module8.size					= 40
 	module8.categories		= time
 	
 !Module 9
@@ -348,7 +348,7 @@
 	module9.header				= otto-procedural/bluetooth_header
 	module9.setup					= otto-procedural/bluetooth_setup
 	module9.footer				= otto-procedural/bluetooth_footer
-	module9.size					= 0
+	module9.size					= 800
 	module9.categories		= bluetooth
 
 	
@@ -356,13 +356,10 @@
 	example1.name					= Wave on proximity
 	example1.description	= When Otto sees obstacle, he waves. 
 	example1.modules			= 1, 2, 3, 4, 5, 6, 7, 8, 9
-	example1.workspace 		= <xml xmlns='https://developers.google.com/blockly/xml'><block type='otto_basic_loop' id='h7W;KMe!nWzO^vGJwpH?' deletable='false' movable='false' x='10' y='10'><statement name='PROGRAM'><block type='wait_ultrasound' id='H4}m1o7mI%%18tKa%kN;'><field name='RELATION'>LESS</field><value name='DISTANCE'><shadow type='math_number' id='{;l*d=]mhlUyG710R(FV'><field name='NUM'>50</field></shadow></value><next><block type='wave_hand' id='y9A1nH9jcCz*~kB7mdil'></block></next></block></statement></block></xml>
+	example1.workspace 		= <xml xmlns\="https\://developers.google.com/blockly/xml"><block type\="otto_basic_loop" id\="h7W;KMe\!nWzO^vGJwpH?" deletable\="false" movable\="false" x\="10" y\="10"><statement name\="PROGRAM"><block type\="wait_ultrasound" id\="H4}m1o7mI%%18tKa%kN;"><field name\="RELATION">LESS</field><value name\="DISTANCE"><shadow type\="math_number" id\="{;l*d\=]mhlUyG710R(FV"><field name\="NUM">50</field></shadow></value><next><block type\="wave_hand" id\="y9A1nH9jcCz*~kB7mdil"></block></next></block></statement></block></xml>
 	
 !Example 2
 	example2.name					= On tiptoes, on heels
 	example2.description	= Let Otto stand  on his tiptoes / on heels by usig the touch sensors.
 	example2.modules			= 1, 2, 3, 4, 5, 6, 7, 8, 9
-	example2.workspace 		= <xml xmlns='https://developers.google.com/blockly/xml'><block type='otto_basic_loop' id='yW*nV4NgvDA$!}N_cjP7' deletable='false' movable='false' x='10' y='10'><statement name='PROGRAM'><block type='controls_if' id='7u+4MJcw9J7?]`HG:#O='><value name='IF0'><block type='button_pressed' id='(O5.g_YtM,;BTkXS7iSs'><field name='BUTTON'>LEFT</field></block></value><statement name='DO0'><block type='tiptoes' id='#)k(onH.LZj+%-}_R@p?'></block></statement><next><block type='controls_if' id='I=;_],QvW#V[C6b,k$Kx'><value name='IF0'><block type='button_pressed' id='F*$mg385U@!lk,;].nB['><field name='BUTTON'>RIGHT</field></block></value><statement name='DO0'><block type='heels' id='Em7!`A.hZYL$L.!lxFR+'></block></statement></block></next></block></statement></block></xml>
-
-
-
+	example2.workspace 		= <xml xmlns\="https\://developers.google.com/blockly/xml"><block type\="otto_basic_loop" id\="yW*nV4NgvDA$\!}N_cjP7" deletable\="false" movable\="false" x\="10" y\="10"><statement name\="PROGRAM"><block type\="controls_if" id\="7u+4MJcw9J7?]`HG\:\#O\="><value name\="IF0"><block type\="button_pressed" id\="(O5.g_YtM,;BTkXS7iSs"><field name\="BUTTON">LEFT</field></block></value><statement name\="DO0"><block type\="tiptoes" id\="\#)k(onH.LZj+%-}_R@p?"></block></statement><next><block type\="controls_if" id\="I\=;_],QvW\#V[C6b,k$Kx"><value name\="IF0"><block type\="button_pressed" id\="F*$mg385U@\!lk,;].nB["><field name\="BUTTON">RIGHT</field></block></value><statement name\="DO0"><block type\="heels" id\="Em7\!`A.hZYL$L.\!lxFR+"></block></statement></block></next></block></statement></block></xml>

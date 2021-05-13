@@ -64,8 +64,9 @@ static uint8_t old_pinb, new_pinb;
 ISR(PCINT0_vect)
 {
   new_pinb = PINB;
-	
-	#ifdef MODULE_ULTRASOUND
+
+  // listen to ultrasound measurement completion
+	#ifdef MODULE_SENSOR
 		if ((new_pinb ^ old_pinb) & 1) {
 			if (new_pinb & 1)
 			  pulse_start = micros();

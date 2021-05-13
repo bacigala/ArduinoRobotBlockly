@@ -1,8 +1,11 @@
+/*
+ * Original program used with Otto, RL 2020
+ */
+
 #include <Servo.h>
 #include <EEPROM.h>
 #include <avr/pgmspace.h>
 
-// odkomentujte nasledujuci riadok, ak je vas robot vytlaceny na 3D tlaciarni
 #define ROBOT_3D_PRINTED 1
 
 // klavesy pre pravy a lavy touch senzor
